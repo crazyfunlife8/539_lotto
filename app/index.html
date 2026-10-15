@@ -1,0 +1,1180 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>〔品牌名〕— 39 彩金桶</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
+  <style>
+    /* ════════════════════════════════════════
+       DESIGN TOKENS
+    ════════════════════════════════════════ */
+    :root {
+      --gold:        #c49a2a;
+      --gold-light:  #e8b84b;
+      --gold-bright: #f5d67a;
+      --gold-dim:    #7a5e18;
+      --text-main:   #f0e6d2;
+      --text-muted:  #8a7a62;
+      --text-dim:    #5a4a35;
+      --bg-dark:     #0a0703;
+      --bg-surface:  #0e0b07;
+      --bg-card:     #1c1610;
+    }
+
+    body {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background-color: #0a0703;
+      color: #f0e6d2;
+      min-height: 100vh;
+    }
+    .bg-neutral-950 { background-color: #0a0703 !important; }
+    .bg-neutral-900 { background-color: #0e0b07 !important; }
+    .bg-neutral-800 { background-color: #181410 !important; }
+    .font-display   { font-family: 'Cinzel', serif !important; }
+
+    /* ════════════════════════════════════════
+       BUTTONS
+    ════════════════════════════════════════ */
+    @keyframes btn-shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .btn-gold {
+      background: linear-gradient(
+        105deg,
+        #7a5010 0%, #c49a2a 22%, #f5d67a 46%,
+        #e8b84b 54%, #c49a2a 78%, #7a5010 100%
+      ) !important;
+      background-size: 250% auto !important;
+      animation: btn-shimmer 4.5s linear infinite;
+      color: #0d0a04 !important;
+      font-weight: 900;
+      box-shadow:
+        0 4px 28px rgba(196, 154, 42, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.35) !important;
+      border: 1px solid rgba(245, 214, 122, 0.3) !important;
+      transition: box-shadow 0.3s ease, transform 0.15s ease !important;
+    }
+    .btn-gold:hover { box-shadow: 0 6px 40px rgba(196,154,42,0.6), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.35) !important; }
+    .btn-gold:active { transform: scale(0.96); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05) !important;
+      color: var(--text-muted) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+    }
+    .btn-ghost:hover  { background: rgba(255,255,255,0.1) !important; color: var(--text-main) !important; }
+    .btn-ghost:active { transform: scale(0.96); }
+
+    /* ════════════════════════════════════════
+       LAYOUT COMPONENTS
+    ════════════════════════════════════════ */
+    .gold-sep {
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent 0%, rgba(196,154,42,0.35) 25%,
+        rgba(232,184,75,0.55) 50%,
+        rgba(196,154,42,0.35) 75%, transparent 100%);
+    }
+    .card {
+      background: linear-gradient(145deg, #1c1710 0%, #14110c 100%) !important;
+      border: 1px solid rgba(196,154,42,0.12) !important;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.45);
+    }
+    .card-hover { transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease !important; }
+    .card-hover:hover {
+      border-color: rgba(196,154,42,0.38) !important;
+      box-shadow: 0 6px 28px rgba(196,154,42,0.12), 0 2px 14px rgba(0,0,0,0.5);
+      transform: translateY(-3px);
+    }
+    .jackpot-pool-box {
+      background: linear-gradient(145deg, #1e0f06 0%, #160b06 100%) !important;
+      border: 1px solid rgba(196,154,42,0.3) !important;
+      box-shadow: 0 0 0 1px rgba(196,154,42,0.06), 0 8px 40px rgba(0,0,0,0.6),
+                  inset 0 1px 0 rgba(196,154,42,0.1), inset 0 -1px 0 rgba(0,0,0,0.4);
+    }
+    .jackpot-main-card {
+      background: linear-gradient(145deg, #1e0d0d 0%, #140909 100%) !important;
+      border: 1px solid rgba(196,154,42,0.28) !important;
+      box-shadow: 0 0 0 1px rgba(196,154,42,0.06), 0 12px 50px rgba(0,0,0,0.7),
+                  inset 0 1px 0 rgba(196,154,42,0.08);
+    }
+    .draw-card {
+      background: linear-gradient(145deg, #1a1510 0%, #110e0a 100%) !important;
+      border: 1px solid rgba(196,154,42,0.18) !important;
+      box-shadow: 0 4px 22px rgba(0,0,0,0.5);
+    }
+    .step-num {
+      background: linear-gradient(145deg, #4a1010, #7a2020) !important;
+      border-color: var(--gold) !important;
+      box-shadow: 0 0 18px rgba(196,154,42,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+      font-family: 'Cinzel', serif;
+      color: #f5d67a !important;
+    }
+
+    /* ════════════════════════════════════════
+       JACKPOT GLOW
+    ════════════════════════════════════════ */
+    @keyframes gold-pulse {
+      0%,100% { text-shadow: 0 0 18px rgba(232,184,75,0.5), 0 0 50px rgba(196,154,42,0.22); }
+      50%      { text-shadow: 0 0 30px rgba(245,214,122,0.8), 0 0 80px rgba(196,154,42,0.38), 0 0 130px rgba(196,154,42,0.12); }
+    }
+    .jackpot-glow { font-family: 'Cinzel', serif !important; animation: gold-pulse 3.5s ease-in-out infinite; }
+
+    /* ════════════════════════════════════════
+       LOTTERY BALLS
+    ════════════════════════════════════════ */
+    .ball {
+      width: 2.75rem; height: 2.75rem; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.875rem;
+      box-shadow: inset 0 -3px 8px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07);
+      flex-shrink: 0; font-family: 'Cinzel', serif; font-variant-numeric: tabular-nums;
+    }
+    .ball-red  { background: radial-gradient(circle at 32% 28%, #f87171, #6b0f0f); color: #fff; }
+    .ball-gold { background: radial-gradient(circle at 32% 28%, #fde68a, #7a4500); color: #fff; }
+    .ball-dim  { background: radial-gradient(circle at 32% 28%, #3a3430, #1a1510); color: #5a4a35; }
+
+    /* ════════════════════════════════════════
+       TICKER  §P1
+    ════════════════════════════════════════ */
+    .ticker-bg { background: #0c0500 !important; border-bottom: 1px solid rgba(196,154,42,0.15) !important; }
+    .ticker-wrap { overflow: hidden; white-space: nowrap; }
+    .ticker-inner { display: inline-block; animation: scroll-ticker 50s linear infinite; will-change: transform; }
+    @keyframes scroll-ticker {
+      from { transform: translateX(100vw); }
+      to   { transform: translateX(-100%); }
+    }
+
+    /* ════════════════════════════════════════
+       HEADER & MENU
+    ════════════════════════════════════════ */
+    .header-bg {
+      background: linear-gradient(90deg, #0e0905 0%, #150e07 100%) !important;
+      border-bottom: 1px solid rgba(196,154,42,0.2) !important;
+    }
+    .menu-item { transition: color 0.15s ease, background 0.15s ease, padding-left 0.2s ease; border-left: 2px solid transparent; }
+    .menu-item:hover, .menu-item.active {
+      color: #c49a2a !important; background: rgba(196,154,42,0.06);
+      padding-left: 1.5rem; border-left-color: rgba(196,154,42,0.4);
+    }
+    #menu-panel { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.2,0,0,1); }
+    #menu-panel.open { transform: translateX(0); }
+    #menu-backdrop { opacity: 0; transition: opacity 0.25s ease; }
+    #menu-backdrop.open { opacity: 1; }
+
+    /* ════════════════════════════════════════
+       MODAL SHARED
+    ════════════════════════════════════════ */
+    .modal-overlay { position: fixed; inset: 0; z-index: 60; }
+    .modal-backdrop-el { position: absolute; inset: 0; background: rgba(0,0,0,0.75); opacity: 0; transition: opacity 0.2s ease; }
+    .modal-backdrop-el.open { opacity: 1; }
+    .modal-dialog-el { opacity: 0; transform: scale(0.95) translateY(10px); transition: opacity 0.25s cubic-bezier(0.2,0,0,1), transform 0.25s cubic-bezier(0.2,0,0,1); }
+    .modal-dialog-el.open { opacity: 1; transform: scale(1) translateY(0); }
+    .modal-surface { background: linear-gradient(160deg, #1a1208, #100c07); border: 1px solid rgba(196,154,42,0.3); }
+    .modal-step-num {
+      background: linear-gradient(145deg, #3a0e0e, #5a1a1a);
+      border: 1px solid rgba(196,154,42,0.35); color: #e8b84b;
+      box-shadow: 0 0 10px rgba(196,154,42,0.2); font-family: 'Cinzel', serif;
+    }
+
+    /* ════════════════════════════════════════
+       ANIMATIONS
+    ════════════════════════════════════════ */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up { opacity: 0; animation: fade-up 0.6s cubic-bezier(0.2,0,0,1) forwards; }
+    .delay-100 { animation-delay: 0.10s; }
+    .delay-200 { animation-delay: 0.22s; }
+    .delay-300 { animation-delay: 0.36s; }
+    .delay-400 { animation-delay: 0.50s; }
+    .delay-500 { animation-delay: 0.64s; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s cubic-bezier(0.2,0,0,1), transform 0.55s cubic-bezier(0.2,0,0,1); }
+    .reveal.visible  { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1  { transition-delay: 0.06s; }
+    .reveal-delay-2  { transition-delay: 0.13s; }
+    .reveal-delay-3  { transition-delay: 0.20s; }
+    .reveal-delay-4  { transition-delay: 0.27s; }
+    .reveal-delay-5  { transition-delay: 0.34s; }
+    .announce-icon   { transition: transform 0.2s cubic-bezier(0.2,0,0,1); }
+
+    .thin-scroll::-webkit-scrollbar { width: 3px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(196,154,42,0.25); border-radius: 2px; }
+
+    /* ════════════════════════════════════════
+       P1-SPECIFIC: HERO BACKGROUNDS
+    ════════════════════════════════════════ */
+    .hero-visitor-bg {
+      position: relative;
+      background:
+        radial-gradient(ellipse 75% 60% at 50% 15%, rgba(155,95,12,0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 45% at 15% 85%, rgba(80,12,12,0.30) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 45% at 85% 75%, rgba(90,55,5,0.18) 0%, transparent 55%),
+        #0a0703 !important;
+    }
+    .hero-visitor-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(196,154,42,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196,154,42,0.035) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+    }
+    .hero-connected-bg {
+      background:
+        radial-gradient(ellipse 80% 70% at 50% -5%, rgba(140,80,10,0.22) 0%, transparent 60%),
+        #0a0703 !important;
+    }
+  </style>
+</head>
+<body class="bg-neutral-950 text-white min-h-screen">
+
+  <!-- ═══ DEV TOGGLE（開發用）════════════ -->
+  <div class="fixed bottom-4 right-4 z-50">
+    <button onclick="toggleView()"
+            class="flex items-center gap-2 text-xs font-bold px-3 py-2 rounded-lg shadow-xl"
+            style="background:#4a1d96; color:#fff; border:1px solid rgba(139,92,246,0.4); transition:background 0.15s ease;"
+            onmouseover="this.style.background='#5b21b6'" onmouseout="this.style.background='#4a1d96'">
+      <i class="fa-solid fa-arrow-right-arrow-left"></i> 切換狀態
+    </button>
+  </div>
+
+  <!-- ═══ STATUS BANNERS  §1.4 ════════════ -->
+  <div id="network-banner" class="hidden text-center py-2.5 px-4 text-sm font-semibold"
+       style="background:#dc2626; color:#fff;">
+    <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
+    <span data-i18n="banner.network">請切換到 TRON 主網，目前連接到測試網或不支援的網路，所有交易功能已停用。</span>
+  </div>
+  <div id="paused-banner" class="hidden text-center py-2.5 px-4 text-sm font-semibold"
+       style="background:#d97706; color:#000;">
+    <i class="fa-solid fa-bullhorn mr-1.5"></i>
+    <span data-i18n="banner.paused">目前暫停接受新注，提領功能照常開放。</span>
+  </div>
+  <div id="blacklist-banner" class="hidden text-center py-2.5 px-4 text-sm font-semibold"
+       style="background:#3a0a00; color:#f87171; border-bottom:1px solid rgba(248,113,113,0.25);">
+    <i class="fa-solid fa-ban mr-1.5"></i>
+    <span data-i18n="banner.blacklist">此地址目前無法下注，餘額可正常提領。</span>
+  </div>
+
+  <!-- ═══ HEADER  §1.1 ════════════════════ -->
+  <header class="header-bg sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+
+      <a href="index.html" style="text-decoration:none;" class="flex items-center gap-2 flex-shrink-0">
+        <img src="image/539_logo.png" alt="39彩金桶" class="navbar-logo">
+        <span class="navbar-brand">〔品牌名〕</span>
+      </a>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- 語言切換（desktop）§1.1 -->
+        <div class="hidden sm:flex items-center gap-0.5 text-xs">
+          <button data-lang-btn="en" onclick="setLang('en')" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+          <button data-lang-btn="zh-tw" onclick="setLang('zh-tw')" class="px-2.5 py-1 rounded font-bold"
+                  style="background:rgba(196,154,42,0.15); color:#c49a2a; border:1px solid rgba(196,154,42,0.3);">繁</button>
+          <button data-lang-btn="zh-cn" onclick="setLang('zh-cn')" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+        </div>
+        <!-- 連接錢包（visitor）-->
+        <button id="wallet-btn-visitor" onclick="connectWallet()"
+                class="btn-gold px-4 py-2 rounded-lg text-sm font-bold hover:scale-[1.02]">
+          <span data-i18n="wallet.connect">連接錢包</span>
+        </button>
+        <!-- 已連接（connected）§1.5 -->
+        <div id="wallet-btn-connected" class="hidden items-center gap-2.5 rounded-lg px-3 py-2 cursor-pointer"
+             style="background:rgba(196,154,42,0.08); border:1px solid rgba(196,154,42,0.25); transition:background 0.15s ease;"
+             onmouseover="this.style.background='rgba(196,154,42,0.14)'"
+             onmouseout="this.style.background='rgba(196,154,42,0.08)'">
+          <i class="fa-solid fa-circle text-xs flex-shrink-0" style="color:#4ade80;"></i>
+          <div class="text-right leading-tight">
+            <div id="header-address" class="text-xs font-mono" style="color:#7a6a50;">—</div>
+            <div id="header-balance" class="text-sm font-black tabular-nums" style="color:#e8b84b;">
+              —&thinsp;<span class="text-xs font-normal" style="color:#7a6a50;">USDT</span>
+            </div>
+          </div>
+        </div>
+        <!-- 選單 -->
+        <button onclick="toggleMenu()" aria-label="選單"
+                class="w-9 h-9 flex items-center justify-center rounded-lg"
+                style="color:#7a6a50; transition:color 0.15s ease, background 0.15s ease;"
+                onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                onmouseout="this.style.color='#7a6a50'; this.style.background='transparent'">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ SIDE MENU  §1.1 ═════════════════ -->
+  <div id="menu-overlay" class="hidden fixed inset-0 z-50">
+    <div id="menu-backdrop" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+    <nav id="menu-panel" class="absolute right-0 top-0 bottom-0 w-64 flex flex-col"
+         style="background:linear-gradient(180deg,#130e08 0%,#0d0a06 100%); border-left:1px solid rgba(196,154,42,0.2);"
+         onclick="event.stopPropagation()">
+
+      <div class="flex items-center justify-between px-5 py-4"
+           style="border-bottom:1px solid rgba(196,154,42,0.15);">
+        <span class="font-display font-bold tracking-[0.15em] text-sm" style="color:#c49a2a;">MENU</span>
+        <button onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg"
+                style="color:#5a4a35; transition:color 0.15s ease, background 0.15s ease;"
+                onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                onmouseout="this.style.color='#5a4a35'; this.style.background='transparent'">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <ul class="flex-1 py-3 overflow-y-auto thin-scroll">
+        <li><a href="index.html"          data-nav="home"      class="menu-item active flex items-center gap-3 px-5 py-3 font-semibold" style="color:#e8b84b;"><i class="fa-solid fa-house w-4 text-center" style="color:#c49a2a;"></i> <span data-i18n="nav.home">首頁</span></a></li>
+        <li><a href="tickets.html"   data-nav="tickets"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-ticket w-4 text-center"></i> <span data-i18n="nav.tickets">我的注單</span></a></li>
+        <li><a href="account.html"   data-nav="account"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-circle-user w-4 text-center"></i> <span data-i18n="nav.account">會員中心</span></a></li>
+        <li><a href="history.html"   data-nav="history"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-clock-rotate-left w-4 text-center"></i> <span data-i18n="nav.history">歷史紀錄</span></a></li>
+        <li><a href="affiliate.html" data-nav="affiliate" class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-handshake w-4 text-center"></i> <span data-i18n="nav.affiliate">推廣夥伴</span></a></li>
+        <li><a href="rules.html"     data-nav="rules"     class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-book-open w-4 text-center"></i> <span data-i18n="nav.rules">遊戲規則</span></a></li>
+        <li><a href="support.html"   data-nav="support"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-headset w-4 text-center"></i> <span data-i18n="nav.support">客服</span></a></li>
+      </ul>
+
+      <div class="p-4" style="border-top:1px solid rgba(196,154,42,0.15);">
+        <div class="flex justify-center gap-1.5 text-xs">
+          <button data-lang-btn="en" onclick="setLang('en')" class="px-3 py-1.5 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+          <button data-lang-btn="zh-tw" onclick="setLang('zh-tw')" class="px-3 py-1.5 rounded font-bold"
+                  style="background:rgba(196,154,42,0.15); color:#c49a2a; border:1px solid rgba(196,154,42,0.3);">繁</button>
+          <button data-lang-btn="zh-cn" onclick="setLang('zh-cn')" class="px-3 py-1.5 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MAIN CONTENT  §P1
+  ═══════════════════════════════════════ -->
+  <main>
+
+    <!-- ─────────────────────────────────────
+         VISITOR VIEW  §P1 訪客狀態
+    ───────────────────────────────────── -->
+    <div id="visitor-view">
+
+      <!-- Hero §P1 訪客主視覺 -->
+      <section class="hero-visitor-bg px-4 overflow-hidden text-center flex flex-col justify-center min-h-[600px]">
+        <i class="fa-solid fa-circle-dot absolute top-8 left-8 text-8xl text-red-800/20 select-none pointer-events-none"></i>
+        <i class="fa-solid fa-trophy absolute bottom-8 right-8 text-8xl text-red-800/20 select-none pointer-events-none"></i>
+
+        <div class="max-w-2xl mx-auto relative z-10">
+          <h1 class="font-black mb-3 [text-wrap:balance] animate-fade-up delay-100">
+            <span class="font-display text-6xl sm:text-7xl tracking-wider" style="color:#c49a2a; letter-spacing:0.06em;">39</span>
+            <span class="text-5xl sm:text-6xl text-white ml-1">彩金桶</span>
+          </h1>
+          <p class="text-base sm:text-lg mb-12 [text-wrap:balance] animate-fade-up delay-200" style="color:#a89070;"
+             data-i18n="p1.tagline">選 5 個號碼，中 1 碼就有獎，頭獎彩池累積不清零</p>
+
+          <!-- 頭獎彩池金額  讀合約 projectedJackpot §P1 -->
+          <div class="jackpot-pool-box inline-block rounded-2xl px-10 py-6 mb-12 animate-fade-up delay-300">
+            <div class="font-display text-xs tracking-[0.22em] uppercase mb-3" style="color:#c49a2a;"
+                 data-i18n="p1.pool.label">今彩 539 目前彩池</div>
+            <div id="visitor-jackpot" class="jackpot-glow text-6xl font-black tabular-nums" style="color:#f5d67a;">
+              128,450
+            </div>
+            <div class="font-display text-base font-bold mt-1.5 tracking-widest" style="color:#c49a2a;">USDT</div>
+            <div class="text-xs mt-2" style="color:#5a4a35;" data-i18n="p1.pool.sublabel">依本期下注即時累積</div>
+          </div>
+
+          <!-- 連接錢包按鈕 -->
+          <div class="animate-fade-up delay-400">
+            <button onclick="connectWallet()"
+                    class="btn-gold text-xl px-12 py-4 rounded-xl hover:scale-[1.03]">
+              <i class="fa-solid fa-wallet mr-2"></i><span data-i18n="p1.cta">連接錢包開始下注</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="gold-sep"></div>
+
+      <!-- 玩法特色（5 項）§P1 -->
+      <section class="bg-neutral-900 py-16 px-4">
+        <div class="max-w-4xl mx-auto">
+          <h2 class="font-display text-center text-2xl font-bold tracking-widest mb-10 [text-wrap:balance]"
+              style="color:#c49a2a; letter-spacing:0.12em;" data-i18n="p1.features.title">為什麼選擇我們？</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            <div class="card card-hover rounded-xl p-5 flex gap-4 items-start reveal reveal-delay-1">
+              <i class="fa-solid fa-bullseye text-3xl text-yellow-500 flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="font-bold text-white mb-1" data-i18n="p1.f1.title">中 1 碼就有獎</div>
+                <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.f1.desc">5 個號碼只需中 1 個即可獲得固定獎金，中獎門檻低</div>
+              </div>
+            </div>
+
+            <div class="card card-hover rounded-xl p-5 flex gap-4 items-start reveal reveal-delay-2">
+              <i class="fa-solid fa-trophy text-3xl text-yellow-500 flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="font-bold text-white mb-1" data-i18n="p1.f2.title">頭獎彩池持續累積</div>
+                <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.f2.desc">無人中頭獎時彩池全額滾存，金額持續增長</div>
+              </div>
+            </div>
+
+            <div class="card card-hover rounded-xl p-5 flex gap-4 items-start reveal reveal-delay-3">
+              <i class="fa-solid fa-landmark text-3xl text-yellow-500 flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="font-bold text-white mb-1" data-i18n="p1.f3.title">官方彩券開獎</div>
+                <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.f3.desc">直接採用今彩 539 官方結果，每期附官方開獎頁連結</div>
+              </div>
+            </div>
+
+            <div class="card card-hover rounded-xl p-5 flex gap-4 items-start reveal reveal-delay-4">
+              <i class="fa-solid fa-magnifying-glass text-3xl text-yellow-500 flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="font-bold text-white mb-1" data-i18n="p1.f4.title">規則寫在合約</div>
+                <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.f4.desc">智能合約公開可查，每筆下注與派彩均在鏈上紀錄</div>
+              </div>
+            </div>
+
+            <div class="card card-hover rounded-xl p-5 flex gap-4 items-start reveal reveal-delay-5">
+              <i class="fa-solid fa-bolt text-3xl text-yellow-500 flex-shrink-0 mt-0.5"></i>
+              <div>
+                <div class="font-bold text-white mb-1" data-i18n="p1.f5.title">獎金自動入帳</div>
+                <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.f5.desc">合約自動結算，獎金即時記入餘額，隨時提領到錢包</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <div class="gold-sep"></div>
+
+      <!-- 三步驟說明 §P1 -->
+      <section class="bg-neutral-950 py-16 px-4">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="font-display text-center text-2xl font-bold tracking-widest mb-12 [text-wrap:balance]"
+              style="color:#c49a2a; letter-spacing:0.12em;" data-i18n="p1.steps.title">三步驟開始遊戲</h2>
+          <div class="flex flex-col sm:flex-row items-stretch gap-6 sm:gap-0">
+
+            <div class="flex-1 flex flex-col items-center text-center px-4 reveal reveal-delay-1">
+              <div class="step-num w-16 h-16 rounded-full border-4 flex items-center justify-center text-2xl font-black mb-4">1</div>
+              <div class="font-bold text-white mb-2" data-i18n="p1.s1.title">連接錢包</div>
+              <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.s1.desc">連接你的 TRON 錢包，無需註冊帳號或密碼</div>
+            </div>
+
+            <div class="hidden sm:flex items-center text-2xl text-red-800 px-2 reveal reveal-delay-2">
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+
+            <div class="flex-1 flex flex-col items-center text-center px-4 reveal reveal-delay-3">
+              <div class="step-num w-16 h-16 rounded-full border-4 flex items-center justify-center text-2xl font-black mb-4">2</div>
+              <div class="font-bold text-white mb-2" data-i18n="p1.s2.title">選 5 個號碼</div>
+              <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.s2.desc">從 1–39 號球中選出幸運號碼，可購買多組</div>
+            </div>
+
+            <div class="hidden sm:flex items-center text-2xl text-red-800 px-2 reveal reveal-delay-4">
+              <i class="fa-solid fa-chevron-right"></i>
+            </div>
+
+            <div class="flex-1 flex flex-col items-center text-center px-4 reveal reveal-delay-5">
+              <div class="step-num w-16 h-16 rounded-full border-4 flex items-center justify-center text-2xl font-black mb-4">3</div>
+              <div class="font-bold text-white mb-2" data-i18n="p1.s3.title">等待開獎</div>
+              <div class="text-sm" style="color:#6a5a45;" data-i18n="p1.s3.desc">開獎後獎金自動記入餘額，隨時可提領到錢包</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <div class="gold-sep"></div>
+
+      <!-- 上一期開獎號碼 §P1 最近開獎 -->
+      <section class="bg-neutral-900 py-14 px-4">
+        <div class="max-w-md mx-auto">
+          <h2 class="font-display text-center text-xl font-bold tracking-widest mb-8 [text-wrap:balance]"
+              style="color:#c49a2a; letter-spacing:0.14em;" data-i18n="p1.draw.title">上一期開獎結果</h2>
+          <div class="draw-card rounded-2xl p-6 reveal">
+            <!-- 期號：讀索引服務 API -->
+            <div class="text-center text-sm mb-4" style="color:#6a5a45;" data-i18n="p1.draw.period">今彩 539 第 115000355 期</div>
+            <div class="flex justify-center gap-3 mb-5">
+              <span class="ball ball-red">03</span>
+              <span class="ball ball-red">11</span>
+              <span class="ball ball-red">22</span>
+              <span class="ball ball-red">28</span>
+              <span class="ball ball-gold">35</span>
+            </div>
+            <div class="flex justify-center gap-6 text-sm">
+              <!-- 官方開獎頁連結 §P1 -->
+              <a href="#" target="_blank" rel="noopener"
+                 class="flex items-center gap-1.5"
+                 style="color:#c49a2a; transition:color 0.15s ease;"
+                 onmouseover="this.style.color='#f5d67a'" onmouseout="this.style.color='#c49a2a'">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> <span data-i18n="p1.draw.official">官方開獎頁</span>
+              </a>
+              <!-- 鏈上紀錄連結 §P1 -->
+              <a href="#" target="_blank" rel="noopener"
+                 class="flex items-center gap-1.5"
+                 style="color:#5ba3c9; transition:color 0.15s ease;"
+                 onmouseover="this.style.color='#7dc8f0'" onmouseout="this.style.color='#5ba3c9'">
+                <i class="fa-solid fa-cube text-xs"></i> <span data-i18n="p1.draw.chain">鏈上紀錄</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 客服 §P1 -->
+      <section class="bg-neutral-950 py-12 px-4 text-center" style="border-top:1px solid rgba(196,154,42,0.1);">
+        <p class="text-sm mb-4" style="color:#5a4a35;" data-i18n="p1.support.question">有任何問題？我們在這裡</p>
+        <a href="https://t.me/placeholder" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 active:scale-[0.96] text-white font-bold px-8 py-3 rounded-xl reveal"
+           style="background:#0088cc; transition:background 0.15s ease;"
+           onmouseover="this.style.background='#00a0ee'" onmouseout="this.style.background='#0088cc'">
+          <i class="fa-brands fa-telegram text-xl"></i>
+          <span data-i18n="p1.support.telegram">加入 Telegram 客服</span>
+        </a>
+      </section>
+
+    </div><!-- /visitor-view -->
+
+    <!-- ─────────────────────────────────────
+         CONNECTED VIEW  §P1 已連接錢包
+    ───────────────────────────────────── -->
+    <div id="connected-view" class="hidden">
+
+      <!-- 跑馬燈 §P1  地址遮蔽 §1.5 — 資料來源：後台 API -->
+      <div class="ticker-bg py-2">
+        <div class="ticker-wrap">
+          <div class="ticker-inner text-sm font-medium px-4" style="color:#e8b84b;">
+            <i class="fa-solid fa-trophy" style="color:#f5d67a;"></i>&nbsp;
+            上期中獎：TXyzA…b12c 中 <strong>5 碼</strong>，獲得 <strong>102,760 USDT</strong>
+            &ensp;｜&ensp;
+            <i class="fa-solid fa-medal" style="color:#d4d4d4;"></i>&nbsp;
+            TAbcd…e45f 中 <strong>4 碼</strong>，獲得 <strong>1,200 USDT</strong>
+            &ensp;｜&ensp;
+            <i class="fa-solid fa-medal" style="color:#b87333;"></i>&nbsp;
+            TGhij…f78g 中 <strong>3 碼</strong>，獲得 <strong>80 USDT</strong>
+            &ensp;｜&ensp;
+            <i class="fa-solid fa-star" style="color:#5a4a35;"></i>&nbsp;
+            TKlmn…g90h 中 <strong>2 碼</strong>，獲得 <strong>20 USDT</strong>
+            &ensp;｜&ensp;
+            <!-- 重複一次以確保滾動連續 -->
+            <i class="fa-solid fa-trophy" style="color:#f5d67a;"></i>&nbsp;
+            上期中獎：TXyzA…b12c 中 <strong>5 碼</strong>，獲得 <strong>102,760 USDT</strong>
+            &ensp;｜&ensp;
+            <i class="fa-solid fa-medal" style="color:#d4d4d4;"></i>&nbsp;
+            TAbcd…e45f 中 <strong>4 碼</strong>，獲得 <strong>1,200 USDT</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 彩金桶卡片（539）§P1 -->
+      <section class="hero-connected-bg px-4 py-12 flex items-center justify-center min-h-[480px]">
+        <div class="max-w-xl mx-auto w-full">
+          <div class="jackpot-main-card relative rounded-2xl overflow-hidden">
+
+            <!-- 斜角裝飾線 -->
+            <div class="absolute top-5 -left-7 w-24 h-1.5 rotate-[135deg] origin-center"
+                 style="background:linear-gradient(90deg,#7a4500,#e8b84b,#7a4500);"></div>
+
+            <div class="p-6 sm:p-7">
+              <!-- 期號 + 倒數 §P1 §1.3 -->
+              <div class="flex items-start justify-between mb-5">
+                <div>
+                  <div class="font-display text-xs tracking-[0.18em] uppercase font-bold mb-0.5"
+                       style="color:#c49a2a;" data-i18n="p1.card.game">今彩 539</div>
+                  <!-- 本期期號：讀合約 -->
+                  <div class="text-sm font-semibold" style="color:#a89070;" data-i18n="p1.card.period">第 115000356 期</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs mb-1" style="color:#4a3a28;">
+                    <i class="fa-regular fa-clock mr-1"></i><span data-i18n="p1.card.countdown.label">截止倒數</span>
+                  </div>
+                  <!-- 截止倒數：區塊時間校正 §1.3 -->
+                  <div id="countdown" class="text-3xl font-black text-white tabular-nums">02:34:17</div>
+                  <div class="text-xs mt-0.5" style="color:#4a3a28;" data-i18n="p1.card.deadline">20:20（台灣時間）</div>
+                </div>
+              </div>
+
+              <!-- 頭獎彩池  讀合約 projectedJackpot -->
+              <div class="jackpot-pool-box rounded-xl px-4 py-4 mb-4 text-center">
+                <div class="font-display text-xs tracking-[0.2em] uppercase mb-2" style="color:#c49a2a;"
+                     data-i18n="p1.card.pool.label">目前彩池</div>
+                <div id="connected-jackpot" class="jackpot-glow text-5xl font-black tabular-nums" style="color:#f5d67a;">
+                  128,450
+                </div>
+                <div class="font-display text-sm font-bold mt-1 tracking-widest" style="color:#c49a2a;">USDT</div>
+                <div class="text-xs mt-1.5" style="color:#4a3a28;" data-i18n="p1.card.pool.sublabel">依本期下注即時累積</div>
+              </div>
+
+              <!-- 轉帳截止警告（距截止 ≤5 分鐘時顯示）§P1 -->
+              <div id="transfer-warning"
+                   class="hidden rounded-lg px-3 py-2 mb-3 text-center text-xs leading-relaxed"
+                   style="background:rgba(120,60,0,0.4); border:1px solid rgba(251,191,36,0.4); color:#fbbf24;">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                <span data-i18n="p1.card.transfer.warning">轉帳下注已於 20:15 截止，授權下注與餘額下注仍可進行至 20:20</span>
+              </div>
+
+              <!-- 去下注按鈕 -->
+              <a href="bet.html"
+                 class="btn-gold block w-full text-xl py-4 rounded-xl text-center font-black hover:scale-[1.02]">
+                <i class="fa-solid fa-dice mr-2"></i><span data-i18n="p1.card.bet.cta">去下注</span>
+              </a>
+
+              <!-- 新手導覽重看入口 §P1 -->
+              <div class="text-center mt-3">
+                <button onclick="openBeginnerModal()"
+                        class="text-xs"
+                        style="color:#4a3a28; transition:color 0.15s ease;"
+                        onmouseover="this.style.color='#7a6040'" onmouseout="this.style.color='#4a3a28'">
+                  <i class="fa-solid fa-compass mr-1"></i><span data-i18n="p1.card.beginner">新手導覽</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 系統公告 §P1  資料來源：後台 API §A2 -->
+      <section class="bg-neutral-900 px-4 py-3">
+        <div class="max-w-lg mx-auto relative" id="announce-container">
+
+          <!-- 公告開關列 -->
+          <button onclick="toggleAnnouncePanel()" id="announce-btn"
+                  class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-left"
+                  style="background:rgba(30,22,14,0.8); border:1px solid rgba(196,154,42,0.15); transition:background 0.15s ease;"
+                  onmouseover="this.style.background='rgba(40,28,16,0.9)'"
+                  onmouseout="this.style.background='rgba(30,22,14,0.8)'">
+            <span class="flex items-center gap-2 text-sm font-semibold" style="color:#e8b84b;">
+              <i class="fa-solid fa-bullhorn"></i>
+              <span data-i18n="p1.announce.title">系統公告</span>
+              <span id="announce-count" class="text-xs font-bold px-1.5 py-0.5 rounded-full tabular-nums"
+                    style="background:rgba(196,154,42,0.18); color:#c49a2a;">2</span>
+            </span>
+            <i class="fa-solid fa-chevron-down text-sm announce-panel-icon"
+               style="color:#5a4a35; transition:transform 0.2s cubic-bezier(0.2,0,0,1);"></i>
+          </button>
+
+          <!-- 懸浮公告面板 -->
+          <div id="announce-panel"
+               class="hidden absolute left-0 right-0 top-full mt-1 rounded-xl z-30 overflow-hidden"
+               style="background:#0d0b07; border:1px solid rgba(196,154,42,0.2); box-shadow:0 8px 32px rgba(0,0,0,0.75);">
+            <div class="overflow-y-auto thin-scroll" style="max-height:300px;">
+
+              <div class="announce-item" style="border-bottom:1px solid rgba(196,154,42,0.08);">
+                <button onclick="toggleAnnouncement(this)"
+                        class="w-full flex items-center justify-between px-4 py-3 text-left"
+                        style="transition:background 0.15s ease;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.03)'"
+                        onmouseout="this.style.background='transparent'">
+                  <span class="text-sm font-semibold text-white">【重要】第一版上線公告</span>
+                  <i class="fa-solid fa-chevron-right text-xs announce-icon flex-shrink-0 ml-3"
+                     style="color:#5a4a35; transition:transform 0.2s cubic-bezier(0.2,0,0,1);"></i>
+                </button>
+                <div class="announcement-body hidden px-4 pb-3 text-sm leading-relaxed"
+                     style="color:#8a7a62; border-top:1px solid rgba(196,154,42,0.08);">
+                  系統已正式上線，目前開放今彩 539 彩金桶。歡迎玩家嘗試三種下注方式。如有問題請聯絡 Telegram 客服。
+                </div>
+              </div>
+
+              <div class="announce-item">
+                <button onclick="toggleAnnouncement(this)"
+                        class="w-full flex items-center justify-between px-4 py-3 text-left"
+                        style="transition:background 0.15s ease;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.03)'"
+                        onmouseout="this.style.background='transparent'">
+                  <span class="text-sm font-semibold text-white">【維護通知】10/10 凌晨例行維護</span>
+                  <i class="fa-solid fa-chevron-right text-xs announce-icon flex-shrink-0 ml-3"
+                     style="color:#5a4a35; transition:transform 0.2s cubic-bezier(0.2,0,0,1);"></i>
+                </button>
+                <div class="announcement-body hidden px-4 pb-3 text-sm leading-relaxed"
+                     style="color:#8a7a62; border-top:1px solid rgba(196,154,42,0.08);">
+                  10 月 10 日 00:00–02:00（台灣時間）進行例行系統維護，期間暫停下注，餘額提領不受影響。
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        </div>
+      </section>
+
+      <!-- 上一期開獎號碼 §P1 最近開獎（同訪客版）-->
+      <section class="bg-neutral-900 py-12 px-4" style="border-top:1px solid rgba(196,154,42,0.1);">
+        <div class="max-w-md mx-auto">
+          <h2 class="font-display text-center text-xl font-bold tracking-widest mb-8 [text-wrap:balance]"
+              style="color:#c49a2a; letter-spacing:0.14em;" data-i18n="p1.draw.title">上一期開獎結果</h2>
+          <div class="draw-card rounded-2xl p-6">
+            <div class="text-center text-sm mb-4" style="color:#6a5a45;" data-i18n="p1.draw.period">今彩 539 第 115000355 期</div>
+            <div class="flex justify-center gap-3 mb-5">
+              <span class="ball ball-red">03</span>
+              <span class="ball ball-red">11</span>
+              <span class="ball ball-red">22</span>
+              <span class="ball ball-red">28</span>
+              <span class="ball ball-gold">35</span>
+            </div>
+            <div class="flex justify-center gap-6 text-sm">
+              <a href="#" target="_blank" rel="noopener"
+                 class="flex items-center gap-1.5"
+                 style="color:#c49a2a; transition:color 0.15s ease;"
+                 onmouseover="this.style.color='#f5d67a'" onmouseout="this.style.color='#c49a2a'">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> <span data-i18n="p1.draw.official">官方開獎頁</span>
+              </a>
+              <a href="#" target="_blank" rel="noopener"
+                 class="flex items-center gap-1.5"
+                 style="color:#5ba3c9; transition:color 0.15s ease;"
+                 onmouseover="this.style.color='#7dc8f0'" onmouseout="this.style.color='#5ba3c9'">
+                <i class="fa-solid fa-cube text-xs"></i> <span data-i18n="p1.draw.chain">鏈上紀錄</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /connected-view -->
+
+  </main>
+
+  <!-- ═══ FOOTER  §1.1 ════════════════════ -->
+  <div id="site-footer"></div>
+<script src="footer.js"></script>
+
+  <!-- ═══ TRANSACTION STATUS MODAL  §1.4 ══ -->
+  <div id="tx-modal" class="hidden modal-overlay">
+    <div id="tx-backdrop" class="modal-backdrop-el"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="tx-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6"
+           style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+        <div id="tx-state-pending" class="text-center">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(196,154,42,0.1); border:1px solid rgba(196,154,42,0.25);">
+            <i class="fa-solid fa-circle-notch fa-spin text-2xl" style="color:#c49a2a;"></i>
+          </div>
+          <div class="font-bold text-white mb-1" data-i18n="tx.pending.title">交易送出中</div>
+          <div class="text-sm mb-4" style="color:#7a6a50;" data-i18n="tx.pending.desc">等待區塊確認…</div>
+          <a id="tx-explorer-link" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs" style="color:#5ba3c9;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><i class="fa-solid fa-arrow-up-right-from-square"></i> <span data-i18n="tx.explorer">在區塊瀏覽器查看</span></a>
+        </div>
+        <div id="tx-state-success" class="hidden text-center">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.3);"><i class="fa-solid fa-check text-2xl" style="color:#4ade80;"></i></div>
+          <div class="font-bold text-white mb-1" data-i18n="tx.success.title">交易成功</div>
+          <div id="tx-success-msg" class="text-sm mb-5" style="color:#7a6a50;"></div>
+          <button onclick="closeTxModal()" class="btn-gold px-6 py-2 rounded-lg text-sm font-bold" data-i18n="tx.confirm">確認</button>
+        </div>
+        <div id="tx-state-failed" class="hidden text-center">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.3);"><i class="fa-solid fa-xmark text-2xl" style="color:#f87171;"></i></div>
+          <div class="font-bold text-white mb-1" data-i18n="tx.failed.title">交易失敗</div>
+          <div id="tx-error-msg" class="text-sm mb-5" style="color:#f87171;"></div>
+          <div class="flex gap-3 justify-center">
+            <button onclick="closeTxModal()" class="btn-ghost px-4 py-2 rounded-lg text-sm" data-i18n="tx.close">關閉</button>
+            <button id="tx-retry-btn" class="btn-gold px-4 py-2 rounded-lg text-sm font-bold" data-i18n="tx.retry">重試</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NO WALLET MODAL  §1.4 ════════════ -->
+  <div id="no-wallet-modal" class="hidden modal-overlay">
+    <div id="nw-backdrop" class="modal-backdrop-el" onclick="closeNoWalletModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="nw-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6" style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+        <div class="flex items-start justify-between mb-5">
+          <div><div class="font-bold text-white mb-1" data-i18n="nw.title">未偵測到錢包</div><div class="text-sm" style="color:#7a6a50;" data-i18n="nw.desc">請安裝支援 TRON 的錢包：</div></div>
+          <button onclick="closeNoWalletModal()" class="w-7 h-7 flex items-center justify-center rounded-lg flex-shrink-0 ml-3" style="color:#5a4a35; transition:color 0.15s ease, background 0.15s ease;" onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35'; this.style.background='transparent'"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <ul class="space-y-2.5">
+          <li>
+            <a href="https://www.tronlink.org/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(196,154,42,0.06); border:1px solid rgba(196,154,42,0.15); transition:border-color 0.15s ease;" onmouseover="this.style.borderColor='rgba(196,154,42,0.35)'" onmouseout="this.style.borderColor='rgba(196,154,42,0.15)'">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(196,154,42,0.12);"><i class="fa-solid fa-link" style="color:#c49a2a;"></i></div>
+              <div class="flex-1 min-w-0"><div class="font-semibold text-sm text-white">TronLink</div><div class="text-xs" style="color:#5a4a35;" data-i18n="nw.tronlink.desc">瀏覽器擴充套件 / 手機 App</div></div>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs flex-shrink-0" style="color:#5a4a35;"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRX WARNING MODAL  §1.4 ══════════ -->
+  <div id="trx-warn-modal" class="hidden modal-overlay">
+    <div class="modal-backdrop-el" onclick="closeTrxWarnModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="trx-warn-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6 text-center" style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.3);"><i class="fa-solid fa-bolt text-2xl" style="color:#fbbf24;"></i></div>
+        <div class="font-bold text-white mb-2" data-i18n="trx.title">TRX 餘額不足</div>
+        <p class="text-sm mb-1" style="color:#a89070;" data-i18n="trx.desc1">送出交易需要少量 TRX 支付網路費用（Bandwidth）。</p>
+        <p class="text-sm mb-5" style="color:#7a6a50;" data-i18n-html="trx.desc2">建議錢包保留至少 <span class="font-bold text-white">10 TRX</span>。</p>
+        <button onclick="closeTrxWarnModal()" class="btn-gold px-6 py-2 rounded-lg text-sm font-bold" data-i18n="trx.ok">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       BEGINNER GUIDE MODAL  §P1 — 5 步
+       Step 1: 玩法流程
+       Step 2: ① 授權下注
+       Step 3: ② 轉帳下注
+       Step 4: ③ 儲值餘額
+       Step 5: 儲值與提領
+  ═══════════════════════════════════════ -->
+  <div id="beginner-guide-modal" class="hidden modal-overlay" style="z-index:65;">
+    <div id="bg-backdrop" class="modal-backdrop-el" onclick="closeBeginnerModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center px-4 py-6 pointer-events-none">
+      <div id="bg-dialog"
+           class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-md rounded-2xl overflow-hidden flex flex-col"
+           style="height:540px; box-shadow:0 0 0 1px rgba(196,154,42,0.07), 0 24px 64px rgba(0,0,0,0.8), inset 0 1px 0 rgba(196,154,42,0.1);">
+
+        <!-- Modal header -->
+        <div class="flex items-center justify-between px-6 py-4 flex-shrink-0"
+             style="background:linear-gradient(90deg,#1e0a0a 0%,#160c05 100%); border-bottom:1px solid rgba(196,154,42,0.2);">
+          <span class="font-display font-bold tracking-widest text-base" style="color:#c49a2a; letter-spacing:0.14em;">
+            <i class="fa-solid fa-compass mr-2.5" style="color:#e8b84b;"></i><span data-i18n="bg.title">新手導覽</span>
+          </span>
+          <button onclick="closeBeginnerModal()" class="w-8 h-8 flex items-center justify-center rounded-lg" style="color:#7a6040; transition:color 0.15s ease, background 0.15s ease;" onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#7a6040'; this.style.background='transparent'">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="flex gap-1.5 px-6 pt-4 pb-1 flex-shrink-0">
+          <div class="bg-dot h-1 flex-1 rounded-full" data-step="1" style="background:#c49a2a;"></div>
+          <div class="bg-dot h-1 flex-1 rounded-full" data-step="2" style="background:#2a2218;"></div>
+          <div class="bg-dot h-1 flex-1 rounded-full" data-step="3" style="background:#2a2218;"></div>
+          <div class="bg-dot h-1 flex-1 rounded-full" data-step="4" style="background:#2a2218;"></div>
+          <div class="bg-dot h-1 flex-1 rounded-full" data-step="5" style="background:#2a2218;"></div>
+        </div>
+
+        <!-- Step content (scrollable) -->
+        <div class="flex-1 overflow-y-auto px-6 py-4 min-h-0 thin-scroll">
+
+          <!-- Step 1: 玩法流程 -->
+          <div class="bg-step" data-step="1">
+            <h3 class="font-display font-bold tracking-widest mb-0.5" style="color:#e8b84b; font-size:1rem; letter-spacing:0.12em;" data-i18n="bg.s1.title">玩法流程</h3>
+            <p class="text-xs mb-4" style="color:#5a4a35;" data-i18n="bg.s1.step">第 1 步 / 共 5 步</p>
+            <ol class="space-y-3 text-sm" style="color:#c8b898;">
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">1</span><span data-i18n="bg.s1.li1">從 1–39 號球中選 5 個號碼，可購買多組</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">2</span><span data-i18n="bg.s1.li2">選擇下注方式完成付款，截止時間（20:20）前可改號碼或取消</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">3</span><span data-i18n="bg.s1.li3">每日 20:30 依今彩 539 官方結果開獎，結果由預言機送上鏈</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">4</span><span data-i18n="bg.s1.li4">中 1 碼以上獎金自動入帳，隨時可提領到錢包</span></li>
+            </ol>
+            <div class="mt-4 rounded-lg p-3 text-xs" style="background:rgba(196,154,42,0.08); border:1px solid rgba(196,154,42,0.22); color:#c49a2a;">
+              <i class="fa-solid fa-lightbulb mr-1.5" style="color:#e8b84b;"></i><span data-i18n="bg.s1.tip">中 1 碼就有固定獎金；中 4 碼以上可爭奪頭獎彩池</span>
+            </div>
+          </div>
+
+          <!-- Step 2: ① 授權下注 -->
+          <div class="bg-step hidden" data-step="2">
+            <h3 class="font-display font-bold tracking-widest mb-0.5" style="color:#e8b84b; font-size:1rem; letter-spacing:0.12em;" data-i18n="bg.s2.title">授權下注</h3>
+            <p class="text-xs mb-4" style="color:#5a4a35;" data-i18n="bg.s2.step">第 2 步 / 共 5 步 · 適合：常玩、熟悉鏈上操作</p>
+            <ol class="space-y-3 text-sm" style="color:#c8b898;">
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">1</span><span data-i18n="bg.s2.li1">第一次使用需授權 USDT 給資金合約（預設只授權本次金額，可授權更多以省下次手續費）</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">2</span><span data-i18n="bg.s2.li2">錢包跳出確認 → 號碼與金額同一筆交易上鏈，完成下注</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">3</span><span data-i18n="bg.s2.li3">平台代付 energy，玩家只需少量 TRX 支付 bandwidth</span></li>
+            </ol>
+            <div class="mt-4 rounded-lg p-3 text-xs" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); color:#7a6a55;">
+              <i class="fa-solid fa-circle-info mr-1.5" style="color:#5a4a38;"></i><span data-i18n="bg.s2.note">授權額度用完才需再次授權；可在「會員中心 → 授權管理」隨時撤銷</span>
+            </div>
+          </div>
+
+          <!-- Step 3: ② 轉帳下注 -->
+          <div class="bg-step hidden" data-step="3">
+            <h3 class="font-display font-bold tracking-widest mb-0.5" style="color:#e8b84b; font-size:1rem; letter-spacing:0.12em;" data-i18n="bg.s3.title">轉帳下注</h3>
+            <p class="text-xs mb-4" style="color:#5a4a35;" data-i18n="bg.s3.step">第 3 步 / 共 5 步 · 適合：怕授權、偶爾玩一局</p>
+            <ol class="space-y-3 text-sm" style="color:#c8b898;">
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">1</span><span data-i18n="bg.s3.li1">錢包「簽署訊息」確認號碼（免費，這不是授權，不會花任何錢）</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">2</span><span data-i18n="bg.s3.li2">把 USDT 轉帳到彩金桶合約地址（多組號碼只需一筆總額轉帳）</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">3</span><span data-i18n="bg.s3.li3">系統比對後注單自動成立；轉帳手續費約 6.4 TRX 由玩家自付</span></li>
+            </ol>
+            <div class="mt-4 rounded-lg p-3 text-xs" style="background:rgba(180,100,20,0.1); border:1px solid rgba(196,120,40,0.3); color:#c49a2a;">
+              <i class="fa-solid fa-triangle-exclamation mr-1.5" style="color:#e8b84b;"></i>
+              <span data-i18n-html="bg.s3.warn">轉帳下注截止時間為 20:15（比一般截止早 5 分鐘）<br>必須從已連接的同一個錢包轉出，交易所提幣無法入帳</span>
+            </div>
+          </div>
+
+          <!-- Step 4: ③ 儲值餘額 -->
+          <div class="bg-step hidden" data-step="4">
+            <h3 class="font-display font-bold tracking-widest mb-0.5" style="color:#e8b84b; font-size:1rem; letter-spacing:0.12em;" data-i18n="bg.s4.title">儲值餘額</h3>
+            <p class="text-xs mb-4" style="color:#5a4a35;" data-i18n="bg.s4.step">第 4 步 / 共 5 步 · 適合：存一筆玩多局</p>
+            <ol class="space-y-3 text-sm" style="color:#c8b898;">
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">1</span><span data-i18n="bg.s4.li1">先至「會員中心 → 儲值」將 USDT 存入遊戲帳戶</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">2</span><span data-i18n="bg.s4.li2">下注時直接從遊戲餘額扣款，簽一筆交易即完成</span></li>
+              <li class="flex gap-3 items-start"><span class="modal-step-num w-6 h-6 rounded-full font-black flex-shrink-0 flex items-center justify-center text-xs mt-0.5">3</span><span data-i18n="bg.s4.li3">餘額只有你本人能動用與提領，平台代付 energy</span></li>
+            </ol>
+            <div class="mt-4 rounded-lg p-3 text-xs" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); color:#7a6a55;">
+              <i class="fa-solid fa-circle-info mr-1.5" style="color:#5a4a38;"></i><span data-i18n="bg.s4.note">儲值方式：授權儲值（平台代付 energy）或轉帳儲值（自付手續費，無需授權）</span>
+            </div>
+          </div>
+
+          <!-- Step 5: 儲值與提領 -->
+          <div class="bg-step hidden" data-step="5">
+            <h3 class="font-display font-bold tracking-widest mb-0.5" style="color:#e8b84b; font-size:1rem; letter-spacing:0.12em;" data-i18n="bg.s5.title">儲值與提領</h3>
+            <p class="text-xs mb-4" style="color:#5a4a35;" data-i18n="bg.s5.step">第 5 步 / 共 5 步</p>
+            <div class="space-y-5 text-sm">
+              <div>
+                <div class="font-bold mb-2 text-sm" style="color:#c49a2a;"><i class="fa-solid fa-arrow-down-to-line mr-1.5"></i><span data-i18n="bg.s5.deposit.title">儲值（二選一）</span></div>
+                <ul class="space-y-2">
+                  <li class="flex gap-2 items-start text-xs" style="color:#7a6a55;"><i class="fa-solid fa-angle-right mt-0.5 flex-shrink-0" style="color:#c49a2a;"></i><span data-i18n-html="bg.s5.deposit.authorize"><strong style="color:#c8b898;">授權儲值</strong>：授權後簽一筆交易存入，平台代付 energy</span></li>
+                  <li class="flex gap-2 items-start text-xs" style="color:#7a6a55;"><i class="fa-solid fa-angle-right mt-0.5 flex-shrink-0" style="color:#c49a2a;"></i><span data-i18n-html="bg.s5.deposit.transfer"><strong style="color:#c8b898;">轉帳儲值</strong>：直接轉帳到資金合約地址，自付手續費，無需授權</span></li>
+                </ul>
+              </div>
+              <div>
+                <div class="font-bold mb-2 text-sm" style="color:#c49a2a;"><i class="fa-solid fa-arrow-up-from-line mr-1.5"></i><span data-i18n="bg.s5.withdraw.title">提領</span></div>
+                <ul class="space-y-2">
+                  <li class="flex gap-2 items-start text-xs" style="color:#7a6a55;"><i class="fa-solid fa-angle-right mt-0.5 flex-shrink-0" style="color:#c49a2a;"></i><span data-i18n="bg.s5.withdraw.li1">在「會員中心」輸入金額或點「全部」</span></li>
+                  <li class="flex gap-2 items-start text-xs" style="color:#7a6a55;"><i class="fa-solid fa-angle-right mt-0.5 flex-shrink-0" style="color:#c49a2a;"></i><span data-i18n="bg.s5.withdraw.li2">錢包簽名後 USDT 直接轉回你的錢包</span></li>
+                  <li class="flex gap-2 items-start text-xs" style="color:#7a6a55;"><i class="fa-solid fa-angle-right mt-0.5 flex-shrink-0" style="color:#c49a2a;"></i><span data-i18n="bg.s5.withdraw.li3">提領 energy 由平台代付，隨時可提領</span></li>
+                </ul>
+              </div>
+            </div>
+            <a href="bet.html"
+               class="btn-gold mt-6 block w-full font-black text-lg py-3 rounded-xl text-center hover:scale-[1.02]">
+              <i class="fa-solid fa-rocket mr-2"></i><span data-i18n="bg.start">開始下注！</span>
+            </a>
+          </div>
+
+        </div><!-- /scrollable body -->
+
+        <!-- Navigation -->
+        <div class="flex items-center justify-between px-5 py-3.5 flex-shrink-0"
+             style="border-top:1px solid rgba(196,154,42,0.15);">
+          <button id="bg-prev" onclick="beginnerPrev()"
+                  class="text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-lg disabled:opacity-25 disabled:cursor-not-allowed"
+                  style="color:#7a6040; transition:color 0.15s ease;"
+                  onmouseover="if(!this.disabled) this.style.color='#c49a2a'"
+                  onmouseout="this.style.color='#7a6040'"
+                  disabled>
+            <i class="fa-solid fa-chevron-left text-xs"></i> <span data-i18n="bg.prev">上一步</span>
+          </button>
+          <span id="bg-step-label" class="font-display text-xs tracking-widest" style="color:#4a3a28; letter-spacing:0.14em;">1 / 5</span>
+          <button id="bg-next" onclick="beginnerNext()"
+                  class="text-sm font-bold flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
+                  style="color:#c49a2a; transition:color 0.15s ease;"
+                  onmouseover="this.style.color='#f5d67a'" onmouseout="this.style.color='#c49a2a'">
+            <span data-i18n="bg.next">下一步</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       JAVASCRIPT  §1.1 §1.4 §1.5 + P1
+  ═══════════════════════════════════════ -->
+  <script>
+    /* ── Menu  §1.1 ────────────────────────── */
+    function toggleMenu() {
+      const overlay  = document.getElementById('menu-overlay');
+      const panel    = document.getElementById('menu-panel');
+      const backdrop = document.getElementById('menu-backdrop');
+      if (overlay.classList.contains('hidden')) {
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(() => { panel.classList.add('open'); backdrop.classList.add('open'); });
+      } else {
+        panel.classList.remove('open'); backdrop.classList.remove('open');
+        setTimeout(() => overlay.classList.add('hidden'), 260);
+      }
+    }
+
+    /* ── Wallet  §1.5 ──────────────────────── */
+    function maskAddress(addr) {
+      if (!addr || addr.length < 10) return addr;
+      return addr.slice(0, 5) + '…' + addr.slice(-4);
+    }
+    function setWalletConnected(address, balanceUsdt) {
+      document.getElementById('wallet-btn-visitor').classList.add('hidden');
+      const el = document.getElementById('wallet-btn-connected');
+      el.classList.remove('hidden'); el.classList.add('flex');
+      document.getElementById('header-address').textContent = maskAddress(address);
+      document.getElementById('header-balance').innerHTML =
+        Number(balanceUsdt).toFixed(2) + ' <span class="text-xs font-normal" style="color:#7a6a50;">USDT</span>';
+      /* P1: 切換訪客 ↔ 已連接視圖 */
+      const vv = document.getElementById('visitor-view');
+      const cv = document.getElementById('connected-view');
+      if (vv && cv) {
+        vv.classList.add('hidden');
+        cv.classList.remove('hidden');
+        /* 首次連接自動開啟新手導覽 §P1 */
+        if (!sessionStorage.getItem('beginner-shown') && typeof openBeginnerModal === 'function') {
+          sessionStorage.setItem('beginner-shown', '1');
+          setTimeout(openBeginnerModal, 600);
+        }
+      }
+    }
+    function connectWallet() {
+      if (typeof window.tronWeb === 'undefined') { openNoWalletModal(); return; }
+      /* TODO: TronWeb connect */
+    }
+    /* ── DEV: 切換訪客 ↔ 已連接（開發用）── */
+    function toggleView() {
+      const vv = document.getElementById('visitor-view');
+      const cv = document.getElementById('connected-view');
+      if (vv.classList.contains('hidden')) {
+        cv.classList.add('hidden');
+        vv.classList.remove('hidden');
+        document.getElementById('wallet-btn-visitor').classList.remove('hidden');
+        const el = document.getElementById('wallet-btn-connected');
+        el.classList.add('hidden'); el.classList.remove('flex');
+      } else {
+        setWalletConnected('TXyzABCDEFG1234', 250.00);
+      }
+    }
+
+    /* ── Banners  §1.4 ─────────────────────── */
+    function showBanner(id) { document.getElementById(id).classList.remove('hidden'); }
+    function hideBanner(id) { document.getElementById(id).classList.add('hidden'); }
+
+    /* ── Modal helpers ─────────────────────── */
+    function _openModal(overlayId, backdropId, dialogId) {
+      const o = document.getElementById(overlayId);
+      const b = document.getElementById(backdropId);
+      const d = document.getElementById(dialogId);
+      o.classList.remove('hidden');
+      requestAnimationFrame(() => { b.classList.add('open'); d.classList.add('open'); });
+    }
+    function _closeModal(overlayId, backdropId, dialogId) {
+      const o = document.getElementById(overlayId);
+      const b = document.getElementById(backdropId);
+      const d = document.getElementById(dialogId);
+      b.classList.remove('open'); d.classList.remove('open');
+      setTimeout(() => o.classList.add('hidden'), 260);
+    }
+
+    /* ── Transaction status modal  §1.4 ────── */
+    function openTxModal() {
+      document.getElementById('tx-state-pending').classList.remove('hidden');
+      document.getElementById('tx-state-success').classList.add('hidden');
+      document.getElementById('tx-state-failed').classList.add('hidden');
+      document.getElementById('tx-explorer-link').href = '#';
+      _openModal('tx-modal', 'tx-backdrop', 'tx-dialog');
+    }
+    function setTxExplorerLink(txHash) {
+      document.getElementById('tx-explorer-link').href = 'https://tronscan.org/#/transaction/' + txHash;
+    }
+    function setTxSuccess(message) {
+      document.getElementById('tx-state-pending').classList.add('hidden');
+      document.getElementById('tx-state-success').classList.remove('hidden');
+      document.getElementById('tx-success-msg').textContent = message || '';
+    }
+    function setTxFailed(errorMessage, retryFn) {
+      document.getElementById('tx-state-pending').classList.add('hidden');
+      document.getElementById('tx-state-failed').classList.remove('hidden');
+      document.getElementById('tx-error-msg').textContent = errorMessage || '請稍後再試';
+      const btn = document.getElementById('tx-retry-btn');
+      btn.style.display = retryFn ? '' : 'none';
+      btn.onclick = () => { closeTxModal(); if (retryFn) retryFn(); };
+    }
+    function closeTxModal() { _closeModal('tx-modal', 'tx-backdrop', 'tx-dialog'); }
+
+    /* ── No wallet modal  §1.4 ─────────────── */
+    function openNoWalletModal()  { _openModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+    function closeNoWalletModal() { _closeModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+
+    /* ── TRX warning modal  §1.4 ───────────── */
+    function openTrxWarnModal() {
+      const o = document.getElementById('trx-warn-modal');
+      const b = o.querySelector('.modal-backdrop-el');
+      const d = document.getElementById('trx-warn-dialog');
+      o.classList.remove('hidden');
+      requestAnimationFrame(() => { b.classList.add('open'); d.classList.add('open'); });
+    }
+    function closeTrxWarnModal() {
+      const o = document.getElementById('trx-warn-modal');
+      const b = o.querySelector('.modal-backdrop-el');
+      const d = document.getElementById('trx-warn-dialog');
+      b.classList.remove('open'); d.classList.remove('open');
+      setTimeout(() => o.classList.add('hidden'), 260);
+    }
+
+    /* ── P1: 公告面板 開／關 ──────────────── */
+    let _announcePanelOpen = false;
+    function toggleAnnouncePanel() {
+      _announcePanelOpen = !_announcePanelOpen;
+      document.getElementById('announce-panel').classList.toggle('hidden', !_announcePanelOpen);
+      document.querySelector('.announce-panel-icon').style.transform = _announcePanelOpen ? 'rotate(180deg)' : '';
+    }
+    document.addEventListener('click', function(e) {
+      const c = document.getElementById('announce-container');
+      if (c && !c.contains(e.target) && _announcePanelOpen) {
+        _announcePanelOpen = false;
+        document.getElementById('announce-panel').classList.add('hidden');
+        document.querySelector('.announce-panel-icon').style.transform = '';
+      }
+    });
+
+    /* ── P1: 公告項目展開（面板內，同時間只展一則）─ */
+    function toggleAnnouncement(btn) {
+      const body = btn.nextElementSibling;
+      const isOpen = !body.classList.contains('hidden');
+      document.querySelectorAll('.announce-item').forEach(item => {
+        item.querySelector('.announcement-body').classList.add('hidden');
+        item.querySelector('.announce-icon').style.transform = '';
+      });
+      if (!isOpen) {
+        body.classList.remove('hidden');
+        btn.querySelector('.announce-icon').style.transform = 'rotate(90deg)';
+      }
+    }
+
+    /* ── P1: Beginner guide modal ──────────── */
+    let bgStep = 1;
+    const BG_TOTAL = 5;
+
+    function openBeginnerModal() {
+      bgStep = 1;
+      _renderBeginner();
+      _openModal('beginner-guide-modal', 'bg-backdrop', 'bg-dialog');
+    }
+    function closeBeginnerModal() { _closeModal('beginner-guide-modal', 'bg-backdrop', 'bg-dialog'); }
+    function beginnerNext() { if (bgStep < BG_TOTAL) { bgStep++; _renderBeginner(); } }
+    function beginnerPrev() { if (bgStep > 1)        { bgStep--; _renderBeginner(); } }
+
+    function _renderBeginner() {
+      document.querySelectorAll('.bg-step').forEach(el => {
+        el.classList.toggle('hidden', +el.dataset.step !== bgStep);
+      });
+      document.querySelectorAll('.bg-dot').forEach(el => {
+        const active = +el.dataset.step <= bgStep;
+        el.style.background = active ? '#c49a2a' : '#2a2218';
+        el.style.boxShadow  = active ? '0 0 6px rgba(196,154,42,0.5)' : 'none';
+      });
+      document.getElementById('bg-step-label').textContent = bgStep + ' / ' + BG_TOTAL;
+      document.getElementById('bg-prev').disabled = (bgStep === 1);
+      document.getElementById('bg-next').classList.toggle('hidden', bgStep === BG_TOTAL);
+    }
+
+    /* ── P1: Countdown timer  §1.3 ─────────── */
+    // 區塊時間校正：TODO — 目前以固定值模擬
+    let _secs = 9257;
+    setInterval(() => {
+      if (_secs > 0) _secs--;
+      const h = Math.floor(_secs / 3600);
+      const m = Math.floor((_secs % 3600) / 60);
+      const s = _secs % 60;
+      const el = document.getElementById('countdown');
+      if (el) el.textContent =
+        String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+      // 轉帳截止警告：距截止 ≤5 分鐘（300 秒）§P1
+      const warn = document.getElementById('transfer-warning');
+      if (warn) warn.classList.toggle('hidden', _secs > 300);
+    }, 1000);
+
+    /* ── Scroll reveal ─────────────────────── */
+    const _ro = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          _ro.unobserve(e.target);
+          requestAnimationFrame(() => requestAnimationFrame(() => e.target.classList.add('visible')));
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => _ro.observe(el));
+  </script>
+
+</body>
+</html>

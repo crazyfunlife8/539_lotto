@@ -1,0 +1,1596 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>〔品牌名〕— 選號下注</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="i18n.js"></script>
+  <style>
+    :root {
+      --gold:        #c49a2a;
+      --gold-light:  #e8b84b;
+      --gold-bright: #f5d67a;
+      --gold-dim:    #7a5e18;
+      --text-main:   #f0e6d2;
+      --text-muted:  #8a7a62;
+      --text-dim:    #5a4a35;
+      --bg-dark:     #0a0703;
+      --bg-surface:  #0e0b07;
+      --bg-card:     #1c1610;
+      --border-gold: rgba(196,154,42,0.22);
+    }
+    body {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background-color: #0a0703;
+      color: #f0e6d2;
+      min-height: 100vh;
+    }
+    .bg-neutral-950 { background-color: #0a0703 !important; }
+    .bg-neutral-900 { background-color: #0e0b07 !important; }
+    .bg-neutral-800 { background-color: #181410 !important; }
+    .font-display   { font-family: 'Cinzel', serif !important; }
+
+    @keyframes btn-shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .btn-gold {
+      background: linear-gradient(105deg,#7a5010 0%,#c49a2a 22%,#f5d67a 46%,#e8b84b 54%,#c49a2a 78%,#7a5010 100%) !important;
+      background-size: 250% auto !important;
+      animation: btn-shimmer 4.5s linear infinite;
+      color: #0d0a04 !important;
+      font-weight: 900;
+      box-shadow: 0 4px 28px rgba(196,154,42,0.4), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.35) !important;
+      border: 1px solid rgba(245,214,122,0.3) !important;
+      transition: box-shadow 0.3s ease, transform 0.15s ease !important;
+    }
+    .btn-gold:hover { box-shadow: 0 6px 40px rgba(196,154,42,0.6), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.35) !important; }
+    .btn-gold:active { transform: scale(0.96); }
+    .btn-gold:disabled { opacity: 0.35; cursor: not-allowed; animation: none; transform: none !important; }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05) !important;
+      color: var(--text-muted) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+    }
+    .btn-ghost:hover  { background: rgba(255,255,255,0.1) !important; color: var(--text-main) !important; }
+    .btn-ghost:active { transform: scale(0.96); }
+
+    .gold-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(196,154,42,0.35) 25%, rgba(232,184,75,0.55) 50%, rgba(196,154,42,0.35) 75%, transparent 100%);
+    }
+    .card {
+      background: linear-gradient(145deg, #1c1710 0%, #14110c 100%) !important;
+      border: 1px solid rgba(196,154,42,0.12) !important;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.45);
+    }
+    .header-bg {
+      background: linear-gradient(90deg,#0e0905 0%,#150e07 100%) !important;
+      border-bottom: 1px solid rgba(196,154,42,0.2) !important;
+    }
+    .menu-item { transition: color 0.15s ease, background 0.15s ease, padding-left 0.2s ease; border-left: 2px solid transparent; }
+    .menu-item:hover, .menu-item.active {
+      color: #c49a2a !important; background: rgba(196,154,42,0.06);
+      padding-left: 1.5rem; border-left-color: rgba(196,154,42,0.4);
+    }
+    #menu-panel { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.2,0,0,1); }
+    #menu-panel.open { transform: translateX(0); }
+    #menu-backdrop { opacity: 0; transition: opacity 0.25s ease; }
+    #menu-backdrop.open { opacity: 1; }
+
+    .modal-overlay { position: fixed; inset: 0; z-index: 60; }
+    .modal-backdrop-el { position: absolute; inset: 0; background: rgba(0,0,0,0.75); opacity: 0; transition: opacity 0.2s ease; }
+    .modal-backdrop-el.open { opacity: 1; }
+    .modal-dialog-el { opacity: 0; transform: scale(0.95) translateY(10px); transition: opacity 0.25s cubic-bezier(0.2,0,0,1), transform 0.25s cubic-bezier(0.2,0,0,1); }
+    .modal-dialog-el.open { opacity: 1; transform: scale(1) translateY(0); }
+    .modal-surface { background: linear-gradient(160deg, #1a1208, #100c07); border: 1px solid rgba(196,154,42,0.3); }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up { opacity: 0; animation: fade-up 0.6s cubic-bezier(0.2,0,0,1) forwards; }
+    .thin-scroll::-webkit-scrollbar { width: 3px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(196,154,42,0.25); border-radius: 2px; }
+
+    /* ── TOP INFO BAR  §P2 ──────────────────────────── */
+    .info-bar {
+      background: linear-gradient(90deg, #0e0a05 0%, #130d06 50%, #0e0a05 100%);
+      border-bottom: 1px solid rgba(196,154,42,0.18);
+    }
+    .countdown-display {
+      font-family: 'Cinzel', serif;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 14px rgba(232,184,75,0.35);
+    }
+
+    /* ── NUMBER PICKER BALLS  §P2 ───────────────────── */
+    .num-ball {
+      width: 2.75rem; height: 2.75rem;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.8rem;
+      font-family: 'Cinzel', serif;
+      cursor: pointer; flex-shrink: 0;
+      user-select: none;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+      background: radial-gradient(circle at 32% 28%, #3a3028, #1a1410);
+      color: #7a6a50;
+      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.5), 0 2px 5px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .num-ball:hover:not(.selected):not(.ball-dim-state) {
+      background: radial-gradient(circle at 32% 28%, #5a4030, #2a1a10);
+      color: #e8b84b;
+      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.4), 0 3px 10px rgba(196,154,42,0.2), 0 0 0 1px rgba(196,154,42,0.2);
+    }
+    .num-ball.selected {
+      background: radial-gradient(circle at 32% 28%, #f87171, #7b0f0f);
+      color: #fff;
+      box-shadow: inset 0 -3px 8px rgba(0,0,0,0.4), 0 0 16px rgba(248,113,113,0.45), 0 4px 10px rgba(0,0,0,0.5);
+      transform: scale(1.12);
+    }
+    .num-ball.ball-dim-state {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* ── CART BALLS (smaller display) ──────────────── */
+    .cart-ball {
+      width: 2rem; height: 2rem; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.7rem; font-family: 'Cinzel', serif;
+      flex-shrink: 0;
+      background: radial-gradient(circle at 32% 28%, #f87171, #6b0f0f);
+      color: #fff;
+      box-shadow: inset 0 -2px 5px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .confirm-ball {
+      width: 2.25rem; height: 2.25rem; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.75rem; font-family: 'Cinzel', serif;
+      flex-shrink: 0;
+      background: radial-gradient(circle at 32% 28%, #f87171, #6b0f0f);
+      color: #fff;
+      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    /* ── METHOD SELECTION CARDS  §P2 ───────────────── */
+    .method-card {
+      display: flex; align-items: flex-start; gap: 0.875rem;
+      padding: 0.875rem 1rem; border-radius: 0.75rem; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.03);
+      transition: border-color 0.15s ease, background 0.15s ease;
+      margin-bottom: 0.625rem;
+    }
+    .method-card:hover:not(.method-disabled) {
+      border-color: rgba(196,154,42,0.25);
+      background: rgba(196,154,42,0.05);
+    }
+    .method-card.method-selected {
+      border-color: rgba(196,154,42,0.5);
+      background: rgba(196,154,42,0.08);
+      box-shadow: 0 0 0 1px rgba(196,154,42,0.15), 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .method-card.method-disabled { opacity: 0.45; cursor: not-allowed; }
+    .method-num {
+      width: 1.75rem; height: 1.75rem; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif; font-weight: 900; font-size: 0.8rem;
+      background: linear-gradient(145deg, #3a1a00, #5a2a00);
+      border: 1px solid rgba(196,154,42,0.35); color: #e8b84b;
+      box-shadow: 0 0 8px rgba(196,154,42,0.15);
+      margin-top: 0.1rem;
+    }
+    .method-radio {
+      margin-left: auto; flex-shrink: 0; margin-top: 0.15rem;
+      color: #4a3a28; transition: color 0.15s ease;
+      font-size: 1.1rem;
+    }
+    .method-selected .method-radio { color: #c49a2a; }
+
+    /* ── TOAST  §P2 (超過5顆) ───────────────────────── */
+    .toast-el {
+      background: rgba(120,40,20,0.95);
+      border: 1px solid rgba(248,113,113,0.4);
+      color: #fca5a5; border-radius: 0.5rem;
+      padding: 0.5rem 0.875rem; font-size: 0.75rem; font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+
+    /* ── COPY BUTTON ────────────────────────────────── */
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.7rem; padding: 0.2rem 0.55rem; border-radius: 0.35rem;
+      cursor: pointer; transition: background 0.15s ease, color 0.15s ease;
+      background: rgba(196,154,42,0.1); color: #c49a2a;
+      border: 1px solid rgba(196,154,42,0.25);
+    }
+    .copy-btn:hover { background: rgba(196,154,42,0.2); color: #f5d67a; }
+    .copy-btn.copied { background: rgba(74,222,128,0.15); color: #4ade80; border-color: rgba(74,222,128,0.3); }
+
+    /* ── SAVED NUMBER ITEM ──────────────────────────── */
+    .saved-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.625rem; border-radius: 0.625rem;
+      border: 1px solid rgba(196,154,42,0.1);
+      background: rgba(255,255,255,0.02);
+      transition: border-color 0.15s ease, background 0.15s ease;
+      cursor: pointer;
+    }
+    .saved-item:hover { border-color: rgba(196,154,42,0.3); background: rgba(196,154,42,0.05); }
+
+    /* ── SUMMARY BOX ────────────────────────────────── */
+    .summary-box {
+      background: linear-gradient(145deg, #1a1308, #100e06) !important;
+      border: 1px solid rgba(196,154,42,0.2) !important;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.4), inset 0 1px 0 rgba(196,154,42,0.06);
+    }
+
+    /* ── TRANSFER STATES ────────────────────────────── */
+    .transfer-step-icon {
+      width: 3.5rem; height: 3.5rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(196,154,42,0.4); }
+      70%  { box-shadow: 0 0 0 10px rgba(196,154,42,0); }
+      100% { box-shadow: 0 0 0 0 rgba(196,154,42,0); }
+    }
+    .pulse-ring { animation: pulse-ring 1.8s ease-out infinite; }
+  </style>
+</head>
+<body class="bg-neutral-950 text-white min-h-screen">
+
+  <!-- ═══ STATUS BANNERS  §1.4 ════════════ -->
+  <div id="network-banner" class="hidden text-center py-2.5 px-4 text-sm font-semibold"
+       style="background:#dc2626; color:#fff;">
+    <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
+    <span data-i18n="banner.network">請切換到 TRON 主網，目前連接到測試網或不支援的網路，所有交易功能已停用。</span>
+  </div>
+  <div id="paused-banner" class="hidden text-center py-2.5 px-4 text-sm font-semibold"
+       style="background:#d97706; color:#000;">
+    <i class="fa-solid fa-bullhorn mr-1.5"></i>
+    <span data-i18n="banner.paused">目前暫停接受新注，提領功能照常開放。</span>
+  </div>
+  <div id="blacklist-banner" class="hidden text-center py-2.5 px-4 text-sm font-semibold"
+       style="background:#3a0a00; color:#f87171; border-bottom:1px solid rgba(248,113,113,0.25);">
+    <i class="fa-solid fa-ban mr-1.5"></i>
+    <span data-i18n="banner.blacklist">此地址目前無法下注，餘額可正常提領。</span>
+  </div>
+
+  <!-- ═══ HEADER  §1.1 ════════════════════ -->
+  <header class="header-bg sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <a href="index.html" style="text-decoration:none;" class="flex items-center gap-2 flex-shrink-0">
+        <img src="image/539_logo.png" alt="39彩金桶" class="navbar-logo">
+        <span class="navbar-brand">〔品牌名〕</span>
+      </a>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden sm:flex items-center gap-0.5 text-xs">
+          <button onclick="setLang('en')" data-lang-btn="en" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+          <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-2.5 py-1 rounded font-bold" style="background:rgba(196,154,42,0.15); color:#c49a2a; border:1px solid rgba(196,154,42,0.3);">繁</button>
+          <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+        </div>
+        <button id="wallet-btn-visitor" onclick="connectWallet()"
+                class="btn-gold px-4 py-2 rounded-lg text-sm font-bold hover:scale-[1.02]">
+          <span data-i18n="wallet.connect">連接錢包</span>
+        </button>
+        <div id="wallet-btn-connected" class="hidden items-center gap-2.5 rounded-lg px-3 py-2 cursor-pointer"
+             style="background:rgba(196,154,42,0.08); border:1px solid rgba(196,154,42,0.25); transition:background 0.15s ease;"
+             onmouseover="this.style.background='rgba(196,154,42,0.14)'"
+             onmouseout="this.style.background='rgba(196,154,42,0.08)'">
+          <i class="fa-solid fa-circle text-xs flex-shrink-0" style="color:#4ade80;"></i>
+          <div class="text-right leading-tight">
+            <div id="header-address" class="text-xs font-mono" style="color:#7a6a50;">—</div>
+            <div id="header-balance" class="text-sm font-black tabular-nums" style="color:#e8b84b;">
+              —&thinsp;<span class="text-xs font-normal" style="color:#7a6a50;">USDT</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="toggleMenu()" aria-label="選單"
+                class="w-9 h-9 flex items-center justify-center rounded-lg"
+                style="color:#7a6a50; transition:color 0.15s ease, background 0.15s ease;"
+                onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                onmouseout="this.style.color='#7a6a50'; this.style.background='transparent'">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ SIDE MENU  §1.1 ═════════════════ -->
+  <div id="menu-overlay" class="hidden fixed inset-0 z-50">
+    <div id="menu-backdrop" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+    <nav id="menu-panel" class="absolute right-0 top-0 bottom-0 w-64 flex flex-col"
+         style="background:linear-gradient(180deg,#130e08 0%,#0d0a06 100%); border-left:1px solid rgba(196,154,42,0.2);"
+         onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-5 py-4"
+           style="border-bottom:1px solid rgba(196,154,42,0.15);">
+        <span class="font-display font-bold tracking-[0.15em] text-sm" style="color:#c49a2a;">MENU</span>
+        <button onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg"
+                style="color:#5a4a35; transition:color 0.15s ease, background 0.15s ease;"
+                onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                onmouseout="this.style.color='#5a4a35'; this.style.background='transparent'">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <ul class="flex-1 py-3 overflow-y-auto thin-scroll">
+        <li><a href="index.html"          data-nav="home"      class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-house w-4 text-center"></i> <span data-i18n="nav.home">首頁</span></a></li>
+        <li><a href="tickets.html"   data-nav="tickets"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-ticket w-4 text-center"></i> <span data-i18n="nav.tickets">我的注單</span></a></li>
+        <li><a href="account.html"   data-nav="account"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-circle-user w-4 text-center"></i> <span data-i18n="nav.account">會員中心</span></a></li>
+        <li><a href="history.html"   data-nav="history"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-clock-rotate-left w-4 text-center"></i> <span data-i18n="nav.history">歷史紀錄</span></a></li>
+        <li><a href="affiliate.html" data-nav="affiliate" class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-handshake w-4 text-center"></i> <span data-i18n="nav.affiliate">推廣夥伴</span></a></li>
+        <li><a href="rules.html"     data-nav="rules"     class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-book-open w-4 text-center"></i> <span data-i18n="nav.rules">遊戲規則</span></a></li>
+        <li><a href="support.html"   data-nav="support"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-headset w-4 text-center"></i> <span data-i18n="nav.support">客服</span></a></li>
+      </ul>
+      <div class="p-4" style="border-top:1px solid rgba(196,154,42,0.15);">
+        <div class="flex justify-center gap-1.5 text-xs">
+          <button onclick="setLang('en')" data-lang-btn="en" class="px-3 py-1.5 rounded" style="color:#5a4a35;">EN</button>
+          <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-3 py-1.5 rounded font-bold" style="background:rgba(196,154,42,0.15); color:#c49a2a; border:1px solid rgba(196,154,42,0.3);">繁</button>
+          <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-3 py-1.5 rounded" style="color:#5a4a35;">简</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MAIN CONTENT  §P2
+  ═══════════════════════════════════════ -->
+  <main>
+
+    <!-- TOP INFO BAR  §P2 頁面頂部資訊列 -->
+    <div class="info-bar px-4 py-3">
+      <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+        <!-- 期號 讀合約【待補】 -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs" style="color:#5a4a35;"><i class="fa-solid fa-hashtag mr-1"></i><span data-i18n="p2.infobar.period">本期期號</span></span>
+          <span class="font-display font-bold text-sm" style="color:#e8b84b;">115000356</span>
+        </div>
+        <!-- 截止倒數  §1.3 -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs" style="color:#5a4a35;"><i class="fa-regular fa-clock mr-1"></i><span data-i18n="p2.infobar.countdown">截止倒數</span></span>
+          <span id="bet-countdown" class="countdown-display font-black text-xl text-white">02:34:17</span>
+          <!-- 轉帳截止警告 ≤5 分鐘  §P2 -->
+          <span id="info-transfer-closed" class="hidden text-xs font-semibold px-2 py-0.5 rounded-full"
+                style="background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3);">
+            <span data-i18n="p2.infobar.transfer.closed">轉帳已截止</span>
+          </span>
+        </div>
+        <!-- 頭獎彩池  讀合約 projectedJackpot §P2 -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs" style="color:#5a4a35;"><i class="fa-solid fa-trophy mr-1"></i><span data-i18n="p2.infobar.pool">目前彩池</span></span>
+          <span class="font-display font-black text-base tabular-nums" style="color:#f5d67a;">128,450</span>
+          <span class="text-xs" style="color:#c49a2a;">USDT</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PICKER + CART LAYOUT ────────────────────── -->
+    <div class="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+      <!-- ─── NUMBER PICKER  §P2 號碼區 ──────────────── -->
+      <section class="lg:col-span-3 animate-fade-up" style="animation-delay:0.08s;">
+
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-display font-bold text-xl tracking-wide" style="color:#e8b84b; letter-spacing:0.1em;">
+            <i class="fa-solid fa-circle-dot mr-2" style="color:#c49a2a;"></i><span data-i18n="p2.picker.title">選號</span>
+          </h2>
+          <!-- 已選幾顆 / 5 -->
+          <div id="sel-count-badge"
+               class="font-display font-bold text-sm px-3 py-1 rounded-full tabular-nums"
+               style="background:rgba(196,154,42,0.1); border:1px solid rgba(196,154,42,0.25); color:#c49a2a; letter-spacing:0.08em;">
+            <span id="sel-count">已選 0 / 5</span>
+          </div>
+        </div>
+
+        <!-- 超過5顆 toast  §P2 bet.max_five -->
+        <div id="max-toast" class="toast-el mb-4 hidden">
+          <i class="fa-solid fa-triangle-exclamation mr-1.5"></i><span data-i18n="p2.toast.max">最多只能選 5 個號碼</span>
+        </div>
+
+        <!-- 39 balls grid -->
+        <div id="balls-grid"
+             class="grid gap-2 mb-6"
+             style="grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr));">
+          <!-- rendered by JS -->
+        </div>
+
+        <!-- Quick action buttons -->
+        <div class="flex flex-wrap gap-3 mb-8">
+          <!-- 隨機選號 §P2 -->
+          <button onclick="randomPick()"
+                  class="btn-ghost flex-1 min-w-[120px] py-2.5 rounded-xl text-sm font-bold">
+            <i class="fa-solid fa-shuffle mr-1.5"></i><span data-i18n="p2.random">隨機選號</span>
+          </button>
+          <!-- 加入注單 §P2 -->
+          <button id="add-to-cart-btn" onclick="addToCart()"
+                  class="btn-gold flex-1 min-w-[140px] py-2.5 rounded-xl text-sm"
+                  disabled>
+            <i class="fa-solid fa-plus-circle mr-1.5"></i><span data-i18n="p2.add">加入注單</span>
+          </button>
+        </div>
+
+        <!-- 錢包連接後的功能 §P2 重下上期 + 收藏號碼 -->
+        <div id="wallet-actions" class="hidden">
+          <div class="gold-sep mb-5"></div>
+
+          <!-- 重下上期號碼 §P2 需已連接錢包 -->
+          <button onclick="rebetLast()"
+                  class="btn-ghost w-full py-2.5 rounded-xl text-sm font-bold mb-5">
+            <i class="fa-solid fa-rotate-left mr-1.5"></i><span data-i18n="p2.rebet">重下上期號碼</span>
+          </button>
+
+          <!-- 收藏號碼  §P2 需已連接錢包 -->
+          <div id="saved-section">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-bold text-sm" style="color:#8a7a62;">
+                <i class="fa-solid fa-bookmark mr-1.5" style="color:#c49a2a;"></i><span data-i18n="p2.saved.title">收藏號碼</span>
+              </h4>
+            </div>
+            <div id="saved-list">
+              <!-- rendered by JS; empty state shown by JS -->
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ─── BET LIST  §P2 注單清單 ─────────────────── -->
+      <section class="lg:col-span-2 animate-fade-up" style="animation-delay:0.18s;">
+
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-display font-bold text-xl tracking-wide" style="color:#e8b84b; letter-spacing:0.1em;">
+            <i class="fa-solid fa-list-check mr-2" style="color:#c49a2a;"></i><span data-i18n="p2.cart.title">注單清單</span>
+          </h2>
+          <span id="cart-count-badge"
+                class="font-display font-bold text-sm px-3 py-1 rounded-full tabular-nums"
+                style="background:rgba(196,154,42,0.1); border:1px solid rgba(196,154,42,0.25); color:#c49a2a; letter-spacing:0.08em;">
+            0 組
+          </span>
+        </div>
+
+        <!-- Cart items list -->
+        <div id="cart-list" class="space-y-2 mb-4 min-h-[80px]">
+          <!-- empty state shown by JS -->
+        </div>
+
+        <!-- 組數上限提示  §P2 條件顯示 -->
+        <div id="cart-limit-notice" class="hidden text-xs text-center py-2 px-3 rounded-lg mb-3"
+             style="background:rgba(180,80,0,0.15); border:1px solid rgba(251,146,60,0.3); color:#fb923c;">
+          <i class="fa-solid fa-lock mr-1.5"></i><span data-i18n="p2.cart.limit_pre">已達下注上限（</span><span id="cart-limit-num">10</span><span data-i18n="p2.cart.limit_post"> 組）</span>
+        </div>
+
+        <!-- Summary  §P2 -->
+        <div class="summary-box rounded-xl p-4 mb-4">
+          <div class="flex items-center justify-between text-sm mb-2" style="color:#7a6a50;">
+            <span data-i18n="p2.summary.count">組數</span>
+            <span id="summary-count" class="tabular-nums font-semibold" style="color:#c8b898;">0 組</span>
+          </div>
+          <div class="flex items-center justify-between text-sm mb-3" style="color:#7a6a50;">
+            <span data-i18n="p2.summary.price">每注金額</span>
+            <!-- 每注金額【待定】待經濟模型 -->
+            <span class="tabular-nums font-semibold" style="color:#c8b898;">10 USDT</span>
+          </div>
+          <div class="gold-sep mb-3"></div>
+          <div class="flex items-center justify-between">
+            <span class="font-bold" style="color:#e8b84b;" data-i18n="p2.summary.total">總額</span>
+            <span id="summary-total" class="font-display font-black text-2xl tabular-nums" style="color:#f5d67a;">
+              0 <span class="text-sm font-bold" style="color:#c49a2a;">USDT</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 確認下注 §P2  需連接錢包 -->
+        <button id="confirm-btn" onclick="openConfirmModal()"
+                class="btn-gold w-full text-lg py-4 rounded-xl font-black"
+                disabled>
+          <i class="fa-solid fa-check-circle mr-2"></i><span data-i18n="p2.confirm.btn">確認下注</span>
+        </button>
+        <p class="text-xs text-center mt-2" style="color:#3a2e22;" data-i18n="p2.confirm.note">需連接錢包才可確認下注</p>
+
+      </section>
+
+    </div><!-- /grid -->
+
+  </main>
+
+  <!-- ═══ FOOTER ═════════════════════════ -->
+  <div id="site-footer"></div>
+<script src="footer.js"></script>
+
+  <!-- ═══════════════════════════════════════
+       CONFIRM MODAL  §P2 確認視窗 + 下注方式選擇
+  ═══════════════════════════════════════ -->
+  <div id="confirm-modal" class="hidden modal-overlay">
+    <div id="cm-backdrop" class="modal-backdrop-el" onclick="closeConfirmModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="cm-dialog"
+           class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-md rounded-2xl overflow-hidden flex flex-col"
+           style="max-height:88vh; box-shadow:0 0 0 1px rgba(196,154,42,0.06), 0 24px 64px rgba(0,0,0,0.85);">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 flex-shrink-0"
+             style="background:linear-gradient(90deg,#1e0a0a 0%,#160c05 100%); border-bottom:1px solid rgba(196,154,42,0.2);">
+          <span class="font-display font-bold tracking-widest text-base" style="color:#c49a2a; letter-spacing:0.14em;">
+            <i class="fa-solid fa-check-circle mr-2" style="color:#e8b84b;"></i><span data-i18n="cm.title">下注確認</span>
+          </span>
+          <button onclick="closeConfirmModal()" class="w-8 h-8 flex items-center justify-center rounded-lg"
+                  style="color:#7a6040; transition:color 0.15s ease, background 0.15s ease;"
+                  onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                  onmouseout="this.style.color='#7a6040'; this.style.background='transparent'">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Scrollable body -->
+        <div class="flex-1 overflow-y-auto thin-scroll px-6 py-5">
+
+          <!-- 每組 5 顆球排列  §P2 確認視窗 -->
+          <div class="text-xs font-semibold uppercase tracking-widest mb-3" style="color:#5a4a35;" data-i18n="cm.groups.label">本次下注號碼</div>
+          <div id="cm-groups" class="space-y-2 mb-5">
+            <!-- rendered by JS -->
+          </div>
+
+          <!-- 總金額  §P2 -->
+          <div class="summary-box rounded-xl px-4 py-3 mb-4 flex items-center justify-between">
+            <span class="font-bold" style="color:#e8b84b;" data-i18n="cm.total.label">總額</span>
+            <span id="cm-total" class="font-display font-black text-2xl tabular-nums" style="color:#f5d67a;">
+              — <span class="text-sm font-bold" style="color:#c49a2a;">USDT</span>
+            </span>
+          </div>
+
+          <!-- bet.confirm.notice  §P2 -->
+          <p class="text-xs leading-relaxed mb-5 px-1"
+             style="color:#6a5a45; background:rgba(255,255,255,0.02); border-left:2px solid rgba(196,154,42,0.25); padding-left:0.75rem; padding-top:0.4rem; padding-bottom:0.4rem;"
+             data-i18n-html="cm.notice">
+            截止前可改單或取消；截止後不可更改。<br>
+            ① ③ 下注獎金記入遊戲餘額，不逐張領獎。
+          </p>
+
+          <!-- 下注方式選擇  §P2 -->
+          <div class="text-xs font-semibold uppercase tracking-widest mb-3" style="color:#5a4a35;" data-i18n="cm.method.label">選擇下注方式</div>
+
+          <!-- ① 授權下注 §P2 永遠可選 -->
+          <div class="method-card method-selected" data-method="1" onclick="selectMethod(1)">
+            <div class="method-num">①</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-sm text-white" data-i18n="cm.m1.title">授權下注</div>
+              <div class="text-xs mt-0.5" style="color:#6a5a45;" data-i18n="cm.m1.desc">授權 USDT → 合約自動扣款，平台代付 energy</div>
+            </div>
+            <i class="method-radio fa-solid fa-circle-dot"></i>
+          </div>
+
+          <!-- ② 轉帳下注  §P2 距截止 >5 分鐘才可選 -->
+          <div class="method-card" id="method-transfer-card" data-method="2" onclick="selectMethod(2)">
+            <div class="method-num">②</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-sm text-white" data-i18n="cm.m2.title">轉帳下注</div>
+              <div class="text-xs mt-0.5" style="color:#6a5a45;" data-i18n="cm.m2.desc">轉帳 USDT 到彩金桶地址，自付手續費</div>
+              <!-- bet.transfer.closed §P2 -->
+              <div id="method-transfer-closed" class="hidden text-xs mt-1.5 font-semibold" style="color:#fbbf24;">
+                <i class="fa-solid fa-clock mr-1"></i><span data-i18n="cm.m2.closed">轉帳下注於 20:15 截止，現已無法使用</span>
+              </div>
+            </div>
+            <i class="method-radio fa-regular fa-circle"></i>
+          </div>
+
+          <!-- ③ 餘額下注  §P2 遊戲餘額 ≥ 總額 -->
+          <div class="method-card" data-method="3" onclick="selectMethod(3)">
+            <div class="method-num">③</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-sm text-white" data-i18n="cm.m3.title">餘額下注</div>
+              <div class="text-xs mt-0.5" style="color:#6a5a45;" data-i18n="cm.m3.desc">從遊戲餘額扣款，平台代付 energy</div>
+              <!-- bet.balance.insufficient §P2 -->
+              <div id="method-balance-msg" class="hidden text-xs mt-1.5 font-semibold" style="color:#f87171;" data-i18n-html="cm.m3.insufficient">
+                <i class="fa-solid fa-exclamation-triangle mr-1"></i>遊戲餘額不足 —
+                <a href="account.html" style="color:#f87171; text-decoration:underline;">去儲值</a>
+              </div>
+            </div>
+            <i class="method-radio fa-regular fa-circle"></i>
+          </div>
+
+        </div><!-- /scrollable -->
+
+        <!-- Footer buttons -->
+        <div class="px-5 py-4 flex-shrink-0" style="border-top:1px solid rgba(196,154,42,0.15);">
+          <div class="flex gap-3">
+            <button onclick="closeConfirmModal()"
+                    class="btn-ghost flex-1 py-3 rounded-xl text-sm font-bold" data-i18n="cm.cancel">
+              取消
+            </button>
+            <button id="proceed-bet-btn" onclick="proceedBet()"
+                    class="btn-gold flex-1 py-3 rounded-xl text-base font-black" data-i18n="cm.confirm">
+              確認下注
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       APPROVE EXPLAIN MODAL  §P2 ① 授權說明
+       僅在授權額度 < 總額時顯示
+  ═══════════════════════════════════════ -->
+  <div id="approve-modal" class="hidden modal-overlay" style="z-index:62;">
+    <div id="ap-backdrop" class="modal-backdrop-el" onclick="closeApproveModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="ap-dialog"
+           class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6"
+           style="box-shadow:0 24px 64px rgba(0,0,0,0.85);">
+
+        <div class="flex items-start justify-between mb-5">
+          <div>
+            <div class="font-display font-bold tracking-widest mb-0.5" style="color:#c49a2a; letter-spacing:0.12em;">
+              <i class="fa-solid fa-shield-halved mr-2" style="color:#e8b84b;"></i><span data-i18n="ap.title">授權 USDT</span>
+            </div>
+            <!-- approve.explain §P2 ① -->
+            <div class="text-xs mt-1.5 leading-relaxed" style="color:#7a6a50;" data-i18n-html="ap.explain">
+              授權讓資金合約從你的錢包扣款。<br>
+              本次只需授權 <strong style="color:#e8b84b;">一次</strong>，額度用完再次授權即可。
+            </div>
+          </div>
+          <button onclick="closeApproveModal()" class="w-7 h-7 flex items-center justify-center rounded-lg flex-shrink-0 ml-3"
+                  style="color:#5a4a35; transition:color 0.15s ease, background 0.15s ease;"
+                  onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                  onmouseout="this.style.color='#5a4a35'; this.style.background='transparent'">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- 本次授權金額 §P2 ① -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold mb-1.5" style="color:#8a7a62;" data-i18n="ap.amount.label">本次授權金額（USDT）</label>
+          <input id="approve-amount-input"
+                 type="number" min="1" step="1" readonly
+                 class="w-full rounded-xl px-4 py-3 text-lg font-black tabular-nums"
+                 style="background:#0d0a06; border:1px solid rgba(196,154,42,0.3); color:#f5d67a;
+                        outline:none; font-family:'Cinzel',serif; transition:border-color 0.15s ease;"
+                 onfocus="this.style.borderColor='rgba(196,154,42,0.6)'"
+                 onblur="this.style.borderColor='rgba(196,154,42,0.3)'"
+                 value="10" />
+          <div class="text-xs mt-1.5" style="color:#4a3a28;" data-i18n="ap.amount.note">預設為本次下注總額</div>
+        </div>
+
+        <!-- 「授權更多」勾選  §P2 ① 不提供無限額 -->
+        <label class="flex items-start gap-3 mb-5 cursor-pointer group">
+          <input type="checkbox" id="approve-more-cb"
+                 class="mt-0.5 w-4 h-4 rounded flex-shrink-0"
+                 style="accent-color:#c49a2a;"
+                 onchange="toggleApproveMore(this)" />
+          <div>
+            <div class="text-sm font-semibold" style="color:#c8b898;" data-i18n="ap.more.title">授權更多金額</div>
+            <div class="text-xs" style="color:#5a4a35;" data-i18n="ap.more.desc">可自訂更大額度，省下次授權手續費</div>
+          </div>
+        </label>
+
+        <button onclick="submitApprove()"
+                class="btn-gold w-full py-3.5 rounded-xl text-base font-black">
+          <i class="fa-solid fa-lock-open mr-2"></i><span data-i18n="ap.submit">授權</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       TRANSFER MODAL  §P2 ② 轉帳下注
+  ═══════════════════════════════════════ -->
+  <div id="transfer-modal" class="hidden modal-overlay" style="z-index:62;">
+    <div id="tf-backdrop" class="modal-backdrop-el"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="tf-dialog"
+           class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-md rounded-2xl overflow-hidden flex flex-col thin-scroll"
+           style="max-height:90vh; box-shadow:0 24px 64px rgba(0,0,0,0.85);">
+
+        <!-- Header (always shown) -->
+        <div class="flex items-center justify-between px-6 py-4 flex-shrink-0"
+             style="background:linear-gradient(90deg,#1a100a 0%,#130c06 100%); border-bottom:1px solid rgba(196,154,42,0.18);">
+          <span class="font-display font-bold tracking-widest text-sm" style="color:#c49a2a; letter-spacing:0.12em;">
+            <i class="fa-solid fa-paper-plane mr-2" style="color:#e8b84b;"></i><span data-i18n="tf.title">轉帳下注</span>
+          </span>
+          <button onclick="closeTransferModal()" id="tf-close-btn" class="w-8 h-8 flex items-center justify-center rounded-lg"
+                  style="color:#7a6040; transition:color 0.15s ease, background 0.15s ease;"
+                  onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                  onmouseout="this.style.color='#7a6040'; this.style.background='transparent'">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto thin-scroll">
+
+          <!-- STATE: instructions ─────────────────── -->
+          <div id="tf-state-instructions" class="px-6 py-5">
+
+            <!-- transfer.sign.explain §P2 ② -->
+            <div class="rounded-lg px-4 py-3 mb-5 text-sm leading-relaxed"
+                 style="background:rgba(196,154,42,0.07); border:1px solid rgba(196,154,42,0.22); color:#c8b898;">
+              <i class="fa-solid fa-circle-info mr-1.5" style="color:#e8b84b;"></i><span data-i18n-html="tf.sign.explain"><strong style="color:#e8b84b;">這不是授權</strong>，簽署訊息只確認你的號碼，不會花費任何 USDT</span>
+            </div>
+
+            <!-- Step 1: Sign message -->
+            <div class="flex items-start gap-3 mb-5">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0 mt-0.5"
+                   style="background:linear-gradient(145deg,#3a1a00,#5a2a00); border:1px solid rgba(196,154,42,0.35); color:#e8b84b;">1</div>
+              <div class="flex-1">
+                <div class="font-bold text-sm text-white mb-1" data-i18n="tf.step1.title">簽署號碼訊息</div>
+                <div class="text-xs mb-3" style="color:#6a5a45;" data-i18n="tf.step1.desc">確認本次選擇的號碼與期號，免費操作</div>
+                <button onclick="signMessage()"
+                        class="btn-ghost text-sm px-4 py-2 rounded-xl font-bold">
+                  <i class="fa-solid fa-pen-nib mr-1.5"></i><span data-i18n="tf.step1.btn">簽署訊息</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="gold-sep mb-5"></div>
+
+            <!-- Step 2: Transfer -->
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center font-black text-xs flex-shrink-0 mt-0.5"
+                   style="background:linear-gradient(145deg,#3a1a00,#5a2a00); border:1px solid rgba(196,154,42,0.35); color:#e8b84b;">2</div>
+              <div class="flex-1">
+                <div class="font-bold text-sm text-white mb-3" data-i18n="tf.step2.title">轉帳到彩金桶</div>
+
+                <!-- 彩金桶地址  §P2 ② 可複製 -->
+                <div class="mb-3">
+                  <div class="text-xs mb-1.5" style="color:#5a4a35;" data-i18n="tf.addr.label">彩金桶地址（539）</div>
+                  <div class="flex items-center gap-2 rounded-lg px-3 py-2.5"
+                       style="background:#0d0a06; border:1px solid rgba(196,154,42,0.2);">
+                    <span id="bucket-addr-display" class="font-mono text-xs flex-1 break-all" style="color:#e8b84b;">TBD_539_BUCKET_ADDRESS</span>
+                    <button id="copy-addr-btn" onclick="copyBucketAddress()" class="copy-btn flex-shrink-0">
+                      <i class="fa-regular fa-copy"></i><span data-i18n="tf.copy">複製</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 彩金桶地址 QR code  §P2 ② -->
+                <div class="flex justify-center mb-4">
+                  <div class="p-3 rounded-xl" style="background:#0d0a06; border:1px solid rgba(196,154,42,0.2);">
+                    <canvas id="bucket-qr" width="148" height="148"></canvas>
+                  </div>
+                </div>
+
+                <!-- 應轉金額  §P2 ② -->
+                <div class="flex items-center justify-between mb-3 rounded-lg px-3 py-2.5"
+                     style="background:rgba(196,154,42,0.07); border:1px solid rgba(196,154,42,0.2);">
+                  <span class="text-sm" style="color:#8a7a62;" data-i18n="tf.amount.label">應轉金額</span>
+                  <span id="tf-transfer-amount" class="font-display font-black text-lg tabular-nums" style="color:#f5d67a;">
+                    — <span class="text-xs font-bold" style="color:#c49a2a;">USDT</span>
+                  </span>
+                </div>
+
+                <!-- 截止時間提醒  §P2 ② -->
+                <div class="text-xs text-center mb-4 rounded-lg px-3 py-2"
+                     style="background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.2); color:#fbbf24;">
+                  <i class="fa-regular fa-clock mr-1.5"></i><span data-i18n-html="tf.deadline">轉帳截止時間：今日 <strong>20:15</strong>（台灣時間）</span>
+                </div>
+
+                <!-- 「用已連接錢包直接轉帳」  §P2 ② -->
+                <button onclick="startTransfer()"
+                        class="btn-gold w-full py-3.5 rounded-xl text-sm font-black">
+                  <i class="fa-solid fa-wallet mr-2"></i><span data-i18n="tf.transfer.btn">用已連接錢包直接轉帳</span>
+                </button>
+              </div>
+            </div>
+
+          </div><!-- /tf-state-instructions -->
+
+          <!-- STATE: waiting ──────────────────────── -->
+          <div id="tf-state-waiting" class="hidden px-6 py-10 text-center">
+            <div class="transfer-step-icon pulse-ring mx-auto mb-4"
+                 style="background:rgba(196,154,42,0.1); border:1px solid rgba(196,154,42,0.3);">
+              <i class="fa-solid fa-circle-notch fa-spin text-2xl" style="color:#c49a2a;"></i>
+            </div>
+            <div class="font-bold text-white mb-2" data-i18n="tf.waiting.title">等待確認</div>
+            <div class="text-sm mb-4" style="color:#7a6a50;" data-i18n="tf.waiting.desc">交易送出，等待區塊鏈確認…</div>
+            <a id="tf-explorer-link" href="#" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-1.5 text-xs"
+               style="color:#5ba3c9;">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> <span data-i18n="tx.explorer">在區塊瀏覽器查看</span>
+            </a>
+          </div>
+
+          <!-- STATE: registering ──────────────────── -->
+          <div id="tf-state-registering" class="hidden px-6 py-10 text-center">
+            <div class="transfer-step-icon mx-auto mb-4"
+                 style="background:rgba(196,154,42,0.1); border:1px solid rgba(196,154,42,0.3);">
+              <i class="fa-solid fa-database fa-bounce text-2xl" style="color:#c49a2a;"></i>
+            </div>
+            <div class="font-bold text-white mb-2" data-i18n="tf.reg.title">登記中</div>
+            <div class="text-sm" style="color:#7a6a50;" data-i18n="tf.reg.desc">系統正在比對轉帳並登記注單，請稍候…</div>
+          </div>
+
+          <!-- STATE: anomaly-late §P2 ② 截止後到帳 -->
+          <div id="tf-state-anomaly-late" class="hidden px-6 py-6">
+            <div class="text-center mb-5">
+              <div class="transfer-step-icon mx-auto mb-3"
+                   style="background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.3);">
+                <i class="fa-solid fa-clock text-2xl" style="color:#fbbf24;"></i>
+              </div>
+              <div class="font-bold text-white mb-1" data-i18n="tf.late.title">轉帳截止後到帳</div>
+              <div class="text-sm leading-relaxed" style="color:#7a6a50;" data-i18n-html="tf.late.desc">
+                此轉帳於截止後到帳，注單無法成立。<br>
+                USDT 已全額記入你的<strong style="color:#e8b84b;">遊戲餘額</strong>。
+              </div>
+            </div>
+            <!-- 一鍵改買下一期（餘額下注＋預填號碼）§P2 ② 異常 -->
+            <button onclick="rebetNextPeriod()"
+                    class="btn-gold w-full py-3.5 rounded-xl text-sm font-black mb-3">
+              <i class="fa-solid fa-forward-step mr-2"></i><span data-i18n="tf.late.rebet">一鍵改買下一期（餘額下注）</span>
+            </button>
+            <!-- 提領按鈕 §P2 ② 異常 -->
+            <a href="account.html"
+               class="btn-ghost flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold"
+               style="text-decoration:none;">
+              <i class="fa-solid fa-arrow-up-from-line"></i><span data-i18n="tf.late.withdraw">前往提領</span>
+            </a>
+          </div>
+
+          <!-- STATE: anomaly-short §P2 ② 轉少 -->
+          <div id="tf-state-anomaly-short" class="hidden px-6 py-6 text-center">
+            <div class="transfer-step-icon mx-auto mb-3"
+                 style="background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3);">
+              <i class="fa-solid fa-arrow-down text-2xl" style="color:#f87171;"></i>
+            </div>
+            <div class="font-bold text-white mb-2" data-i18n="tf.short.title">轉帳金額不足</div>
+            <div class="text-sm leading-relaxed mb-5" style="color:#7a6a50;" data-i18n-html="tf.short.desc">
+              轉帳金額少於下注所需，注單尚未成立。<br>
+              差額已全額記入你的<strong style="color:#e8b84b;">遊戲餘額</strong>。
+            </div>
+            <button onclick="closeTransferModal()" class="btn-ghost px-6 py-2.5 rounded-xl text-sm font-bold" data-i18n="tf.close">關閉</button>
+          </div>
+
+          <!-- STATE: anomaly-over §P2 ② 轉多 -->
+          <div id="tf-state-anomaly-over" class="hidden px-6 py-6 text-center">
+            <div class="transfer-step-icon mx-auto mb-3"
+                 style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3);">
+              <i class="fa-solid fa-check text-2xl" style="color:#4ade80;"></i>
+            </div>
+            <div class="font-bold text-white mb-2" data-i18n="tf.over.title">注單成立・差額已入餘額</div>
+            <div class="text-sm leading-relaxed mb-5" style="color:#7a6a50;" data-i18n-html="tf.over.desc">
+              轉帳金額多於所需，注單已成立。<br>
+              超出部分已記入你的<strong style="color:#e8b84b;">遊戲餘額</strong>。
+            </div>
+            <button onclick="closeTransferModal(); openSuccessModal();"
+                    class="btn-gold px-6 py-3 rounded-xl text-sm font-black" data-i18n="tf.over.view">查看注單</button>
+          </div>
+
+          <!-- STATE: anomaly-toosmall §P2 ② 低於一注 -->
+          <div id="tf-state-anomaly-toosmall" class="hidden px-6 py-6 text-center">
+            <div class="transfer-step-icon mx-auto mb-3"
+                 style="background:rgba(148,163,184,0.1); border:1px solid rgba(148,163,184,0.25);">
+              <i class="fa-solid fa-circle-half-stroke text-2xl" style="color:#94a3b8;"></i>
+            </div>
+            <div class="font-bold text-white mb-2" data-i18n="tf.small.title">金額未達一注</div>
+            <div class="text-sm leading-relaxed mb-5" style="color:#7a6a50;" data-i18n-html="tf.small.desc">
+              此筆轉帳金額低於一注，暫不入帳。<br>
+              累積達一注金額後系統將自動入帳。
+            </div>
+            <button onclick="closeTransferModal()" class="btn-ghost px-6 py-2.5 rounded-xl text-sm font-bold" data-i18n="tf.close">關閉</button>
+          </div>
+
+        </div><!-- /scrollable -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SUCCESS MODAL  §P2 成功視窗
+  ═══════════════════════════════════════ -->
+  <div id="success-modal" class="hidden modal-overlay" style="z-index:62;">
+    <div id="su-backdrop" class="modal-backdrop-el"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="su-dialog"
+           class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl overflow-hidden"
+           style="box-shadow:0 0 0 1px rgba(196,154,42,0.08), 0 24px 64px rgba(0,0,0,0.85);">
+
+        <div class="px-6 pt-8 pb-5 text-center">
+          <!-- Success icon -->
+          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+               style="background:linear-gradient(145deg,rgba(196,154,42,0.15),rgba(196,154,42,0.05)); border:1px solid rgba(196,154,42,0.4); box-shadow:0 0 30px rgba(196,154,42,0.2);">
+            <i class="fa-solid fa-trophy text-3xl" style="color:#f5d67a;"></i>
+          </div>
+
+          <!-- bet.success.title  §P2 -->
+          <div class="font-display font-bold text-xl tracking-widest mb-1" style="color:#f5d67a; letter-spacing:0.12em;" data-i18n="su.title">
+            下注成功！
+          </div>
+          <div class="text-sm mb-5" style="color:#7a6a50;" data-i18n="su.subtitle">祝您今日好運，等待開獎結果</div>
+
+          <!-- 本次注單摘要  §P2 -->
+          <div class="rounded-xl p-4 mb-5 text-left"
+               style="background:rgba(255,255,255,0.03); border:1px solid rgba(196,154,42,0.15);">
+            <div class="text-xs font-semibold uppercase tracking-widest mb-3" style="color:#5a4a35;" data-i18n="su.summary.label">本次注單</div>
+            <div id="success-groups" class="space-y-2 mb-3">
+              <!-- rendered by JS -->
+            </div>
+            <div class="gold-sep mb-2"></div>
+            <div class="flex justify-between text-sm">
+              <span style="color:#6a5a45;" data-i18n="su.summary.total">合計</span>
+              <span id="success-total" class="font-bold tabular-nums" style="color:#e8b84b;">— USDT</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions  §P2 -->
+        <div class="px-5 pb-6 grid grid-cols-2 gap-3">
+          <!-- 查看我的注單  §P2 → P3 -->
+          <a href="tickets.html"
+             class="btn-gold flex items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-black"
+             style="text-decoration:none;">
+            <i class="fa-solid fa-ticket"></i><span data-i18n="su.tickets">我的注單</span>
+          </a>
+          <!-- 繼續下注  §P2 -->
+          <button onclick="continueBetting()"
+                  class="btn-ghost py-3 rounded-xl text-sm font-bold">
+            <i class="fa-solid fa-plus mr-1"></i><span data-i18n="su.continue">繼續下注</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRANSACTION STATUS MODAL  §1.4 ══ -->
+  <div id="tx-modal" class="hidden modal-overlay" style="z-index:64;">
+    <div id="tx-backdrop" class="modal-backdrop-el"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="tx-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6"
+           style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+        <div id="tx-state-pending" class="text-center">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(196,154,42,0.1); border:1px solid rgba(196,154,42,0.25);"><i class="fa-solid fa-circle-notch fa-spin text-2xl" style="color:#c49a2a;"></i></div>
+          <div class="font-bold text-white mb-1" data-i18n="tx.pending.title">交易送出中</div>
+          <div class="text-sm mb-4" style="color:#7a6a50;" data-i18n="tx.pending.desc">等待區塊確認…</div>
+          <a id="tx-explorer-link" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs" style="color:#5ba3c9;"><i class="fa-solid fa-arrow-up-right-from-square"></i> <span data-i18n="tx.explorer">在區塊瀏覽器查看</span></a>
+        </div>
+        <div id="tx-state-success" class="hidden text-center">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.3);"><i class="fa-solid fa-check text-2xl" style="color:#4ade80;"></i></div>
+          <div class="font-bold text-white mb-1" data-i18n="tx.success.title">交易成功</div>
+          <div id="tx-success-msg" class="text-sm mb-5" style="color:#7a6a50;"></div>
+          <button onclick="closeTxModal()" class="btn-gold px-6 py-2 rounded-lg text-sm font-bold" data-i18n="tx.confirm">確認</button>
+        </div>
+        <div id="tx-state-failed" class="hidden text-center">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.3);"><i class="fa-solid fa-xmark text-2xl" style="color:#f87171;"></i></div>
+          <div class="font-bold text-white mb-1" data-i18n="tx.failed.title">交易失敗</div>
+          <div id="tx-error-msg" class="text-sm mb-5" style="color:#f87171;"></div>
+          <div class="flex gap-3 justify-center">
+            <button onclick="closeTxModal()" class="btn-ghost px-4 py-2 rounded-lg text-sm" data-i18n="tx.close">關閉</button>
+            <button id="tx-retry-btn" class="btn-gold px-4 py-2 rounded-lg text-sm font-bold" data-i18n="tx.retry">重試</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NO WALLET MODAL  §1.4 ════════════ -->
+  <div id="no-wallet-modal" class="hidden modal-overlay" style="z-index:64;">
+    <div id="nw-backdrop" class="modal-backdrop-el" onclick="closeNoWalletModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="nw-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6" style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+        <div class="flex items-start justify-between mb-5">
+          <div><div class="font-bold text-white mb-1" data-i18n="nw.title">未偵測到錢包</div><div class="text-sm" style="color:#7a6a50;" data-i18n="nw.desc">請安裝支援 TRON 的錢包：</div></div>
+          <button onclick="closeNoWalletModal()" class="w-7 h-7 flex items-center justify-center rounded-lg flex-shrink-0 ml-3" style="color:#5a4a35;" onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35'; this.style.background='transparent'"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <a href="https://www.tronlink.org/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(196,154,42,0.06); border:1px solid rgba(196,154,42,0.15);">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(196,154,42,0.12);"><i class="fa-solid fa-link" style="color:#c49a2a;"></i></div>
+          <div class="flex-1 min-w-0"><div class="font-semibold text-sm text-white">TronLink</div><div class="text-xs" style="color:#5a4a35;" data-i18n="nw.tronlink.desc">瀏覽器擴充套件 / 手機 App</div></div>
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs flex-shrink-0" style="color:#5a4a35;"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TRX WARNING MODAL  §1.4 ══════════ -->
+  <div id="trx-warn-modal" class="hidden modal-overlay" style="z-index:64;">
+    <div class="modal-backdrop-el" onclick="closeTrxWarnModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div id="trx-warn-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6 text-center" style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.3);"><i class="fa-solid fa-bolt text-2xl" style="color:#fbbf24;"></i></div>
+        <div class="font-bold text-white mb-2" data-i18n="trx.title">TRX 餘額不足</div>
+        <p class="text-sm mb-1" style="color:#a89070;" data-i18n="trx.desc1">送出交易需要少量 TRX 支付網路費用（Bandwidth）。</p>
+        <p class="text-sm mb-5" style="color:#7a6a50;" data-i18n-html="trx.desc2">建議錢包保留至少 <span class="font-bold text-white">10 TRX</span>。</p>
+        <button onclick="closeTrxWarnModal()" class="btn-gold px-6 py-2 rounded-lg text-sm font-bold" data-i18n="trx.ok">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════ -->
+  <script>
+    /* ════════════════════════════════════════
+       CONSTANTS  §P2 (待定欄位標記)
+    ════════════════════════════════════════ */
+    const CART_LIMIT      = 10;                     // §P2 組數上限（暫定 10 組，待調整）
+    const PRICE_PER_BET   = 10;                     // §P2 每注金額【待定】，待經濟模型
+    const BUCKET_ADDRESS  = 'TBD_539_BUCKET_ADDR';  // §P2 539彩金桶合約地址【待補】
+    const PERIOD_NO       = '115000356';             // §P2 本期期號【待補，讀合約】
+
+    /* ════════════════════════════════════════
+       STATE
+    ════════════════════════════════════════ */
+    let _selected    = new Set();   // currently selected ball numbers
+    let _cart        = [];          // array of number-arrays, e.g. [[3,7,15,22,38], ...]
+    let _saved       = JSON.parse(localStorage.getItem('p2_saved') || '[]'); // §P2 收藏號碼（鏈下 API 待補）
+    let _connected   = false;
+    let _connectedAddr = '';
+    let _gameBalance = 250;         // mock: 遊戲餘額（USDT），讀合約【待補】
+    let _method      = 1;           // selected bet method: 1, 2, or 3
+    let _betSecs     = 9257;        // countdown to 20:20; §1.3 區塊時間校正【待補】
+    let _pendingCart = [];          // snapshot of cart when confirm modal opens
+
+    /* ════════════════════════════════════════
+       SHARED: MENU / WALLET / BANNERS / MODALS
+    ════════════════════════════════════════ */
+    function toggleMenu() {
+      const o = document.getElementById('menu-overlay');
+      const p = document.getElementById('menu-panel');
+      const b = document.getElementById('menu-backdrop');
+      if (o.classList.contains('hidden')) {
+        o.classList.remove('hidden');
+        requestAnimationFrame(() => { p.classList.add('open'); b.classList.add('open'); });
+      } else {
+        p.classList.remove('open'); b.classList.remove('open');
+        setTimeout(() => o.classList.add('hidden'), 260);
+      }
+    }
+
+    function maskAddress(addr) {
+      if (!addr || addr.length < 10) return addr;
+      return addr.slice(0, 5) + '…' + addr.slice(-4);
+    }
+
+    function setWalletConnected(address, balanceUsdt) {
+      _connected = true; _connectedAddr = address;
+      document.getElementById('wallet-btn-visitor').classList.add('hidden');
+      const el = document.getElementById('wallet-btn-connected');
+      el.classList.remove('hidden'); el.classList.add('flex');
+      document.getElementById('header-address').textContent = maskAddress(address);
+      document.getElementById('header-balance').innerHTML =
+        Number(balanceUsdt).toFixed(2) + ' <span class="text-xs font-normal" style="color:#7a6a50;">USDT</span>';
+      document.getElementById('wallet-actions').classList.remove('hidden');
+      renderSaved();
+      _updateConfirmBtn();
+    }
+
+    function connectWallet() {
+      if (typeof window.tronWeb === 'undefined') { openNoWalletModal(); return; }
+      /* TODO: TronWeb connect */
+    }
+
+    function showBanner(id) { document.getElementById(id).classList.remove('hidden'); }
+    function hideBanner(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function _openModal(overlayId, backdropId, dialogId) {
+      const o = document.getElementById(overlayId);
+      const b = document.getElementById(backdropId);
+      const d = document.getElementById(dialogId);
+      o.classList.remove('hidden');
+      requestAnimationFrame(() => { b.classList.add('open'); d.classList.add('open'); });
+    }
+    function _closeModal(overlayId, backdropId, dialogId) {
+      const o = document.getElementById(overlayId);
+      const b = document.getElementById(backdropId);
+      const d = document.getElementById(dialogId);
+      b.classList.remove('open'); d.classList.remove('open');
+      setTimeout(() => o.classList.add('hidden'), 260);
+    }
+
+    /* Transaction modal §1.4 */
+    function openTxModal() {
+      document.getElementById('tx-state-pending').classList.remove('hidden');
+      document.getElementById('tx-state-success').classList.add('hidden');
+      document.getElementById('tx-state-failed').classList.add('hidden');
+      document.getElementById('tx-explorer-link').href = '#';
+      _openModal('tx-modal', 'tx-backdrop', 'tx-dialog');
+    }
+    function setTxExplorerLink(h) { document.getElementById('tx-explorer-link').href = 'https://tronscan.org/#/transaction/' + h; }
+    function setTxSuccess(msg) {
+      document.getElementById('tx-state-pending').classList.add('hidden');
+      document.getElementById('tx-state-success').classList.remove('hidden');
+      document.getElementById('tx-success-msg').textContent = msg || '';
+    }
+    function setTxFailed(err, retryFn) {
+      document.getElementById('tx-state-pending').classList.add('hidden');
+      document.getElementById('tx-state-failed').classList.remove('hidden');
+      document.getElementById('tx-error-msg').textContent = err || t('tx.try_later');
+      const btn = document.getElementById('tx-retry-btn');
+      btn.style.display = retryFn ? '' : 'none';
+      btn.onclick = () => { closeTxModal(); if (retryFn) retryFn(); };
+    }
+    function closeTxModal() { _closeModal('tx-modal', 'tx-backdrop', 'tx-dialog'); }
+
+    function openNoWalletModal()  { _openModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+    function closeNoWalletModal() { _closeModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+
+    function openTrxWarnModal() {
+      const o = document.getElementById('trx-warn-modal');
+      const b = o.querySelector('.modal-backdrop-el');
+      const d = document.getElementById('trx-warn-dialog');
+      o.classList.remove('hidden');
+      requestAnimationFrame(() => { b.classList.add('open'); d.classList.add('open'); });
+    }
+    function closeTrxWarnModal() {
+      const o = document.getElementById('trx-warn-modal');
+      const b = o.querySelector('.modal-backdrop-el');
+      const d = document.getElementById('trx-warn-dialog');
+      b.classList.remove('open'); d.classList.remove('open');
+      setTimeout(() => o.classList.add('hidden'), 260);
+    }
+
+    /* ════════════════════════════════════════
+       P2: BALL PICKER
+    ════════════════════════════════════════ */
+    function renderBalls() {
+      const grid = document.getElementById('balls-grid');
+      grid.innerHTML = '';
+      const full = _selected.size >= 5;
+      for (let n = 1; n <= 39; n++) {
+        const sel = _selected.has(n);
+        const dim = full && !sel;
+        const btn = document.createElement('button');
+        btn.className = 'num-ball' + (sel ? ' selected' : '') + (dim ? ' ball-dim-state' : '');
+        btn.textContent = String(n).padStart(2, '0');
+        btn.disabled = dim;
+        btn.onclick = () => pickBall(n);
+        grid.appendChild(btn);
+      }
+      document.getElementById('sel-count').textContent = t('p2.picker.count', {n: _selected.size});
+      document.getElementById('add-to-cart-btn').disabled = (_selected.size !== 5);
+    }
+
+    function pickBall(n) {
+      if (_selected.has(n)) {
+        _selected.delete(n);
+      } else {
+        if (_selected.size >= 5) {
+          _showMaxToast(); return;
+        }
+        _selected.add(n);
+      }
+      renderBalls();
+    }
+
+    function _showMaxToast() {
+      const t = document.getElementById('max-toast');
+      t.classList.remove('hidden');
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => t.classList.add('hidden'), 2200);
+    }
+    let _toastTimer = null;
+
+    /* 隨機選號  §P2 */
+    function randomPick() {
+      _selected.clear();
+      const pool = Array.from({length: 39}, (_, i) => i + 1);
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      pool.slice(0, 5).forEach(n => _selected.add(n));
+      renderBalls();
+    }
+
+    /* 加入購物車  §P2 */
+    function addToCart() {
+      if (_selected.size !== 5) return;
+      if (_cart.length >= CART_LIMIT) return;
+      const combo = Array.from(_selected).sort((a, b) => a - b);
+      _cart.push(combo);
+      _selected.clear();
+      renderBalls();
+      renderCart();
+    }
+
+    /* 重下上期號碼  §P2 需連接錢包 */
+    function rebetLast() {
+      /* TODO: 讀索引服務 API 取上期本人號碼 */
+      /* Mock: load a fixed combo into cart */
+      const mock = [5, 12, 19, 27, 33];
+      if (_cart.length < CART_LIMIT) {
+        _cart.push(mock);
+        renderCart();
+      }
+    }
+
+    /* ════════════════════════════════════════
+       P2: CART
+    ════════════════════════════════════════ */
+    function _makeBallsHtml(numbers, cls) {
+      return numbers.map(n =>
+        `<span class="${cls}">${String(n).padStart(2,'0')}</span>`
+      ).join('');
+    }
+
+    function renderCart() {
+      const list = document.getElementById('cart-list');
+      const count = _cart.length;
+
+      if (count === 0) {
+        list.innerHTML = `
+          <div class="text-center py-8" style="color:#3a2e22;">
+            <i class="fa-solid fa-cart-shopping text-3xl mb-3 block opacity-40"></i>
+            <div class="text-sm">${t('p2.cart.empty')}</div>
+          </div>`;
+      } else {
+        list.innerHTML = _cart.map((combo, idx) => `
+          <div class="flex items-center gap-2 rounded-xl px-3 py-2.5"
+               style="background:rgba(255,255,255,0.03); border:1px solid rgba(196,154,42,0.12);">
+            <span class="font-mono text-xs w-5 text-center flex-shrink-0" style="color:#4a3a28;">${idx + 1}</span>
+            <div class="flex gap-1.5 flex-1 flex-wrap">
+              ${_makeBallsHtml(combo, 'cart-ball')}
+            </div>
+            <!-- 收藏按鈕（每組）§P2 需連接錢包 -->
+            ${_connected ? `
+              <button onclick="saveBet(${idx})" title="收藏"
+                      class="w-7 h-7 flex items-center justify-center rounded-lg flex-shrink-0"
+                      style="color:#4a3a28; transition:color 0.15s ease, background 0.15s ease;"
+                      onmouseover="this.style.color='#c49a2a'; this.style.background='rgba(196,154,42,0.1)'"
+                      onmouseout="this.style.color='#4a3a28'; this.style.background='transparent'">
+                <i class="fa-regular fa-bookmark text-sm"></i>
+              </button>` : ''}
+            <!-- 刪除單組  §P2 -->
+            <button onclick="deleteCartItem(${idx})" title="移除"
+                    class="w-7 h-7 flex items-center justify-center rounded-lg flex-shrink-0"
+                    style="color:#4a3a28; transition:color 0.15s ease, background 0.15s ease;"
+                    onmouseover="this.style.color='#f87171'; this.style.background='rgba(248,113,113,0.1)'"
+                    onmouseout="this.style.color='#4a3a28'; this.style.background='transparent'">
+              <i class="fa-solid fa-trash-can text-sm"></i>
+            </button>
+          </div>`).join('');
+      }
+
+      document.getElementById('cart-count-badge').textContent = count + ' ' + t('p2.unit.group');
+      document.getElementById('summary-count').textContent    = count + ' ' + t('p2.unit.group');
+      const total = count * PRICE_PER_BET;
+      document.getElementById('summary-total').innerHTML =
+        total + ' <span class="text-sm font-bold" style="color:#c49a2a;">USDT</span>';
+      document.getElementById('cart-limit-notice').classList.toggle('hidden', count < CART_LIMIT);
+      _updateConfirmBtn();
+    }
+
+    function deleteCartItem(idx) {
+      _cart.splice(idx, 1);
+      renderCart();
+    }
+
+    /* 收藏按鈕（購物車每組）§P2 */
+    function saveBet(idx) {
+      const combo = _cart[idx];
+      const already = _saved.some(s => s.join() === combo.join());
+      if (!already) {
+        _saved.push([...combo]);
+        localStorage.setItem('p2_saved', JSON.stringify(_saved)); /* §P2 鏈下 API【待補】 */
+        renderSaved();
+      }
+    }
+
+    function _updateConfirmBtn() {
+      const btn = document.getElementById('confirm-btn');
+      const note = btn.nextElementSibling;
+      if (!_connected) {
+        btn.disabled = true;
+        if (note) note.style.display = '';
+      } else {
+        btn.disabled = _cart.length === 0;
+        if (note) note.style.display = 'none';
+      }
+    }
+
+    /* ════════════════════════════════════════
+       P2: SAVED NUMBERS  §P2 收藏號碼（鏈下 API 待補）
+    ════════════════════════════════════════ */
+    function renderSaved() {
+      const el = document.getElementById('saved-list');
+      if (_saved.length === 0) {
+        el.innerHTML = `<div class="text-xs text-center py-3" style="color:#3a2e22;">${t('p2.saved.empty')}</div>`;
+        return;
+      }
+      el.innerHTML = _saved.map((combo, idx) => `
+        <div class="saved-item mb-2" onclick="loadSaved(${idx})">
+          <div class="flex gap-1 flex-1 flex-wrap">
+            ${_makeBallsHtml(combo, 'cart-ball')}
+          </div>
+          <button onclick="event.stopPropagation(); deleteSaved(${idx})"
+                  class="w-6 h-6 flex items-center justify-center rounded flex-shrink-0"
+                  style="color:#4a3a28; transition:color 0.15s ease;"
+                  onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#4a3a28'">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>`).join('');
+    }
+
+    /* 一鍵帶入收藏號碼  §P2 */
+    function loadSaved(idx) {
+      _selected = new Set(_saved[idx]);
+      renderBalls();
+    }
+
+    function deleteSaved(idx) {
+      _saved.splice(idx, 1);
+      localStorage.setItem('p2_saved', JSON.stringify(_saved));
+      renderSaved();
+    }
+
+    /* ════════════════════════════════════════
+       P2: CONFIRM MODAL
+    ════════════════════════════════════════ */
+    function openConfirmModal() {
+      if (!_connected) { openNoWalletModal(); return; }
+      if (_cart.length === 0) return;
+      _pendingCart = _cart.map(c => [...c]); // snapshot
+
+      /* Render groups  §P2 確認視窗 每組 5 顆球 */
+      const cmGroups = document.getElementById('cm-groups');
+      cmGroups.innerHTML = _pendingCart.map((combo, idx) => `
+        <div class="flex items-center gap-2 rounded-lg px-3 py-2"
+             style="background:rgba(255,255,255,0.03); border:1px solid rgba(196,154,42,0.1);">
+          <span class="font-mono text-xs w-5 text-center flex-shrink-0" style="color:#4a3a28;">${idx + 1}</span>
+          <div class="flex gap-1.5 flex-wrap">
+            ${_makeBallsHtml(combo, 'confirm-ball')}
+          </div>
+        </div>`).join('');
+
+      /* Total §P2 */
+      const total = _pendingCart.length * PRICE_PER_BET;
+      document.getElementById('cm-total').innerHTML =
+        total + ' <span class="text-sm font-bold" style="color:#c49a2a;">USDT</span>';
+
+      /* Method states */
+      _method = 1;
+      _refreshMethodCards();
+
+      _openModal('confirm-modal', 'cm-backdrop', 'cm-dialog');
+    }
+
+    function closeConfirmModal() { _closeModal('confirm-modal', 'cm-backdrop', 'cm-dialog'); }
+
+    /* 下注方式選擇  §P2 */
+    function selectMethod(m) {
+      const transferCard = document.getElementById('method-transfer-card');
+      if (m === 2 && transferCard.classList.contains('method-disabled')) return;
+      if (m === 3) {
+        const total = _pendingCart.length * PRICE_PER_BET;
+        if (_gameBalance < total) return;
+      }
+      _method = m;
+      _refreshMethodCards();
+    }
+
+    function _refreshMethodCards() {
+      const total = _pendingCart.length * PRICE_PER_BET;
+
+      /* ① always available */
+      /* ② disabled if ≤5 min */
+      const transferClosed = _betSecs <= 300;
+      const tfCard = document.getElementById('method-transfer-card');
+      tfCard.classList.toggle('method-disabled', transferClosed);
+      document.getElementById('method-transfer-closed').classList.toggle('hidden', !transferClosed);
+      if (transferClosed && _method === 2) { _method = 1; }
+
+      /* ③ disabled if insufficient balance */
+      const balanceInsufficient = _gameBalance < total;
+      const thirdCards = document.querySelectorAll('[data-method="3"]');
+      thirdCards.forEach(c => c.classList.toggle('method-disabled', balanceInsufficient));
+      document.getElementById('method-balance-msg').classList.toggle('hidden', !balanceInsufficient);
+      if (balanceInsufficient && _method === 3) { _method = 1; }
+
+      /* Update selected state */
+      document.querySelectorAll('.method-card').forEach(card => {
+        const m = +card.dataset.method;
+        const sel = m === _method;
+        card.classList.toggle('method-selected', sel);
+        const radio = card.querySelector('.method-radio');
+        if (radio) {
+          radio.className = 'method-radio ' + (sel ? 'fa-solid fa-circle-dot' : 'fa-regular fa-circle');
+        }
+      });
+    }
+
+    /* 確認下注  §P2 */
+    function proceedBet() {
+      closeConfirmModal();
+      if (_method === 1) _flowAuthorize();
+      else if (_method === 2) _flowTransfer();
+      else if (_method === 3) _flowBalance();
+    }
+
+    /* ════════════════════════════════════════
+       P2: ① AUTHORIZE FLOW
+    ════════════════════════════════════════ */
+    function _flowAuthorize() {
+      /* Check allowance vs total (TBD: read USDT.allowance(player, fundContract)) */
+      const total = _pendingCart.length * PRICE_PER_BET;
+      const mockAllowance = 0; /* TODO: read from contract */
+      if (mockAllowance < total) {
+        _openApproveModal(total);
+      } else {
+        _sendBetTx();
+      }
+    }
+
+    function _openApproveModal(total) {
+      document.getElementById('approve-amount-input').value = total;
+      document.getElementById('approve-more-cb').checked = false;
+      document.getElementById('approve-amount-input').readOnly = true;
+      _openModal('approve-modal', 'ap-backdrop', 'ap-dialog');
+    }
+
+    /* 授權說明視窗  §P2 ① */
+    function toggleApproveMore(cb) {
+      const input = document.getElementById('approve-amount-input');
+      input.readOnly = !cb.checked;
+      if (cb.checked) { input.focus(); }
+    }
+
+    function closeApproveModal() { _closeModal('approve-modal', 'ap-backdrop', 'ap-dialog'); }
+
+    function submitApprove() {
+      closeApproveModal();
+      openTxModal(); /* 授權交易狀態視窗 §1.4 */
+      /* TODO: send USDT.approve(fundContract, amount) */
+      setTimeout(() => {
+        setTxSuccess('USDT 授權成功，正在送出下注交易…');
+        setTimeout(() => { closeTxModal(); _sendBetTx(); }, 1200);
+      }, 1800);
+    }
+
+    function _sendBetTx() {
+      openTxModal(); /* 下注交易狀態視窗 §1.4 */
+      /* TODO: call bet contract function */
+      setTimeout(() => {
+        setTxSuccess('下注成功！注單已登記');
+        setTimeout(() => { closeTxModal(); _clearCartAfterBet(); openSuccessModal(); }, 1000);
+      }, 2000);
+    }
+
+    /* ════════════════════════════════════════
+       P2: ② TRANSFER FLOW
+    ════════════════════════════════════════ */
+    function _flowTransfer() {
+      openTransferModal();
+    }
+
+    function openTransferModal() {
+      setTransferState('instructions');
+      const total = _pendingCart.length * PRICE_PER_BET;
+      document.getElementById('tf-transfer-amount').innerHTML =
+        total + ' <span class="text-xs font-bold" style="color:#c49a2a;">USDT</span>';
+      _openModal('transfer-modal', 'tf-backdrop', 'tf-dialog');
+      /* Generate QR code §P2 ② */
+      if (typeof QRCode !== 'undefined') {
+        QRCode.toCanvas(document.getElementById('bucket-qr'), BUCKET_ADDRESS, {
+          width: 148, margin: 1,
+          color: { dark: '#c49a2a', light: '#0d0a04' }
+        }, err => { if (err) console.error(err); });
+      }
+    }
+
+    function closeTransferModal() { _closeModal('transfer-modal', 'tf-backdrop', 'tf-dialog'); }
+
+    const _TF_STATES = ['instructions','waiting','registering','anomaly-late','anomaly-short','anomaly-over','anomaly-toosmall'];
+    function setTransferState(state) {
+      _TF_STATES.forEach(s => {
+        const el = document.getElementById('tf-state-' + s);
+        if (el) el.classList.toggle('hidden', s !== state);
+      });
+      /* hide close btn during waiting/registering */
+      const closeBtn = document.getElementById('tf-close-btn');
+      if (closeBtn) closeBtn.classList.toggle('invisible', state === 'waiting' || state === 'registering');
+    }
+
+    /* 簽署號碼訊息  §P2 ② */
+    function signMessage() {
+      /* TODO: tronWeb.trx.sign(message) */
+      /* Mock flow */
+      setTransferState('waiting');
+    }
+
+    /* 複製彩金桶地址  §P2 ② */
+    function copyBucketAddress() {
+      navigator.clipboard.writeText(BUCKET_ADDRESS).then(() => {
+        const btn = document.getElementById('copy-addr-btn');
+        btn.classList.add('copied');
+        btn.innerHTML = `<i class="fa-solid fa-check"></i>${t('tf.copy.done')}`;
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `<i class="fa-regular fa-copy"></i>${t('tf.copy')}`;
+        }, 2000);
+      }).catch(() => {});
+    }
+
+    /* 直接轉帳  §P2 ② 觸發錢包轉帳 */
+    function startTransfer() {
+      /* TODO: tronWeb.transactionBuilder / sendToken */
+      setTransferState('waiting');
+      /* Mock: simulate waiting → registering → success */
+    }
+
+    /* 一鍵改買下一期（餘額下注＋預填號碼）§P2 ② 截止後異常 */
+    function rebetNextPeriod() {
+      closeTransferModal();
+      /* Load pending combo back into cart as balance bet */
+      _cart = _pendingCart.map(c => [...c]);
+      _method = 3;
+      renderCart();
+    }
+
+    /* ════════════════════════════════════════
+       P2: ③ BALANCE FLOW
+    ════════════════════════════════════════ */
+    function _flowBalance() {
+      openTxModal(); /* 下注交易狀態視窗 §1.4 */
+      /* TODO: call balance-bet contract function */
+      setTimeout(() => {
+        setTxSuccess('下注成功！注單已登記');
+        setTimeout(() => { closeTxModal(); _clearCartAfterBet(); openSuccessModal(); }, 1000);
+      }, 2000);
+    }
+
+    /* ════════════════════════════════════════
+       P2: SUCCESS MODAL  §P2 成功視窗
+    ════════════════════════════════════════ */
+    function openSuccessModal() {
+      /* 本次注單摘要 §P2 */
+      const groups = document.getElementById('success-groups');
+      groups.innerHTML = _pendingCart.map((combo, idx) => `
+        <div class="flex items-center gap-2">
+          <span class="text-xs w-4 flex-shrink-0" style="color:#4a3a28;">${idx + 1}</span>
+          <div class="flex gap-1 flex-wrap">${_makeBallsHtml(combo, 'cart-ball')}</div>
+        </div>`).join('');
+      const total = _pendingCart.length * PRICE_PER_BET;
+      document.getElementById('success-total').textContent = total + ' USDT';
+      _openModal('success-modal', 'su-backdrop', 'su-dialog');
+    }
+
+    function closeSuccessModal() { _closeModal('success-modal', 'su-backdrop', 'su-dialog'); }
+
+    /* 繼續下注  §P2 */
+    function continueBetting() {
+      closeSuccessModal();
+      _pendingCart = [];
+    }
+
+    function _clearCartAfterBet() {
+      _cart = [];
+      renderCart();
+    }
+
+    /* ════════════════════════════════════════
+       P2: COUNTDOWN TIMER  §1.3
+    ════════════════════════════════════════ */
+    setInterval(() => {
+      if (_betSecs > 0) _betSecs--;
+      const h = Math.floor(_betSecs / 3600);
+      const m = Math.floor((_betSecs % 3600) / 60);
+      const s = _betSecs % 60;
+      const el = document.getElementById('bet-countdown');
+      if (el) el.textContent =
+        String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+      /* 轉帳截止：≤5 分鐘顯示警告 §P2 */
+      const badge = document.getElementById('info-transfer-closed');
+      if (badge) badge.classList.toggle('hidden', _betSecs > 300);
+    }, 1000);
+
+    /* ════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════ */
+    document.getElementById('cart-limit-num').textContent = CART_LIMIT;
+    renderBalls();
+    renderCart();
+    renderSaved();
+  </script>
+
+</body>
+</html>

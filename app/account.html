@@ -1,0 +1,799 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>〔品牌名〕— 會員中心</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
+  <style>
+    :root {
+      --gold:        #c49a2a;
+      --gold-light:  #e8b84b;
+      --gold-bright: #f5d67a;
+      --gold-dim:    #7a5e18;
+      --text-main:   #f0e6d2;
+      --text-muted:  #8a7a62;
+      --text-dim:    #5a4a35;
+      --bg-dark:     #0a0703;
+      --bg-surface:  #0e0b07;
+      --bg-card:     #1c1610;
+      --border-gold: rgba(196,154,42,0.22);
+    }
+    body {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background-color: #0a0703;
+      color: #f0e6d2;
+      min-height: 100vh;
+    }
+    .bg-neutral-950 { background-color: #0a0703 !important; }
+    .bg-neutral-900 { background-color: #0e0b07 !important; }
+    .font-display   { font-family: 'Cinzel', serif !important; }
+
+    @keyframes btn-shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .btn-gold {
+      background: linear-gradient(105deg,#7a5010 0%,#c49a2a 22%,#f5d67a 46%,#e8b84b 54%,#c49a2a 78%,#7a5010 100%) !important;
+      background-size: 250% auto !important;
+      animation: btn-shimmer 4.5s linear infinite;
+      color: #0d0a04 !important;
+      font-weight: 900;
+      box-shadow: 0 4px 28px rgba(196,154,42,0.4), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.35) !important;
+      border: 1px solid rgba(245,214,122,0.3) !important;
+      transition: box-shadow 0.3s ease, transform 0.15s ease !important;
+    }
+    .btn-gold:hover  { box-shadow: 0 6px 40px rgba(196,154,42,0.6), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.35) !important; }
+    .btn-gold:active { transform: scale(0.96); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05) !important;
+      color: var(--text-muted) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+    }
+    .btn-ghost:hover  { background: rgba(255,255,255,0.1) !important; color: var(--text-main) !important; }
+    .btn-ghost:active { transform: scale(0.96); }
+
+    .gold-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(196,154,42,0.35) 25%, rgba(232,184,75,0.55) 50%, rgba(196,154,42,0.35) 75%, transparent 100%);
+    }
+    .header-bg {
+      background: linear-gradient(90deg,#0e0905 0%,#150e07 100%) !important;
+      border-bottom: 1px solid rgba(196,154,42,0.2) !important;
+    }
+    .menu-item { transition: color 0.15s ease, background 0.15s ease, padding-left 0.2s ease; border-left: 2px solid transparent; }
+    .menu-item:hover, .menu-item.active {
+      color: #c49a2a !important; background: rgba(196,154,42,0.06);
+      padding-left: 1.5rem; border-left-color: rgba(196,154,42,0.4);
+    }
+    #menu-panel { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.2,0,0,1); }
+    #menu-panel.open { transform: translateX(0); }
+    #menu-backdrop { opacity: 0; transition: opacity 0.25s ease; }
+    #menu-backdrop.open { opacity: 1; }
+
+    .modal-overlay { position: fixed; inset: 0; z-index: 60; }
+    .modal-backdrop-el { position: absolute; inset: 0; background: rgba(0,0,0,0.75); opacity: 0; transition: opacity 0.2s ease; }
+    .modal-backdrop-el.open { opacity: 1; }
+    .modal-dialog-el { opacity: 0; transform: scale(0.95) translateY(10px); transition: opacity 0.25s cubic-bezier(0.2,0,0,1), transform 0.25s cubic-bezier(0.2,0,0,1); }
+    .modal-dialog-el.open { opacity: 1; transform: scale(1) translateY(0); }
+    .modal-surface { background: linear-gradient(160deg, #1a1208, #100c07); border: 1px solid rgba(196,154,42,0.3); }
+
+    .thin-scroll::-webkit-scrollbar { width: 3px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(196,154,42,0.25); border-radius: 2px; }
+
+    /* ── TICKET DISPLAY BALLS ─────────────── */
+    .ticket-ball {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.625rem; height: 1.625rem; border-radius: 50%;
+      font-size: 0.6rem; font-weight: 900; font-family: 'DM Sans', sans-serif;
+      user-select: none; flex-shrink: 0;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.6);
+    }
+    .tb-hit  { background: radial-gradient(circle at 40% 35%, #f5d67a, #c49a2a); color: #0d0a04; }
+    .tb-miss { background: rgba(40,30,20,0.8); color: #3a2e1e; border: 1px solid rgba(196,154,42,0.15); }
+    .draw-ball {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.625rem; height: 1.625rem; border-radius: 50%;
+      font-size: 0.6rem; font-weight: 900;
+      background: radial-gradient(circle at 40% 35%, #f5d67a 0%, #c49a2a 50%, #7a5010 100%);
+      color: #0d0a04;
+      box-shadow: 0 2px 8px rgba(196,154,42,0.4), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.25);
+    }
+
+    /* ── P4 SPECIFIC ─────────────────────── */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center;
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(196,154,42,0.12);
+    }
+    .input-field {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(196,154,42,0.2);
+      color: #f0e6d2;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      width: 100%; outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+    }
+    .input-field:focus {
+      border-color: rgba(196,154,42,0.5);
+      box-shadow: 0 0 0 3px rgba(196,154,42,0.08);
+    }
+    .input-field::placeholder { color: #3a2e1e; }
+    .input-field[type=number]::-webkit-outer-spin-button,
+    .input-field[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .input-field[type=number] { -moz-appearance: textfield; }
+
+    .tab-bar {
+      display: flex; gap: 0.25rem; padding: 0.5rem;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid rgba(196,154,42,0.1);
+    }
+    .tab-btn {
+      flex: 1; padding: 0.5rem 0.75rem;
+      text-align: center; font-size: 0.8125rem; font-weight: 600;
+      border-radius: 0.5rem;
+      transition: background 0.15s ease, color 0.15s ease;
+      color: #5a4a35; border: 1px solid transparent; cursor: pointer;
+    }
+    .tab-btn.active {
+      background: rgba(196,154,42,0.15);
+      color: #c49a2a;
+      border-color: rgba(196,154,42,0.25);
+    }
+    .auth-step-box {
+      background: rgba(196,154,42,0.05);
+      border: 1px solid rgba(196,154,42,0.2);
+      border-radius: 0.75rem; padding: 0.875rem 1rem;
+    }
+    .qr-placeholder {
+      width: 108px; height: 108px; flex-shrink: 0;
+      background: #f0e6d2; border-radius: 0.5rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fund-badge {
+      display: inline-flex; align-items: center;
+      padding: 0.2rem 0.625rem; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+    }
+    .ft-deposit  { background: rgba(74,222,128,0.12);  color: #4ade80; }
+    .ft-withdraw { background: rgba(248,113,113,0.12); color: #f87171; }
+    .ft-prize    { background: rgba(196,154,42,0.15);  color: #e8b84b; }
+    .ft-auto     { background: rgba(96,165,250,0.12);  color: #60a5fa; }
+    .ft-cancel   { background: rgba(251,191,36,0.12);  color: #fbbf24; }
+    .ft-refund   { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .ft-abnormal { background: rgba(248,113,113,0.12); color: #f87171; }
+
+    .divide-gold > * + * { border-top: 1px solid rgba(196,154,42,0.1); }
+  </style>
+</head>
+<body class="bg-neutral-950">
+
+<!-- ═══ SHARED BANNERS  §G1 ════════════════ -->
+<div id="banner-network"   class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.15);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.2);"><span data-i18n="banner.network">請切換到 TRON 主網，目前連接到測試網或不支援的網路，所有交易功能已停用。</span></div>
+<div id="banner-paused"    class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(234,179,8,0.1);color:#fbbf24;border-bottom:1px solid rgba(234,179,8,0.15);"><span data-i18n="banner.paused">目前暫停接受新注，提領功能照常開放。</span></div>
+<div id="banner-blacklist" class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.12);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.18);"><span data-i18n="banner.blacklist">此地址目前無法下注，餘額可正常提領。</span></div>
+
+<!-- ═══ HEADER  §G1 ═════════════════════════ -->
+<header class="header-bg sticky top-0 z-40 w-full">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2 select-none">
+      <img src="image/539_logo.png" alt="39彩金桶" class="navbar-logo">
+      <span class="navbar-brand">〔品牌名〕</span>
+    </a>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden sm:flex items-center gap-0.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-2.5 py-1 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+      </div>
+      <button id="wallet-btn-visitor" onclick="connectWallet()"
+              class="btn-gold px-4 py-2 rounded-lg text-sm font-bold hover:scale-[1.02]">
+        <span data-i18n="wallet.connect">連接錢包</span>
+      </button>
+      <div id="wallet-btn-connected" class="hidden items-center gap-2.5 rounded-lg px-3 py-2 cursor-pointer"
+           style="background:rgba(196,154,42,0.08);border:1px solid rgba(196,154,42,0.25);transition:background 0.15s ease;"
+           onmouseover="this.style.background='rgba(196,154,42,0.14)'"
+           onmouseout="this.style.background='rgba(196,154,42,0.08)'">
+        <i class="fa-solid fa-circle text-xs flex-shrink-0" style="color:#4ade80;"></i>
+        <div class="text-right leading-tight">
+          <div id="header-address" class="text-xs font-mono" style="color:#7a6a50;">—</div>
+          <div id="header-balance" class="text-sm font-black tabular-nums" style="color:#e8b84b;">—&thinsp;<span class="text-xs font-normal" style="color:#7a6a50;">USDT</span></div>
+        </div>
+      </div>
+      <button onclick="toggleMenu()" aria-label="選單"
+              class="w-9 h-9 flex items-center justify-center rounded-lg"
+              style="color:#7a6a50;transition:color 0.15s ease,background 0.15s ease;"
+              onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'"
+              onmouseout="this.style.color='#7a6a50';this.style.background='transparent'">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SIDE MENU  §G1 ══════════════════════ -->
+<div id="menu-overlay" class="hidden fixed inset-0 z-50">
+  <div id="menu-backdrop" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+  <nav id="menu-panel" class="absolute right-0 top-0 bottom-0 w-64 flex flex-col"
+       style="background:linear-gradient(180deg,#130e08 0%,#0d0a06 100%);border-left:1px solid rgba(196,154,42,0.2);"
+       onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid rgba(196,154,42,0.15);">
+      <span class="font-display font-bold tracking-[0.15em] text-sm" style="color:#c49a2a;">MENU</span>
+      <button onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg" style="color:#5a4a35;transition:color 0.15s ease,background 0.15s ease;" onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35';this.style.background='transparent'">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <ul class="flex-1 py-3 overflow-y-auto thin-scroll">
+      <li><a href="index.html"          data-nav="home"      class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-house w-4 text-center"></i> <span data-i18n="nav.home">首頁</span></a></li>
+      <li><a href="tickets.html"   data-nav="tickets"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-ticket w-4 text-center"></i> <span data-i18n="nav.tickets">我的注單</span></a></li>
+      <li><a href="account.html"   data-nav="account"   class="menu-item active flex items-center gap-3 px-5 py-3 font-semibold" style="color:#e8b84b;"><i class="fa-solid fa-circle-user w-4 text-center" style="color:#c49a2a;"></i> <span data-i18n="nav.account">會員中心</span></a></li>
+      <li><a href="history.html"   data-nav="history"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-clock-rotate-left w-4 text-center"></i> <span data-i18n="nav.history">歷史紀錄</span></a></li>
+      <li><a href="affiliate.html" data-nav="affiliate" class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-handshake w-4 text-center"></i> <span data-i18n="nav.affiliate">推廣夥伴</span></a></li>
+      <li><a href="rules.html"     data-nav="rules"     class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-book-open w-4 text-center"></i> <span data-i18n="nav.rules">遊戲規則</span></a></li>
+      <li><a href="support.html"   data-nav="support"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-headset w-4 text-center"></i> <span data-i18n="nav.support">客服</span></a></li>
+    </ul>
+    <div class="p-4" style="border-top:1px solid rgba(196,154,42,0.15);">
+      <div class="flex justify-center gap-1.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-3 py-1.5 rounded" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-3 py-1.5 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-3 py-1.5 rounded" style="color:#5a4a35;">简</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT  §P4
+═══════════════════════════════════════ -->
+<main class="max-w-3xl mx-auto px-4 py-8 pb-20">
+
+  <div class="mb-6">
+    <h1 class="font-display font-bold text-2xl tracking-widest mb-1"
+        style="color:#e8b84b; letter-spacing:0.12em;" data-i18n="p4.page.title">會員中心</h1>
+    <div class="gold-sep"></div>
+  </div>
+
+  <!-- ── 1. ACCOUNT CARD  §P4 帳戶 ─────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-circle-user mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p4.account.title">帳戶資訊</span>
+    </div>
+    <!-- Wallet address -->
+    <div class="px-4 pt-4 pb-3">
+      <div class="text-xs mb-1.5" style="color:#5a4a35;" data-i18n="p4.wallet.label">錢包地址</div>
+      <div class="flex items-start gap-2">
+        <span class="font-mono text-sm break-all leading-snug" style="color:#c49a2a;">TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+        <button id="copy-addr-btn" onclick="copyAddress()"
+                class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg"
+                style="background:rgba(196,154,42,0.08);color:#7a6a50;border:1px solid rgba(196,154,42,0.15);transition:background 0.15s ease,color 0.15s ease;"
+                onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.18)'"
+                onmouseout="this.style.color='#7a6a50';this.style.background='rgba(196,154,42,0.08)'">
+          <i class="fa-solid fa-copy text-xs"></i>
+        </button>
+      </div>
+    </div>
+    <div class="gold-sep mx-4"></div>
+    <!-- Game balance -->
+    <div class="px-4 pt-3 pb-4">
+      <div class="text-xs mb-1.5" style="color:#5a4a35;" data-i18n="p4.balance.label">遊戲餘額</div>
+      <div class="flex items-baseline gap-2">
+        <span class="text-2xl font-black tabular-nums" style="color:#e8b84b;">23.50</span>
+        <span class="text-sm font-normal" style="color:#6a5a45;">USDT</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 2. WITHDRAW CARD  §P4 提領 ─────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-arrow-up-from-bracket mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p4.withdraw.title">提領</span>
+    </div>
+    <div class="p-4 space-y-3">
+      <label class="block text-xs" style="color:#5a4a35;" data-i18n="p4.withdraw.amount.label">提領金額（USDT）</label>
+      <div class="flex gap-2">
+        <input id="wd-amount" type="number" min="0" step="0.01" class="input-field" placeholder="0.00" />
+        <button onclick="fillWithdrawAll()"
+                class="btn-ghost flex-shrink-0 px-4 rounded-xl text-sm font-bold" data-i18n="p4.withdraw.all">全部</button>
+      </div>
+      <button onclick="doWithdraw()"
+              class="btn-gold w-full py-3 rounded-xl text-sm font-black" data-i18n="p4.withdraw.btn">提領</button>
+      <p class="text-xs" style="color:#4a3c2a;" data-i18n="p4.withdraw.fee.note">提領 Energy 由平台代付；USDT 手續費【待定】</p>
+    </div>
+  </section>
+
+  <!-- ── 3. DEPOSIT CARD  §P4 儲值 ─────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-arrow-down-to-bracket mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p4.deposit.title">儲值</span>
+    </div>
+    <!-- Tab buttons -->
+    <div class="tab-bar">
+      <button id="tab-authorize" onclick="switchDepositTab('authorize')"
+              class="tab-btn active" data-i18n="p4.deposit.tab.authorize">授權儲值</button>
+      <button id="tab-transfer"  onclick="switchDepositTab('transfer')"
+              class="tab-btn" data-i18n="p4.deposit.tab.transfer">轉帳儲值</button>
+    </div>
+
+    <!-- Panel: Authorize deposit -->
+    <div id="panel-authorize" class="p-4 space-y-3">
+      <label class="block text-xs" style="color:#5a4a35;" data-i18n="p4.deposit.amount.label">儲值金額（USDT）</label>
+      <input id="dep-amount" type="number" min="0" step="0.01" class="input-field" placeholder="0.00" />
+      <!-- Auth step: shown when current allowance is insufficient §P4 儲值 -->
+      <div class="auth-step-box">
+        <div class="flex items-start gap-3">
+          <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-black"
+               style="background:rgba(196,154,42,0.2);color:#c49a2a;">1</div>
+          <div>
+            <div class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p4.deposit.auth.step">授權 USDT</div>
+            <div class="text-xs mt-0.5" style="color:#5a4a35;" data-i18n="p4.deposit.auth.note">目前授權額度不足，請先完成授權再存入</div>
+          </div>
+        </div>
+      </div>
+      <button onclick="doDeposit()"
+              class="btn-gold w-full py-3 rounded-xl text-sm font-black" data-i18n="p4.deposit.btn">授權並存入</button>
+    </div>
+
+    <!-- Panel: Transfer deposit -->
+    <div id="panel-transfer" class="p-4 space-y-4 hidden">
+      <div>
+        <div class="text-xs mb-1.5" style="color:#5a4a35;" data-i18n="p4.deposit.transfer.addr.label">資金合約地址</div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-sm" style="color:#c49a2a;">TBD — 待部署</span>
+          <button onclick="copyFundAddr()"
+                  class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg"
+                  style="background:rgba(196,154,42,0.08);color:#7a6a50;border:1px solid rgba(196,154,42,0.15);transition:background 0.15s ease,color 0.15s ease;"
+                  onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.18)'"
+                  onmouseout="this.style.color='#7a6a50';this.style.background='rgba(196,154,42,0.08)'">
+            <i class="fa-solid fa-copy text-xs"></i>
+          </button>
+        </div>
+      </div>
+      <!-- QR Code placeholder §P4 儲值 -->
+      <div class="qr-placeholder">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:92px;height:92px;">
+          <rect x="5"  y="5"  width="30" height="30" fill="none" stroke="#0a0703" stroke-width="4"/>
+          <rect x="12" y="12" width="16" height="16" fill="#0a0703"/>
+          <rect x="65" y="5"  width="30" height="30" fill="none" stroke="#0a0703" stroke-width="4"/>
+          <rect x="72" y="12" width="16" height="16" fill="#0a0703"/>
+          <rect x="5"  y="65" width="30" height="30" fill="none" stroke="#0a0703" stroke-width="4"/>
+          <rect x="12" y="72" width="16" height="16" fill="#0a0703"/>
+          <rect x="42" y="5"  width="6" height="6" fill="#0a0703"/>
+          <rect x="50" y="5"  width="6" height="6" fill="#0a0703"/>
+          <rect x="42" y="13" width="6" height="6" fill="#0a0703"/>
+          <rect x="58" y="13" width="6" height="6" fill="#0a0703"/>
+          <rect x="42" y="21" width="6" height="6" fill="#0a0703"/>
+          <rect x="50" y="21" width="6" height="6" fill="#0a0703"/>
+          <rect x="5"  y="42" width="6" height="6" fill="#0a0703"/>
+          <rect x="13" y="42" width="6" height="6" fill="#0a0703"/>
+          <rect x="21" y="50" width="6" height="6" fill="#0a0703"/>
+          <rect x="5"  y="58" width="6" height="6" fill="#0a0703"/>
+          <rect x="42" y="42" width="6" height="6" fill="#0a0703"/>
+          <rect x="50" y="50" width="6" height="6" fill="#0a0703"/>
+          <rect x="58" y="42" width="6" height="6" fill="#0a0703"/>
+          <rect x="66" y="50" width="6" height="6" fill="#0a0703"/>
+          <rect x="74" y="42" width="6" height="6" fill="#0a0703"/>
+          <rect x="82" y="50" width="6" height="6" fill="#0a0703"/>
+          <rect x="42" y="66" width="6" height="6" fill="#0a0703"/>
+          <rect x="58" y="58" width="6" height="6" fill="#0a0703"/>
+          <rect x="66" y="66" width="6" height="6" fill="#0a0703"/>
+          <rect x="74" y="74" width="6" height="6" fill="#0a0703"/>
+          <rect x="50" y="74" width="6" height="6" fill="#0a0703"/>
+          <rect x="82" y="82" width="6" height="6" fill="#0a0703"/>
+          <rect x="58" y="82" width="6" height="6" fill="#0a0703"/>
+        </svg>
+      </div>
+      <!-- Warning §P4 儲值 -->
+      <div class="flex items-start gap-2.5 p-3 rounded-xl"
+           style="background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.15);">
+        <i class="fa-solid fa-triangle-exclamation text-xs mt-0.5 flex-shrink-0" style="color:#fbbf24;"></i>
+        <p class="text-xs" style="color:#a89070; line-height:1.65;" data-i18n="p4.deposit.transfer.warn">必須從目前連接的錢包轉出，交易所提幣無法入帳</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4. AUTHORIZATION MANAGEMENT  §P4 授權管理 ── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-shield-halved mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p4.auth.title">授權管理</span>
+    </div>
+    <div class="p-4">
+      <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="p4.auth.allowance.label">目前授權剩餘額度</div>
+      <div class="flex items-baseline gap-2 mb-4">
+        <span class="text-2xl font-black tabular-nums" style="color:#e8b84b;">5.00</span>
+        <span class="text-sm font-normal" style="color:#6a5a45;">USDT</span>
+      </div>
+      <div class="gold-sep mb-4"></div>
+      <!-- Revoke instructions (text only, no button) §P4 排除 -->
+      <div class="text-sm font-bold mb-2" style="color:#c49a2a;" data-i18n="p4.auth.revoke.title">如何撤銷授權</div>
+      <p class="text-xs leading-relaxed" style="color:#6a5a45; line-height:1.8;" data-i18n="p4.auth.revoke.note">如需撤銷對資金合約的 USDT 授權，請至 TronLink（或其他 TRON 錢包）→ DApp 管理 → 找到本平台資金合約地址 → 撤銷授權。已有遊戲餘額與獎金不受影響。</p>
+    </div>
+  </section>
+
+  <!-- ── 5. BET HISTORY  §P4 下注紀錄 ─────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-ticket mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p4.bets.title">下注紀錄</span>
+    </div>
+    <div class="divide-gold">
+
+      <!-- Entry 1: no match, period 115000355 -->
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-display text-xs font-bold tabular-nums" style="color:#c49a2a;">第 115000355 期</span>
+            <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(196,154,42,0.1);color:#7a6a50;">①授權</span>
+          </div>
+          <span class="text-xs tabular-nums flex-shrink-0" style="color:#4a3c2a;">20:30 · 2026-10-05</span>
+        </div>
+        <div class="flex items-center gap-1.5 mb-1.5">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p3.drawn.numbers">開獎號碼</span>
+          <div class="flex gap-1">
+            <span class="draw-ball">03</span><span class="draw-ball">11</span><span class="draw-ball">22</span><span class="draw-ball">28</span><span class="draw-ball">35</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 mb-2.5">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p4.bets.numbers">所選號碼</span>
+          <div class="flex gap-1">
+            <span class="ticket-ball tb-miss">05</span><span class="ticket-ball tb-miss">12</span><span class="ticket-ball tb-miss">18</span><span class="ticket-ball tb-miss">27</span><span class="ticket-ball tb-miss">33</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs" style="color:#4a3c2a;"><span data-i18n="p4.bets.pool">彩池</span>：2,456 USDT</span>
+          <span class="text-xs font-bold" style="color:#4a3c2a;" data-i18n="p3.match.0">未中獎</span>
+        </div>
+      </div>
+
+      <!-- Entry 2: 2 matches + edit log, period 115000354 -->
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-display text-xs font-bold tabular-nums" style="color:#c49a2a;">第 115000354 期</span>
+            <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(196,154,42,0.1);color:#7a6a50;">③餘額</span>
+          </div>
+          <span class="text-xs tabular-nums flex-shrink-0" style="color:#4a3c2a;">20:30 · 2026-10-04</span>
+        </div>
+        <div class="flex items-center gap-1.5 mb-1.5">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p3.drawn.numbers">開獎號碼</span>
+          <div class="flex gap-1">
+            <span class="draw-ball">07</span><span class="draw-ball">15</span><span class="draw-ball">20</span><span class="draw-ball">28</span><span class="draw-ball">36</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 mb-2.5">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p4.bets.numbers">所選號碼</span>
+          <div class="flex gap-1">
+            <span class="ticket-ball tb-hit">07</span><span class="ticket-ball tb-hit">15</span><span class="ticket-ball tb-miss">18</span><span class="ticket-ball tb-miss">29</span><span class="ticket-ball tb-miss">33</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs" style="color:#4a3c2a;"><span data-i18n="p4.bets.pool">彩池</span>：1,892 USDT</span>
+          <span class="text-xs font-bold" style="color:#4ade80;">中 2 碼 · +20 USDT</span>
+        </div>
+        <!-- Edit log §P4 改單紀錄 -->
+        <div class="flex items-start gap-1.5 p-2.5 rounded-lg" style="background:rgba(196,154,42,0.06);border:1px solid rgba(196,154,42,0.12);">
+          <i class="fa-solid fa-pen text-xs mt-0.5 flex-shrink-0" style="color:#7a6a50;"></i>
+          <p class="text-xs" style="color:#5a4a35;">
+            <span data-i18n="p4.bets.edit.log">改單紀錄</span>：<span class="font-mono">01 08 14 22 37 → 07 15 18 29 33</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Entry 3: 1 match, period 115000353 -->
+      <div class="p-4">
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-display text-xs font-bold tabular-nums" style="color:#c49a2a;">第 115000353 期</span>
+            <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(196,154,42,0.1);color:#7a6a50;">②轉帳</span>
+          </div>
+          <span class="text-xs tabular-nums flex-shrink-0" style="color:#4a3c2a;">20:30 · 2026-10-03</span>
+        </div>
+        <div class="flex items-center gap-1.5 mb-1.5">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p3.drawn.numbers">開獎號碼</span>
+          <div class="flex gap-1">
+            <span class="draw-ball">02</span><span class="draw-ball">07</span><span class="draw-ball">22</span><span class="draw-ball">31</span><span class="draw-ball">39</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 mb-2.5">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p4.bets.numbers">所選號碼</span>
+          <div class="flex gap-1">
+            <span class="ticket-ball tb-miss">03</span><span class="ticket-ball tb-miss">11</span><span class="ticket-ball tb-hit">22</span><span class="ticket-ball tb-miss">28</span><span class="ticket-ball tb-miss">35</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-xs" style="color:#4a3c2a;"><span data-i18n="p4.bets.pool">彩池</span>：987 USDT</span>
+          <span class="text-xs font-bold" style="color:#4ade80;">中 1 碼 · +10 USDT</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── 6. FUND HISTORY  §P4 資金紀錄 ─────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-clock-rotate-left mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p4.funds.title">資金紀錄</span>
+    </div>
+    <div class="divide-gold">
+
+      <!-- 獎金入帳 -->
+      <div class="flex items-center gap-3 px-4 py-3.5">
+        <span class="fund-badge ft-prize" data-i18n="p4.fund.prize">獎金入帳</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs tabular-nums" style="color:#5a4a35;">2026-10-04 20:35</div>
+          <div class="text-xs mt-0.5" style="color:#4a3c2a;">第 115000354 期</div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-sm font-bold tabular-nums" style="color:#4ade80;">+20.00 USDT</div>
+          <a href="#" target="_blank" rel="noopener" class="text-xs" style="color:#5ba3c9;" data-i18n="p4.funds.tx">鏈上交易</a>
+        </div>
+      </div>
+
+      <!-- 授權儲值 -->
+      <div class="flex items-center gap-3 px-4 py-3.5">
+        <span class="fund-badge ft-deposit" data-i18n="p4.fund.deposit">儲值</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs tabular-nums" style="color:#5a4a35;">2026-10-04 09:22</div>
+          <div class="text-xs mt-0.5" style="color:#4a3c2a;">—</div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-sm font-bold tabular-nums" style="color:#4ade80;">+50.00 USDT</div>
+          <a href="#" target="_blank" rel="noopener" class="text-xs" style="color:#5ba3c9;" data-i18n="p4.funds.tx">鏈上交易</a>
+        </div>
+      </div>
+
+      <!-- 取消退回 -->
+      <div class="flex items-center gap-3 px-4 py-3.5">
+        <span class="fund-badge ft-cancel" data-i18n="p4.fund.cancel">取消退回</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs tabular-nums" style="color:#5a4a35;">2026-10-03 18:10</div>
+          <div class="text-xs mt-0.5" style="color:#4a3c2a;">第 115000355 期</div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-sm font-bold tabular-nums" style="color:#4ade80;">+5.00 USDT</div>
+          <a href="#" target="_blank" rel="noopener" class="text-xs" style="color:#5ba3c9;" data-i18n="p4.funds.tx">鏈上交易</a>
+        </div>
+      </div>
+
+      <!-- 提領 -->
+      <div class="flex items-center gap-3 px-4 py-3.5">
+        <span class="fund-badge ft-withdraw" data-i18n="p4.fund.withdraw">提領</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs tabular-nums" style="color:#5a4a35;">2026-10-01 14:35</div>
+          <div class="text-xs mt-0.5" style="color:#4a3c2a;">—</div>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <div class="text-sm font-bold tabular-nums" style="color:#f87171;">-30.00 USDT</div>
+          <a href="#" target="_blank" rel="noopener" class="text-xs" style="color:#5ba3c9;" data-i18n="p4.funds.tx">鏈上交易</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════ -->
+<div id="site-footer"></div>
+<script src="footer.js"></script>
+
+<!-- ═══ TRANSACTION STATUS MODAL  §1.4 ═══ -->
+<div id="tx-modal" class="hidden modal-overlay" style="z-index:64;">
+  <div id="tx-backdrop" class="modal-backdrop-el"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="tx-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6"
+         style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+      <div id="tx-state-pending" class="text-center">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(196,154,42,0.1);border:1px solid rgba(196,154,42,0.25);"><i class="fa-solid fa-circle-notch fa-spin text-2xl" style="color:#c49a2a;"></i></div>
+        <div class="font-bold text-white mb-1" data-i18n="tx.pending.title">交易送出中</div>
+        <div class="text-sm mb-4" style="color:#7a6a50;" data-i18n="tx.pending.desc">等待區塊確認…</div>
+        <a id="tx-explorer-link" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs" style="color:#5ba3c9;"><i class="fa-solid fa-arrow-up-right-from-square"></i> <span data-i18n="tx.explorer">在區塊瀏覽器查看</span></a>
+      </div>
+      <div id="tx-state-success" class="hidden text-center">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.3);"><i class="fa-solid fa-check text-2xl" style="color:#4ade80;"></i></div>
+        <div class="font-bold text-white mb-1" data-i18n="tx.success.title">交易成功</div>
+        <div id="tx-success-msg" class="text-sm mb-5" style="color:#7a6a50;"></div>
+        <button onclick="closeTxModal()" class="btn-gold px-6 py-2 rounded-lg text-sm font-bold" data-i18n="tx.confirm">確認</button>
+      </div>
+      <div id="tx-state-failed" class="hidden text-center">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);"><i class="fa-solid fa-xmark text-2xl" style="color:#f87171;"></i></div>
+        <div class="font-bold text-white mb-1" data-i18n="tx.failed.title">交易失敗</div>
+        <div id="tx-error-msg" class="text-sm mb-5" style="color:#f87171;"></div>
+        <div class="flex gap-3 justify-center">
+          <button onclick="closeTxModal()" class="btn-ghost px-4 py-2 rounded-lg text-sm" data-i18n="tx.close">關閉</button>
+          <button id="tx-retry-btn" class="btn-gold px-4 py-2 rounded-lg text-sm font-bold" data-i18n="tx.retry">重試</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NO WALLET MODAL  §1.4 ════════════ -->
+<div id="no-wallet-modal" class="hidden modal-overlay" style="z-index:64;">
+  <div id="nw-backdrop" class="modal-backdrop-el" onclick="closeNoWalletModal()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="nw-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6" style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+      <div class="flex items-start justify-between mb-5">
+        <div><div class="font-bold text-white mb-1" data-i18n="nw.title">未偵測到錢包</div><div class="text-sm" style="color:#7a6a50;" data-i18n="nw.desc">請安裝支援 TRON 的錢包：</div></div>
+        <button onclick="closeNoWalletModal()" class="w-7 h-7 flex items-center justify-center rounded-lg flex-shrink-0 ml-3" style="color:#5a4a35;" onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35';this.style.background='transparent'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <a href="https://www.tronlink.org/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(196,154,42,0.06);border:1px solid rgba(196,154,42,0.15);">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(196,154,42,0.12);"><i class="fa-solid fa-link" style="color:#c49a2a;"></i></div>
+        <div class="flex-1 min-w-0"><div class="font-semibold text-sm text-white">TronLink</div><div class="text-xs" style="color:#5a4a35;" data-i18n="nw.tronlink.desc">瀏覽器擴充套件 / 手機 App</div></div>
+        <i class="fa-solid fa-arrow-up-right-from-square text-xs flex-shrink-0" style="color:#5a4a35;"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TRX WARNING MODAL  §1.4 ══════════ -->
+<div id="trx-warn-modal" class="hidden modal-overlay" style="z-index:64;">
+  <div class="modal-backdrop-el" onclick="closeTrxWarnModal()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="trx-warn-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6 text-center" style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+      <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><i class="fa-solid fa-bolt text-2xl" style="color:#fbbf24;"></i></div>
+      <div class="font-bold text-white mb-2" data-i18n="trx.title">TRX 餘額不足</div>
+      <p class="text-sm mb-1" style="color:#a89070;" data-i18n="trx.desc1">送出交易需要少量 TRX 支付網路費用（Bandwidth）。</p>
+      <p class="text-sm mb-5" style="color:#7a6a50;" data-i18n-html="trx.desc2">建議錢包保留至少 <span class="font-bold text-white">10 TRX</span>。</p>
+      <button onclick="closeTrxWarnModal()" class="btn-gold px-6 py-2 rounded-lg text-sm font-bold" data-i18n="trx.ok">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+  /* ════ SHARED HELPERS ════════════════════ */
+  let _connected = false;
+  let _connectedAddr = '';
+
+  function toggleMenu() {
+    const o = document.getElementById('menu-overlay');
+    const p = document.getElementById('menu-panel');
+    const b = document.getElementById('menu-backdrop');
+    if (o.classList.contains('hidden')) {
+      o.classList.remove('hidden');
+      requestAnimationFrame(() => { p.classList.add('open'); b.classList.add('open'); });
+    } else {
+      p.classList.remove('open'); b.classList.remove('open');
+      setTimeout(() => o.classList.add('hidden'), 260);
+    }
+  }
+
+  function maskAddress(addr) {
+    if (!addr || addr.length < 10) return addr;
+    return addr.slice(0, 5) + '…' + addr.slice(-4);
+  }
+
+  function setWalletConnected(address, balanceUsdt) {
+    _connected = true; _connectedAddr = address;
+    document.getElementById('wallet-btn-visitor').classList.add('hidden');
+    const el = document.getElementById('wallet-btn-connected');
+    el.classList.remove('hidden'); el.classList.add('flex');
+    document.getElementById('header-address').textContent = maskAddress(address);
+    document.getElementById('header-balance').innerHTML =
+      Number(balanceUsdt).toFixed(2) + ' <span class="text-xs font-normal" style="color:#7a6a50;">USDT</span>';
+  }
+
+  function connectWallet() {
+    if (typeof window.tronWeb === 'undefined') { openNoWalletModal(); return; }
+    /* TODO: TronWeb connect */
+  }
+
+  function _openModal(overlayId, backdropId, dialogId) {
+    const o = document.getElementById(overlayId);
+    const b = document.getElementById(backdropId);
+    const d = document.getElementById(dialogId);
+    o.classList.remove('hidden');
+    requestAnimationFrame(() => { b.classList.add('open'); d.classList.add('open'); });
+  }
+  function _closeModal(overlayId, backdropId, dialogId) {
+    const o = document.getElementById(overlayId);
+    const b = document.getElementById(backdropId);
+    const d = document.getElementById(dialogId);
+    b.classList.remove('open'); d.classList.remove('open');
+    setTimeout(() => o.classList.add('hidden'), 260);
+  }
+
+  /* TX modal §1.4 */
+  function openTxModal()  { _openModal('tx-modal', 'tx-backdrop', 'tx-dialog'); }
+  function closeTxModal() { _closeModal('tx-modal', 'tx-backdrop', 'tx-dialog'); }
+  function setTxPending(txHash) {
+    ['tx-state-pending','tx-state-success','tx-state-failed'].forEach(id =>
+      document.getElementById(id).classList.toggle('hidden', id !== 'tx-state-pending'));
+    const link = document.getElementById('tx-explorer-link');
+    link.href = txHash ? 'https://tronscan.org/#/transaction/' + txHash : '#';
+    link.classList.toggle('invisible', !txHash);
+    openTxModal();
+  }
+  function setTxSuccess(msg) {
+    ['tx-state-pending','tx-state-success','tx-state-failed'].forEach(id =>
+      document.getElementById(id).classList.toggle('hidden', id !== 'tx-state-success'));
+    document.getElementById('tx-success-msg').textContent = msg || '';
+  }
+  function setTxFailed(msg) {
+    ['tx-state-pending','tx-state-success','tx-state-failed'].forEach(id =>
+      document.getElementById(id).classList.toggle('hidden', id !== 'tx-state-failed'));
+    document.getElementById('tx-error-msg').textContent = msg || t('tx.try_later');
+    document.getElementById('tx-retry-btn').classList.add('hidden');
+  }
+
+  /* No-wallet modal §1.4 */
+  function openNoWalletModal()  { _openModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+  function closeNoWalletModal() { _closeModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+
+  /* TRX warn modal §1.4 */
+  function openTrxWarnModal()  { _openModal('trx-warn-modal', 'trx-warn-modal', 'trx-warn-dialog'); }
+  function closeTrxWarnModal() { _closeModal('trx-warn-modal', 'trx-warn-modal', 'trx-warn-dialog'); }
+
+  /* ════ P4: WITHDRAW §P4 提領 ═══════════ */
+  function fillWithdrawAll() {
+    document.getElementById('wd-amount').value = '23.50';
+  }
+
+  function doWithdraw() {
+    if (!_connected) { openNoWalletModal(); return; }
+    /* TODO: §P4 call fund contract withdraw */
+    setTxPending(null);
+    setTimeout(() => setTxSuccess(''), 1500);
+  }
+
+  /* ════ P4: DEPOSIT §P4 儲值 ═════════════ */
+  function switchDepositTab(tab) {
+    document.getElementById('tab-authorize').classList.toggle('active', tab === 'authorize');
+    document.getElementById('tab-transfer').classList.toggle('active', tab === 'transfer');
+    document.getElementById('panel-authorize').classList.toggle('hidden', tab !== 'authorize');
+    document.getElementById('panel-transfer').classList.toggle('hidden', tab !== 'transfer');
+  }
+
+  function doDeposit() {
+    if (!_connected) { openNoWalletModal(); return; }
+    /* TODO: §P4 authorize (if needed) then deposit */
+    setTxPending(null);
+    setTimeout(() => setTxSuccess(''), 1500);
+  }
+
+  /* ════ COPY HELPERS ═════════════════════ */
+  function copyAddress() {
+    const addr = 'TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(addr).then(() => {
+      const btn = document.getElementById('copy-addr-btn');
+      const icon = btn.querySelector('i');
+      icon.className = 'fa-solid fa-check text-xs';
+      btn.style.color = '#4ade80';
+      setTimeout(() => { icon.className = 'fa-solid fa-copy text-xs'; btn.style.color = ''; }, 1800);
+    });
+  }
+
+  function copyFundAddr() {
+    /* TODO: real fund contract address */
+  }
+
+  /* ════ INIT ═════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', applyLang);
+</script>
+</body>
+</html>

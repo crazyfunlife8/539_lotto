@@ -1,0 +1,40 @@
+# Claude Code 內部狀態
+.claude/
+
+# 本地草稿
+homepage.html
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# 編輯器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 環境變數與機密
+.env
+.env.*
+*.pem
+*.key
+
+# Node（未來後端開發用）
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+build/
+
+# 日誌
+*.log
+logs/

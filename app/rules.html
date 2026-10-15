@@ -1,0 +1,377 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>〔品牌名〕— 遊戲規則</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
+  <style>
+    :root {
+      --gold:        #c49a2a;
+      --gold-light:  #e8b84b;
+      --gold-bright: #f5d67a;
+      --text-main:   #f0e6d2;
+      --text-muted:  #8a7a62;
+      --text-dim:    #5a4a35;
+      --bg-dark:     #0a0703;
+      --bg-card:     #1c1610;
+      --border-gold: rgba(196,154,42,0.22);
+    }
+    body {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background-color: #0a0703;
+      color: #f0e6d2;
+      min-height: 100vh;
+    }
+    .bg-neutral-950 { background-color: #0a0703 !important; }
+    .font-display   { font-family: 'Cinzel', serif !important; }
+
+    @keyframes btn-shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .btn-gold {
+      background: linear-gradient(105deg,#7a5010 0%,#c49a2a 22%,#f5d67a 46%,#e8b84b 54%,#c49a2a 78%,#7a5010 100%) !important;
+      background-size: 250% auto !important;
+      animation: btn-shimmer 4.5s linear infinite;
+      color: #0d0a04 !important;
+      font-weight: 900;
+      box-shadow: 0 4px 28px rgba(196,154,42,0.4), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.35) !important;
+      border: 1px solid rgba(245,214,122,0.3) !important;
+      transition: box-shadow 0.3s ease, transform 0.15s ease !important;
+    }
+    .btn-gold:active { transform: scale(0.96); }
+    .gold-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(196,154,42,0.35) 25%, rgba(232,184,75,0.55) 50%, rgba(196,154,42,0.35) 75%, transparent 100%);
+    }
+    .header-bg {
+      background: linear-gradient(90deg,#0e0905 0%,#150e07 100%) !important;
+      border-bottom: 1px solid rgba(196,154,42,0.2) !important;
+    }
+    .menu-item { transition: color 0.15s ease, background 0.15s ease, padding-left 0.2s ease; border-left: 2px solid transparent; }
+    .menu-item:hover, .menu-item.active {
+      color: #c49a2a !important; background: rgba(196,154,42,0.06);
+      padding-left: 1.5rem; border-left-color: rgba(196,154,42,0.4);
+    }
+    #menu-panel { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.2,0,0,1); }
+    #menu-panel.open { transform: translateX(0); }
+    #menu-backdrop { opacity: 0; transition: opacity 0.25s ease; }
+    #menu-backdrop.open { opacity: 1; }
+    .thin-scroll::-webkit-scrollbar { width: 3px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(196,154,42,0.25); border-radius: 2px; }
+
+    /* ── P7 SPECIFIC ─────────────────────── */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center;
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(196,154,42,0.12);
+    }
+    .rule-text {
+      font-size: 0.875rem;
+      color: #c0ad8a;
+      line-height: 1.7;
+      padding: 0.75rem 1rem;
+    }
+    .rule-text + .rule-text { border-top: 1px solid rgba(196,154,42,0.08); }
+    .tbd-badge {
+      display: inline-block;
+      font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      background: rgba(251,191,36,0.12); color: #fbbf24;
+      vertical-align: middle; margin-left: 0.35rem;
+    }
+    /* Prize table */
+    .prize-table { width: 100%; border-collapse: collapse; }
+    .prize-table th {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; padding: 0.5rem 1rem;
+      color: #5a4a35; background: rgba(0,0,0,0.2);
+      text-align: left;
+    }
+    .prize-table td {
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem; color: #c0ad8a;
+      border-top: 1px solid rgba(196,154,42,0.08);
+    }
+    .prize-table tr td:first-child { font-weight: 700; color: #e8b84b; }
+    .prize-table tr.jackpot-row td { color: #f5d67a; }
+    /* Contract address row */
+    .contract-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 0.75rem; padding: 0.75rem 1rem;
+    }
+    .contract-row + .contract-row { border-top: 1px solid rgba(196,154,42,0.08); }
+  </style>
+</head>
+<body class="bg-neutral-950">
+
+<!-- ═══ SHARED BANNERS ════════════════════ -->
+<div id="banner-network"   class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.15);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.2);"><span data-i18n="banner.network"></span></div>
+<div id="banner-paused"    class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(234,179,8,0.1);color:#fbbf24;border-bottom:1px solid rgba(234,179,8,0.15);"><span data-i18n="banner.paused"></span></div>
+<div id="banner-blacklist" class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.12);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.18);"><span data-i18n="banner.blacklist"></span></div>
+
+<!-- ═══ HEADER ══════════════════════════════ -->
+<header class="header-bg sticky top-0 z-40 w-full">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2 select-none">
+      <img src="image/539_logo.png" alt="39彩金桶" class="navbar-logo">
+      <span class="navbar-brand">〔品牌名〕</span>
+    </a>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden sm:flex items-center gap-0.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-2.5 py-1 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+      </div>
+      <button id="wallet-btn-visitor" onclick="connectWallet()"
+              class="btn-gold px-4 py-2 rounded-lg text-sm font-bold">
+        <span data-i18n="wallet.connect">連接錢包</span>
+      </button>
+      <div id="wallet-btn-connected" class="hidden items-center gap-2.5 rounded-lg px-3 py-2 cursor-pointer"
+           style="background:rgba(196,154,42,0.08);border:1px solid rgba(196,154,42,0.25);">
+        <i class="fa-solid fa-circle text-xs" style="color:#4ade80;"></i>
+        <div id="header-address" class="text-xs font-mono" style="color:#7a6a50;">—</div>
+      </div>
+      <button onclick="toggleMenu()" aria-label="選單"
+              class="w-9 h-9 flex items-center justify-center rounded-lg"
+              style="color:#7a6a50;transition:color 0.15s ease,background 0.15s ease;"
+              onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'"
+              onmouseout="this.style.color='#7a6a50';this.style.background='transparent'">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SIDE MENU ══════════════════════════ -->
+<div id="menu-overlay" class="hidden fixed inset-0 z-50">
+  <div id="menu-backdrop" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+  <nav id="menu-panel" class="absolute right-0 top-0 bottom-0 w-64 flex flex-col"
+       style="background:linear-gradient(180deg,#130e08 0%,#0d0a06 100%);border-left:1px solid rgba(196,154,42,0.2);"
+       onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid rgba(196,154,42,0.15);">
+      <span class="font-display font-bold tracking-[0.15em] text-sm" style="color:#c49a2a;">MENU</span>
+      <button onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg" style="color:#5a4a35;" onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35';this.style.background='transparent'">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <ul class="flex-1 py-3 overflow-y-auto thin-scroll">
+      <li><a href="index.html"     data-nav="home"      class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-house w-4 text-center"></i> <span data-i18n="nav.home">首頁</span></a></li>
+      <li><a href="tickets.html"   data-nav="tickets"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-ticket w-4 text-center"></i> <span data-i18n="nav.tickets">我的注單</span></a></li>
+      <li><a href="account.html"   data-nav="account"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-circle-user w-4 text-center"></i> <span data-i18n="nav.account">會員中心</span></a></li>
+      <li><a href="history.html"   data-nav="history"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-clock-rotate-left w-4 text-center"></i> <span data-i18n="nav.history">歷史紀錄</span></a></li>
+      <li><a href="affiliate.html" data-nav="affiliate" class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-handshake w-4 text-center"></i> <span data-i18n="nav.affiliate">推廣夥伴</span></a></li>
+      <li><a href="rules.html"     data-nav="rules"     class="menu-item active flex items-center gap-3 px-5 py-3 font-semibold" style="color:#e8b84b;"><i class="fa-solid fa-book-open w-4 text-center" style="color:#c49a2a;"></i> <span data-i18n="nav.rules">遊戲規則</span></a></li>
+      <li><a href="support.html"   data-nav="support"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-headset w-4 text-center"></i> <span data-i18n="nav.support">客服</span></a></li>
+    </ul>
+    <div class="p-4" style="border-top:1px solid rgba(196,154,42,0.15);">
+      <div class="flex justify-center gap-1.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-3 py-1.5 rounded" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-3 py-1.5 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-3 py-1.5 rounded" style="color:#5a4a35;">简</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT  §P7
+═══════════════════════════════════════ -->
+<main class="max-w-3xl mx-auto px-4 py-8 pb-20">
+
+  <div class="mb-6">
+    <h1 class="font-display font-bold text-2xl tracking-widest mb-1"
+        style="color:#e8b84b; letter-spacing:0.12em;" data-i18n="p7.page.title">遊戲規則</h1>
+    <div class="gold-sep"></div>
+  </div>
+
+  <!-- ── 1. 玩法說明  §P7 ─────────────────── -->
+  <section id="how" class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-dice-five mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.how.title">玩法說明</span>
+    </div>
+    <div class="rule-text" data-i18n="p7.how.desc">從 1–39 號球中選 5 個號碼，截止前付款即成立注單。每日 20:30 採用今彩 539 官方開獎結果，由預言機上鏈後自動結算。中 1 碼以上即可獲獎，中 4 碼以上可爭奪頭獎彩池。</div>
+    <div class="rule-text flex items-center gap-3" style="border-top:1px solid rgba(196,154,42,0.08);">
+      <span style="color:#5a4a35;" data-i18n="p7.price.label">每注金額</span>
+      <span class="font-bold tabular-nums" style="color:#e8b84b;" id="bet-price">【待定】<span class="text-sm font-normal ml-1" style="color:#6a5a45;">USDT</span></span>
+    </div>
+  </section>
+
+  <!-- ── 2. 獎項表  §P7 ───────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-trophy mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.prize.table.title">獎項表</span>
+    </div>
+    <table class="prize-table">
+      <thead>
+        <tr>
+          <th data-i18n="p7.prize.col.match">中碼數</th>
+          <th data-i18n="p7.prize.col.type">獎項類型</th>
+          <th data-i18n="p7.prize.col.amount">獎金</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="jackpot-row">
+          <td data-i18n="p7.prize.match5">中 5 碼</td>
+          <td data-i18n="p7.prize.type.jackpot">頭獎（彩池 80%）</td>
+          <td data-i18n="p7.prize.amount.5">彩池 80%<span class="tbd-badge">待定</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="p7.prize.match4">中 4 碼</td>
+          <td data-i18n="p7.prize.type.4">固定獎 / 保底獎</td>
+          <td data-i18n="p7.prize.amount.4"><span class="tbd-badge">待定</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="p7.prize.match3">中 3 碼</td>
+          <td data-i18n="p7.prize.type.fixed">固定獎</td>
+          <td data-i18n="p7.prize.amount.3"><span class="tbd-badge">待定</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="p7.prize.match2">中 2 碼</td>
+          <td data-i18n="p7.prize.type.fixed">固定獎</td>
+          <td data-i18n="p7.prize.amount.2"><span class="tbd-badge">待定</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="p7.prize.match1">中 1 碼</td>
+          <td data-i18n="p7.prize.type.fixed">固定獎</td>
+          <td data-i18n="p7.prize.amount.1"><span class="tbd-badge">待定</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── 3. 獎項規則  §P7 ─────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-scale-balanced mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.rules.title">獎項規則</span>
+    </div>
+    <div class="rule-text" data-i18n="p7.rules.highest">每張注單只領取最高獎項，不重複計算。</div>
+    <div class="rule-text" data-i18n="p7.rules.4code">同一期有人中 5 碼時，中 4 碼的注單改領「保底獎」，金額不低於中 3 碼獎金。</div>
+    <div class="rule-text" data-i18n="p7.rules.jackpot.dist">頭獎由彩池 80% 派出；剩餘 20% 留存至下一期繼續累積。</div>
+    <div class="rule-text" data-i18n="p7.rules.nojackpot">無人中頭獎時的處理方式：【待定】</div>
+    <div class="rule-text" data-i18n="p7.rules.guaranteed">中 1–3 碼固定獎金及 4 碼保底獎由平台保證支付，不從彩池扣除。</div>
+  </section>
+
+  <!-- ── 4. 時間規則  §P7 ─────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-regular fa-clock mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.time.title">時間規則</span>
+    </div>
+    <div class="rule-text" data-i18n="p7.time.deadline">截止時間：每日 20:20（台灣時間）。授權下注與餘額下注可在此前完成。</div>
+    <div class="rule-text" data-i18n="p7.time.transfer">轉帳下注截止時間：每日 20:15，比一般截止早 5 分鐘。</div>
+    <div class="rule-text" data-i18n="p7.time.draw">開獎時間：每日 20:30，採用今彩 539 官方結果，由預言機上鏈。</div>
+    <div class="rule-text" data-i18n="p7.time.edit">截止前可改號碼或取消注單；截止後不可更改。取消金額退回遊戲餘額。</div>
+  </section>
+
+  <!-- ── 5. 開獎異常處理  §P7 ─────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-triangle-exclamation mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.abnormal.title">開獎異常處理</span>
+    </div>
+    <div class="rule-text" data-i18n="p7.abnormal.refund">若官方開獎後 72 小時內未完成鏈上結算，本期所有注單全額退款至遊戲餘額。</div>
+  </section>
+
+  <!-- ── 6. 下注方式  §P7 ─────────────────── -->
+  <section id="bet-method" class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-list-check mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.method.title">下注方式</span>
+    </div>
+    <div class="rule-text" data-i18n="p7.method.desc">提供三種下注方式：① 授權下注、② 轉帳下注、③ 餘額下注，玩家依需求自由選擇。</div>
+    <div class="rule-text" data-i18n="p7.method.fee">手續費說明：① 授權下注與 ③ 餘額下注的 Energy 費用由平台代付；② 轉帳下注的轉帳手續費（約 6.4 TRX）由玩家自付。所有方式皆需少量 TRX 支付 Bandwidth。</div>
+  </section>
+
+  <!-- ── 7. 風險揭露  §P7 ─────────────────── -->
+  <section id="risk" class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-shield-exclamation mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.risk.title">風險揭露</span>
+    </div>
+    <div class="rule-text" data-i18n="p7.risk.usdt">USDT 發行方（Tether）保留凍結任何地址的權利，包含本遊戲的合約地址。如發生凍結，相關資金將無法移動。</div>
+    <div class="rule-text" data-i18n="p7.risk.irreversible">區塊鏈交易一旦確認即不可逆，請在交易前仔細確認金額與地址。</div>
+    <div class="rule-text" data-i18n="p7.risk.restricted">受限地區用戶（具體清單由合規團隊提供）不得使用本服務。請遵守所在地區法律法規。</div>
+  </section>
+
+  <!-- ── 8. 合約資訊  §P7 ─────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-file-contract mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p7.contracts.title">合約資訊</span>
+    </div>
+    <div class="contract-row">
+      <div>
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="footer.fund">資金合約</div>
+        <div class="font-mono text-xs" style="color:#7a6a50;">TBD — 待部署</div>
+      </div>
+      <a href="#" class="text-xs flex-shrink-0 mt-1" style="color:#5a4a35;text-decoration:underline;" data-i18n="p7.contracts.explorer">區塊瀏覽器</a>
+    </div>
+    <div class="contract-row">
+      <div>
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="footer.539">539 彩金桶合約</div>
+        <div class="font-mono text-xs" style="color:#7a6a50;">TBD — 待部署</div>
+      </div>
+      <a href="#" class="text-xs flex-shrink-0 mt-1" style="color:#5a4a35;text-decoration:underline;" data-i18n="p7.contracts.explorer">區塊瀏覽器</a>
+    </div>
+    <div class="contract-row">
+      <div>
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="footer.oracle">預言機合約</div>
+        <div class="font-mono text-xs" style="color:#7a6a50;">TBD — 待部署</div>
+      </div>
+      <a href="#" class="text-xs flex-shrink-0 mt-1" style="color:#5a4a35;text-decoration:underline;" data-i18n="p7.contracts.explorer">區塊瀏覽器</a>
+    </div>
+    <div class="contract-row" style="border-top:1px solid rgba(196,154,42,0.08);">
+      <div>
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="footer.audit">審計報告</div>
+        <div class="text-xs" style="color:#7a6a50;" data-i18n="p7.contracts.audit.tbd">待審計完成後公布</div>
+      </div>
+      <a href="#" class="text-xs flex-shrink-0 mt-1" style="color:#5a4a35;text-decoration:underline;" data-i18n="p7.contracts.audit.link">查看報告</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════ -->
+<div id="site-footer"></div>
+<script src="footer.js"></script>
+
+<script>
+function toggleMenu() {
+  const overlay  = document.getElementById('menu-overlay');
+  const backdrop = document.getElementById('menu-backdrop');
+  const panel    = document.getElementById('menu-panel');
+  const isOpen   = panel.classList.contains('open');
+  if (isOpen) {
+    backdrop.classList.remove('open');
+    panel.classList.remove('open');
+    setTimeout(() => { overlay.classList.add('hidden'); }, 260);
+  } else {
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+    });
+  }
+}
+function connectWallet() { /* TODO */ }
+</script>
+</body>
+</html>

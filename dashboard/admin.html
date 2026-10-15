@@ -1,0 +1,2437 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>後台管理系統 — 39彩金桶</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+        <img src="image/539_logo.png" alt="39彩金桶" class="login-logo-icon">
+      <div style="font-size:18px; font-weight:800; color:var(--text-main);">39彩金桶</div>
+      <div style="font-size:12px; color:var(--text-faint); margin-top:4px;">後台管理系統</div>
+    </div>
+    <form onsubmit="doLogin(event)">
+      <div class="form-group">
+        <label class="form-label">帳號</label>
+        <input class="form-input" type="text" id="login-user" placeholder="輸入帳號" value="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">密碼</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="輸入密碼" value="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">二次驗證碼（2FA）</label>
+        <input class="form-input" type="text" placeholder="6 位數字" maxlength="6" value="123456">
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center; padding:11px;">
+        <i class="fa-solid fa-right-to-bracket"></i> 登入
+      </button>
+    </form>
+    <div style="margin-top:16px; text-align:center; font-size:12px; color:var(--text-faint);">
+      忘記密碼請聯絡管理員
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ADMIN APP ═══════════════ -->
+<div id="app" style="display:none;">
+
+  <!-- ── Sidebar ── -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <img src="image/539_logo.png" alt="39彩金桶" style="width:44px; height:44px; object-fit:contain; flex-shrink:0;">
+      <div>
+        <div class="sidebar-logo-text">39彩金桶</div>
+        <div class="sidebar-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; padding-bottom:8px;">
+      <div class="sidebar-section">主要</div>
+      <a class="nav-item active" data-page="a1" onclick="gotoPage('a1')">
+        <span class="icon"><i class="fa-solid fa-gauge-high"></i></span>
+        <span>總覽</span>
+        <span class="badge" id="sidebar-alert-count" style="display:none;">3</span>
+      </a>
+
+      <div class="sidebar-section">管理</div>
+      <a class="nav-item" data-page="a2" onclick="gotoPage('a2')">
+        <span class="icon"><i class="fa-solid fa-pen-to-square"></i></span>
+        <span>內容管理</span>
+      </a>
+      <a class="nav-item" data-page="a3" onclick="gotoPage('a3')">
+        <span class="icon"><i class="fa-solid fa-calendar-days"></i></span>
+        <span>期別管理</span>
+      </a>
+      <a class="nav-item" data-page="a4" onclick="gotoPage('a4')">
+        <span class="icon"><i class="fa-solid fa-file-csv"></i></span>
+        <span>收單報表</span>
+      </a>
+      <a class="nav-item" data-page="a5" onclick="gotoPage('a5')">
+        <span class="icon"><i class="fa-solid fa-money-bill-transfer"></i></span>
+        <span>入帳監控</span>
+      </a>
+      <a class="nav-item" data-page="a6" onclick="gotoPage('a6')">
+        <span class="icon"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+        <span>無主款認領</span>
+      </a>
+      <a class="nav-item" data-page="a7" onclick="gotoPage('a7')">
+        <span class="icon"><i class="fa-solid fa-magnifying-glass-dollar"></i></span>
+        <span>玩家查詢</span>
+      </a>
+      <a class="nav-item" data-page="a8" onclick="gotoPage('a8')">
+        <span class="icon"><i class="fa-solid fa-handshake"></i></span>
+        <span>推廣夥伴</span>
+      </a>
+
+      <div class="sidebar-section">財務 & 系統</div>
+      <a class="nav-item" data-page="a9" onclick="gotoPage('a9')">
+        <span class="icon"><i class="fa-solid fa-wallet"></i></span>
+        <span>財務</span>
+      </a>
+      <a class="nav-item" data-page="a10" onclick="gotoPage('a10')">
+        <span class="icon"><i class="fa-solid fa-sliders"></i></span>
+        <span>合約參數</span>
+      </a>
+      <a class="nav-item" data-page="a11" onclick="gotoPage('a11')">
+        <span class="icon"><i class="fa-solid fa-bolt"></i></span>
+        <span>Energy 監控</span>
+      </a>
+      <a class="nav-item" data-page="a12" onclick="gotoPage('a12')">
+        <span class="icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+        <span>告警中心</span>
+        <span class="badge" id="sidebar-alert-badge">4</span>
+      </a>
+      <a class="nav-item" data-page="a13" onclick="gotoPage('a13')">
+        <span class="icon"><i class="fa-solid fa-clipboard-list"></i></span>
+        <span>操作紀錄</span>
+      </a>
+    </div>
+
+    <div class="sidebar-bottom">
+      <a class="nav-item" onclick="doLogout()">
+        <span class="icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+        <span>登出</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <div id="main">
+    <!-- Topbar -->
+    <div id="topbar">
+      <div class="topbar-title" id="topbar-title">總覽</div>
+      <div class="topbar-spacer"></div>
+      <div style="font-size:12px; color:var(--text-faint); margin-right:8px;">
+        <i class="fa-solid fa-clock"></i>
+        <span id="topbar-time">--:--:--</span>
+        <span style="margin-left:4px; color:var(--text-faint);">台灣時間</span>
+      </div>
+      <div class="topbar-user" onclick="alert('帳號設定（待實作）')">
+        <div class="avatar">A</div>
+        <span>管理員</span>
+        <span class="role-badge">管理員</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:10px; color:var(--text-faint);"></i>
+      </div>
+    </div>
+
+    <!-- Page content -->
+    <div id="page-content">
+
+      <!-- ╔══ A1 總覽 ══╗ -->
+      <div class="page-section active" id="page-a1">
+
+        <!-- 告警橫幅 -->
+        <div id="alert-banner" style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.20); border-radius:10px; padding:12px 16px; display:none; align-items:center; gap:12px; margin-bottom:20px;">
+          <i class="fa-solid fa-triangle-exclamation" style="color:var(--red); font-size:15px;"></i>
+          <span style="color:var(--text-main); font-size:13px; flex:1;"><strong>3 個未處理告警</strong>需要關注</span>
+          <button class="btn btn-outline btn-sm" onclick="gotoPage('a12')">查看告警</button>
+        </div>
+
+        <!-- 期別狀態卡 -->
+        <h2 style="font-size:13px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px;">本期狀態</h2>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;">
+
+          <div class="card" style="border-color:rgba(34,197,94,0.20);">
+            <div class="card-title">今彩 539</div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+              <span class="badge-status badge-accepting">
+                <span class="dot dot-green"></span> 收單中
+              </span>
+            </div>
+            <div style="font-size:13px; color:var(--text-muted);">期號 <strong style="color:var(--text-main);">115000248</strong></div>
+            <div style="margin-top:8px; font-size:12px; color:var(--text-faint);">截止 <span style="color:var(--orange); font-weight:700;" id="a1-countdown">02:13:44</span></div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="font-size:12px; color:var(--text-muted);">本期下注額</div>
+            <div style="font-size:20px; font-weight:700; font-variant-numeric:tabular-nums;">12,480 <span style="font-size:13px; color:var(--text-muted);">USDT</span></div>
+            <div style="margin-top:8px;">
+              <button class="btn btn-outline btn-sm" onclick="gotoPage('a3')">管理期別</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">頭獎彩池（今彩 539）</div>
+            <div class="card-value">128,450</div>
+            <div class="card-sub">USDT</div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="display:flex; gap:16px;">
+              <div>
+                <div style="font-size:11px; color:var(--text-faint);">本期下注筆數</div>
+                <div style="font-size:16px; font-weight:700; font-variant-numeric:tabular-nums; margin-top:2px;">312</div>
+              </div>
+              <div>
+                <div style="font-size:11px; color:var(--text-faint);">本期提撥預估</div>
+                <div style="font-size:16px; font-weight:700; color:var(--gold); font-variant-numeric:tabular-nums; margin-top:2px;">+748</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="a1-finance-card">
+            <div class="card-title">平台財務</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; color:var(--text-muted);">平台戶餘額</span>
+                <span style="font-size:15px; font-weight:700; color:var(--green); font-variant-numeric:tabular-nums;">85,000 USDT</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; color:var(--text-muted);">待付固定獎金</span>
+                <span style="font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text-main);">12,340 USDT</span>
+              </div>
+              <div style="height:1px; background:var(--border);"></div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12px; color:var(--text-muted);">安全緩衝</span>
+                <span style="font-size:15px; font-weight:700; color:var(--green);">×6.9</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 系統健康 -->
+        <h2 style="font-size:13px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px;">系統狀態</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;">
+
+          <div class="card">
+            <div class="card-title">服務狀態</div>
+            <div class="health-row">
+              <span class="dot dot-green"></span>
+              <div style="flex:1;">
+                <div class="health-label">入帳服務</div>
+                <div class="health-sub">上次心跳：3 分鐘前</div>
+              </div>
+              <span style="font-size:11px; color:var(--green);">正常</span>
+            </div>
+            <div class="health-row">
+              <span class="dot dot-green"></span>
+              <div style="flex:1;">
+                <div class="health-label">預言機 #1 (主)</div>
+                <div class="health-sub">上次回報：08:12 台灣時間</div>
+              </div>
+              <span style="font-size:11px; color:var(--green);">正常</span>
+            </div>
+            <div class="health-row">
+              <span class="dot dot-green"></span>
+              <div style="flex:1;">
+                <div class="health-label">預言機 #2 (備)</div>
+                <div class="health-sub">上次回報：08:12 台灣時間</div>
+              </div>
+              <span style="font-size:11px; color:var(--green);">正常</span>
+            </div>
+            <div class="health-row">
+              <span class="dot dot-orange"></span>
+              <div style="flex:1;">
+                <div class="health-label">預言機 #3 (備)</div>
+                <div class="health-sub">上次回報：2 小時前</div>
+              </div>
+              <span style="font-size:11px; color:var(--orange);">延遲</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Energy 存量</div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:6px;">
+              <div class="card-value" style="font-size:22px;">2,840,000</div>
+              <div style="font-size:12px; color:var(--text-muted);">剩餘 <strong style="color:var(--text-main);">12</strong> 天</div>
+            </div>
+            <div class="progress-bg">
+              <div class="progress-fill" style="width:65%; background:linear-gradient(90deg, var(--gold), var(--green));"></div>
+            </div>
+            <div style="margin-top:10px; font-size:12px; color:var(--text-faint);">每日消耗 ≈ 230,000 · 告警門檻：500,000</div>
+            <div style="margin-top:10px;">
+              <button class="btn btn-outline btn-sm" onclick="gotoPage('a11')">詳細監控</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 未處理告警 -->
+        <h2 style="font-size:13px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px;">未處理告警</h2>
+        <div class="card">
+          <div class="alert-pill">
+            <i class="fa-solid fa-circle-exclamation alert-icon" style="color:var(--red);"></i>
+            <span class="alert-label"><strong>預言機分歧</strong>：#3 預言機超過 2 小時未回報</span>
+            <span class="alert-time">10 分鐘前</span>
+            <button class="btn btn-outline btn-sm" onclick="gotoPage('a12')">處理</button>
+          </div>
+          <div class="alert-pill alert-pill-orange">
+            <i class="fa-solid fa-circle-exclamation alert-icon" style="color:var(--orange);"></i>
+            <span class="alert-label"><strong>入帳比對異常</strong>：期號 115000247 發現 2 筆待查</span>
+            <span class="alert-time">1 小時前</span>
+            <button class="btn btn-outline btn-sm" onclick="gotoPage('a5')">查看</button>
+          </div>
+          <div class="alert-pill alert-pill-orange">
+            <i class="fa-solid fa-circle-exclamation alert-icon" style="color:var(--orange);"></i>
+            <span class="alert-label"><strong>無主款</strong>：出現 1 筆新無主款（38.50 USDT）</span>
+            <span class="alert-time">3 小時前</span>
+            <button class="btn btn-outline btn-sm" onclick="gotoPage('a6')">查看</button>
+          </div>
+        </div>
+      </div>
+      <!-- ╚══ /A1 ══╝ -->
+
+      <!-- ╔══ A2 內容管理 ══╗ -->
+      <div class="page-section" id="page-a2">
+        <div class="tab-bar">
+          <div class="tab-btn active" onclick="switchTab(this,'tab-marquee')">跑馬燈</div>
+          <div class="tab-btn" onclick="switchTab(this,'tab-announce')">系統公告</div>
+          <div class="tab-btn" onclick="switchTab(this,'tab-faq')">常見問題</div>
+        </div>
+
+        <!-- 跑馬燈 -->
+        <div class="tab-panel active" id="tab-marquee">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+            <button class="btn btn-gold" onclick="openMarqueeModal()">
+              <i class="fa-solid fa-plus"></i> 新增跑馬燈
+            </button>
+          </div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>狀態</th>
+                  <th>繁中文案</th>
+                  <th>簡中文案</th>
+                  <th>英文文案</th>
+                  <th>排程</th>
+                  <th style="text-align:right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="marquee-list">
+                <tr>
+                  <td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td>
+                  <td style="max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🎉 恭喜 TXyzA…b12c 中得本期彩金桶獎金 8,500 USDT！</td>
+                  <td style="max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-muted);">🎉 恭喜 TXyzA…b12c 赢得本期彩金桶奖金 8,500 USDT！</td>
+                  <td style="max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-muted);">🎉 Congratulations TXyzA…b12c won 8,500 USDT jackpot!</td>
+                  <td><span style="font-size:12px; color:var(--text-faint);">常態上架</span></td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openMarqueeModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><div class="toggle" onclick="this.classList.toggle('on')"></div></td>
+                  <td>系統維護公告：10/10 凌晨 2:00–4:00 暫停服務</td>
+                  <td style="color:var(--text-muted);">系统维护公告：10/10 凌晨 2:00–4:00 暂停服务</td>
+                  <td style="color:var(--text-muted);">Maintenance: Oct 10, 2:00–4:00 AM (UTC+8) service pause</td>
+                  <td><span style="font-size:12px; color:var(--blue);">10/09 20:00 上架</span></td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openMarqueeModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 系統公告 -->
+        <div class="tab-panel" id="tab-announce">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+            <button class="btn btn-gold" onclick="openAnnounceModal()">
+              <i class="fa-solid fa-plus"></i> 新增公告
+            </button>
+          </div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>狀態</th>
+                  <th>標題（繁中）</th>
+                  <th>排程</th>
+                  <th style="text-align:right;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="badge-status badge-live"><span class="dot dot-green"></span> 上架</span></td>
+                  <td>【重要】第一版上線公告</td>
+                  <td><span style="font-size:12px; color:var(--text-faint);">常態</span></td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openAnnounceModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="badge-status badge-live"><span class="dot dot-green"></span> 上架</span></td>
+                  <td>【公告】下注方式完整說明</td>
+                  <td><span style="font-size:12px; color:var(--text-faint);">常態</span></td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openAnnounceModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="badge-status badge-scheduled"><span class="dot" style="background:var(--blue);"></span> 排程</span></td>
+                  <td>系統維護預告</td>
+                  <td><span style="font-size:12px; color:var(--blue);">10/09 18:00 上架</span></td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openAnnounceModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="tab-panel" id="tab-faq">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+            <button class="btn btn-gold" onclick="openFaqModal()">
+              <i class="fa-solid fa-plus"></i> 新增 FAQ
+            </button>
+          </div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th style="width:32px;"></th>
+                  <th style="width:100px;">分類</th>
+                  <th>狀態</th>
+                  <th>問題（繁中）</th>
+                  <th style="text-align:right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="faq-list">
+                <tr draggable="true">
+                  <td style="color:var(--text-faint); cursor:grab;"><i class="fa-solid fa-grip-vertical"></i></td>
+                  <td style="font-size:12px; color:var(--text-muted);">玩法</td>
+                  <td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td>
+                  <td>如何購買彩金桶？</td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openFaqModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr draggable="true">
+                  <td style="color:var(--text-faint); cursor:grab;"><i class="fa-solid fa-grip-vertical"></i></td>
+                  <td style="font-size:12px; color:var(--text-muted);">下注方式</td>
+                  <td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td>
+                  <td>三種下注方式有什麼差別？</td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openFaqModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr draggable="true">
+                  <td style="color:var(--text-faint); cursor:grab;"><i class="fa-solid fa-grip-vertical"></i></td>
+                  <td style="font-size:12px; color:var(--text-muted);">開獎與退款</td>
+                  <td><div class="toggle on" onclick="this.classList.toggle('on')"></div></td>
+                  <td>獎金如何領取？</td>
+                  <td style="text-align:right;">
+                    <div style="display:flex; gap:6px; justify-content:flex-end;">
+                      <button class="btn btn-outline btn-sm" onclick="openFaqModal('edit')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn btn-danger btn-sm" onclick="if(confirm('確認刪除？此操作無法復原。')) alert('已刪除（Demo）')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- ╚══ /A2 ══╝ -->
+
+      <!-- ╔══ A3 期別管理 ══╗ -->
+      <div class="page-section" id="page-a3">
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:16px;">
+          <button class="btn btn-outline" onclick="confirmPendingTx(null,'手動建立期別')">
+            <i class="fa-solid fa-plus"></i> 手動建立期別
+          </button>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>期號</th>
+                <th>彩金桶</th>
+                <th>狀態</th>
+                <th>截止時間</th>
+                <th>下注筆數</th>
+                <th>下注總額</th>
+                <th style="text-align:right;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>115000248</strong></td>
+                <td>今彩 539</td>
+                <td><span class="badge-status badge-accepting"><span class="dot dot-green"></span> 收單中</span></td>
+                <td>2026-10-07 20:20</td>
+                <td>312</td>
+                <td style="font-variant-numeric:tabular-nums;">12,480 USDT</td>
+                <td style="text-align:right;">
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-danger btn-sm" onclick="confirmPendingTx(null,'取消 539 第 115000248 期')">取消</button>
+                    <button class="btn btn-outline btn-sm" onclick="openA3PostponeModal('115000248')">延期</button>
+                  </div>
+                </td>
+              </tr>
+              <tr style="background:rgba(239,68,68,0.04);">
+                <td><strong>115000245</strong></td>
+                <td>今彩 539</td>
+                <td><span class="badge-status badge-disputed"><span class="dot" style="background:var(--red);"></span> 爭議中</span></td>
+                <td>2026-10-04 20:20</td>
+                <td>278</td>
+                <td style="font-variant-numeric:tabular-nums;">11,120 USDT</td>
+                <td style="text-align:right;">
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="openA3OracleModal('115000245')">查看開獎</button>
+                    <button class="btn btn-danger btn-sm" onclick="openA3OracleModal('115000245')">
+                      <i class="fa-solid fa-gavel"></i> 爭議裁定
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>115000247</strong></td>
+                <td>今彩 539</td>
+                <td><span class="badge-status badge-settled"><span class="dot dot-gray"></span> 已結算</span></td>
+                <td>2026-10-06 20:20</td>
+                <td>298</td>
+                <td style="font-variant-numeric:tabular-nums;">11,920 USDT</td>
+                <td style="text-align:right;">
+                  <button class="btn btn-outline btn-sm" onclick="openA3OracleModal('115000247')">查看開獎</button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>115000246</strong></td>
+                <td>今彩 539</td>
+                <td><span class="badge-status badge-settled"><span class="dot dot-gray"></span> 已結算</span></td>
+                <td>2026-10-05 20:20</td>
+                <td>341</td>
+                <td style="font-variant-numeric:tabular-nums;">13,640 USDT</td>
+                <td style="text-align:right;">
+                  <button class="btn btn-outline btn-sm" onclick="openA3OracleModal('115000246')">查看開獎</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- ╚══ /A3 ══╝ -->
+
+      <!-- ╔══ A4 收單報表 ══╗ -->
+      <div class="page-section" id="page-a4">
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+              <label class="form-label">期號</label>
+              <input class="form-input" type="text" value="115000247" style="width:160px;">
+            </div>
+            <div>
+              <label class="form-label">彩金桶</label>
+              <select class="form-select" style="width:140px;">
+                <option>今彩 539</option>
+              </select>
+            </div>
+            <button class="btn btn-gold" onclick="alert('查詢完成（Demo）')"><i class="fa-solid fa-magnifying-glass"></i> 查詢</button>
+            <button class="btn btn-outline" onclick="alert('匯出 CSV（Demo）')"><i class="fa-solid fa-file-csv"></i> 匯出 CSV</button>
+            <button class="btn btn-outline" onclick="alert('匯出 Excel（Demo）')"><i class="fa-solid fa-file-excel"></i> 匯出 Excel</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>期號</th>
+                <th>注單編號</th>
+                <th>地址</th>
+                <th>號碼</th>
+                <th>金額</th>
+                <th>下注方式</th>
+                <th>時間</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-variant-numeric:tabular-nums; color:var(--text-muted); font-size:12px;">115000247</td>
+                <td style="font-variant-numeric:tabular-nums; font-family:monospace; font-size:12px;">0x1a2b3c…</td>
+                <td style="font-size:12px;">TXyzA…b12c</td>
+                <td><span style="font-family:monospace;">03 12 18 27 35</span></td>
+                <td>40.00 USDT</td>
+                <td>①授權</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-10-06 19:43</td>
+              </tr>
+              <tr>
+                <td style="font-variant-numeric:tabular-nums; color:var(--text-muted); font-size:12px;">115000247</td>
+                <td style="font-variant-numeric:tabular-nums; font-family:monospace; font-size:12px;">0x4d5e6f…</td>
+                <td style="font-size:12px;">TAbc1…d23e</td>
+                <td><span style="font-family:monospace;">07 15 22 30 38</span></td>
+                <td>40.00 USDT</td>
+                <td>②轉帳</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-10-06 19:55</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px; font-size:12px; color:var(--text-faint); text-align:right;">共 298 筆 · 截止後才可匯出</div>
+      </div>
+      <!-- ╚══ /A4 ══╝ -->
+
+      <!-- ╔══ A5 入帳監控 ══╗ -->
+      <div class="page-section" id="page-a5">
+
+        <!-- 頂部狀態列 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+          <div class="card">
+            <div class="card-title">入帳服務狀態</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="dot dot-green"></span>
+              <span style="font-size:15px; font-weight:600; color:var(--green);">運作中</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-faint); margin-top:6px;">上次心跳：3 分鐘前</div>
+            <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-danger btn-sm" onclick="openA5PausedModal()">
+                  <i class="fa-solid fa-pause"></i> 暫停服務
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="openA5ReplaceModal()">
+                  <i class="fa-solid fa-arrow-right-arrow-left"></i> 更換錢包
+                </button>
+              </div>
+              <button class="btn btn-sm" id="a5-manual-register-btn"
+                disabled style="opacity:0.4; border:1px solid var(--border); color:var(--text-muted); cursor:not-allowed;"
+                title="需入帳服務停擺超過 6 小時才可操作"
+                onclick="openA5ManualRegisterModal()">
+                <i class="fa-solid fa-hand-point-right"></i> 代為入帳
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">本期入帳上限使用量</div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
+              <span style="font-size:20px; font-weight:700; font-variant-numeric:tabular-nums;">312</span>
+              <span style="font-size:13px; color:var(--text-muted);">/ 1,000 筆</span>
+            </div>
+            <div class="progress-bg">
+              <div class="progress-fill" style="width:31.2%; background:linear-gradient(90deg,var(--gold),var(--green));"></div>
+            </div>
+            <div style="font-size:12px; color:var(--text-faint); margin-top:6px;">已使用 31.2%</div>
+          </div>
+          <div class="card">
+            <div class="card-title">待處理項目</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between;">
+                <span style="font-size:13px; color:var(--text-muted);">待付單</span>
+                <span style="font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">3</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="font-size:13px; color:var(--text-muted);">比對異常</span>
+                <span style="font-variant-numeric:tabular-nums; font-weight:600; color:var(--red);">2</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="font-size:13px; color:var(--text-muted);">無主款</span>
+                <span style="font-variant-numeric:tabular-nums; font-weight:600; color:var(--text-main);">1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 列表 -->
+        <div class="tab-bar" id="a5-tab-bar">
+          <div class="tab-btn active" onclick="switchTab(this,'a5-tab-pending')">
+            待付單 <span style="background:rgba(249,115,22,0.20);color:var(--orange);border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px;">3</span>
+          </div>
+          <div class="tab-btn" onclick="switchTab(this,'a5-tab-registered')">已登記</div>
+          <div class="tab-btn" onclick="switchTab(this,'a5-tab-anomaly')">
+            異常轉帳（已轉入餘額）<span style="background:rgba(239,68,68,0.20);color:var(--red);border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px;">2</span>
+          </div>
+          <div class="tab-btn" onclick="switchTab(this,'a5-tab-micro')">小額累積</div>
+          <div class="tab-btn" onclick="switchTab(this,'a5-tab-unclaimed')">無主款</div>
+        </div>
+
+        <!-- Tab：待付單 -->
+        <div class="tab-panel active" id="a5-tab-pending">
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>交易編號（txHash）</th>
+                  <th>來源地址</th>
+                  <th>金額</th>
+                  <th>入帳時間</th>
+                  <th>期號</th>
+                  <th>狀態</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x1a2b3c4d…ef01</td>
+                  <td style="font-size:12px;">TXyzA…b12c</td>
+                  <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                  <td style="font-size:12px; color:var(--text-muted);">2026-10-07 19:48</td>
+                  <td>115000248</td>
+                  <td><span class="badge-status badge-closed">待登記</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x2b3c4d5e…f012</td>
+                  <td style="font-size:12px;">TAbc1…d23e</td>
+                  <td style="font-variant-numeric:tabular-nums;">80.00 USDT</td>
+                  <td style="font-size:12px; color:var(--text-muted);">2026-10-07 19:52</td>
+                  <td>115000248</td>
+                  <td><span class="badge-status badge-closed">待登記</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x3c4d5e6f…0123</td>
+                  <td style="font-size:12px;">TDef2…e34f</td>
+                  <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                  <td style="font-size:12px; color:var(--text-muted);">2026-10-07 20:01</td>
+                  <td>115000248</td>
+                  <td><span class="badge-status badge-closed">待登記</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px; font-size:12px; color:var(--text-faint);">共 3 筆 · 由入帳服務自動登記，無需手動操作</div>
+        </div>
+
+        <!-- Tab：已登記 -->
+        <div class="tab-panel" id="a5-tab-registered">
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>交易編號（txHash）</th>
+                  <th>來源地址</th>
+                  <th>金額</th>
+                  <th>注單編號</th>
+                  <th>比對結果</th>
+                  <th>登記時間</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x9a8b7c6d…cd12</td>
+                  <td style="font-size:12px;">TXyzA…b12c</td>
+                  <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                  <td style="font-family:monospace; font-size:12px;">TKT-0x4a…</td>
+                  <td><span class="badge-status badge-live"><i class="fa-solid fa-check" style="font-size:10px;"></i> 符合</span></td>
+                  <td style="font-size:12px; color:var(--text-muted);">2026-10-07 19:33</td>
+                </tr>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x8b7c6d5e…bc01</td>
+                  <td style="font-size:12px;">TAbc1…d23e</td>
+                  <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                  <td style="font-family:monospace; font-size:12px;">TKT-0x5b…</td>
+                  <td><span class="badge-status" style="background:rgba(239,68,68,0.12);color:var(--red);"><i class="fa-solid fa-xmark" style="font-size:10px;"></i> 不符</span></td>
+                  <td style="font-size:12px; color:var(--text-muted);">2026-10-07 19:41</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab：比對異常 -->
+        <div class="tab-panel" id="a5-tab-anomaly">
+          <div style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.15); border-radius:8px; padding:12px 16px; margin-bottom:14px; font-size:13px; color:var(--text-muted);">
+            <i class="fa-solid fa-circle-info" style="color:var(--red); margin-right:6px;"></i>
+            比對異常紀錄已自動產生告警。點擊「查看詳情」確認後，前往 A3 期別管理進行爭議裁定。
+          </div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>交易編號（txHash）</th>
+                  <th>來源地址</th>
+                  <th>金額</th>
+                  <th>異常原因</th>
+                  <th>已轉入餘額</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x8b7c6d5e…bc01</td>
+                  <td style="font-size:12px;">TAbc1…d23e</td>
+                  <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                  <td style="color:var(--red);">登記 txHash 與鏈上不符</td>
+                  <td><span class="badge-status badge-live">是</span></td>
+                  <td><button class="btn btn-outline btn-sm" onclick="gotoPage('a3')">前往 A3 裁定</button></td>
+                </tr>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x7c6d5e4f…ab90</td>
+                  <td style="font-size:12px;">TGhi3…f45g</td>
+                  <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                  <td style="color:var(--red);">登記 txHash 與鏈上不符</td>
+                  <td><span class="badge-status badge-live">是</span></td>
+                  <td><button class="btn btn-outline btn-sm" onclick="gotoPage('a3')">前往 A3 裁定</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab：小額累積 -->
+        <div class="tab-panel" id="a5-tab-micro">
+          <div style="background:rgba(136,146,164,0.06); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:14px; font-size:13px; color:var(--text-muted);">
+            <i class="fa-solid fa-circle-info" style="margin-right:6px;"></i>
+            未達最低下注額（40 USDT）的轉帳，金額已累計至玩家遊戲餘額。
+          </div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>來源地址</th>
+                  <th>累積金額</th>
+                  <th>轉帳次數</th>
+                  <th>最近入帳</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-size:12px;">TJkl4…g56h</td>
+                  <td style="font-variant-numeric:tabular-nums;">15.50 USDT</td>
+                  <td>3</td>
+                  <td style="font-size:12px; color:var(--text-muted);">2026-10-06 18:22</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab：無主款 -->
+        <div class="tab-panel" id="a5-tab-unclaimed">
+          <div style="background:rgba(136,146,164,0.06); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:14px; font-size:13px; color:var(--text-muted);">
+            <i class="fa-solid fa-circle-info" style="margin-right:6px;"></i>
+            無法對應玩家地址的轉帳。玩家可於 30 天內透過客服認領，逾期由 A6 發起清理。
+          </div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>交易編號（txHash）</th>
+                  <th>金額</th>
+                  <th>入帳時間</th>
+                  <th>到期日</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">0x5e4f3a2b…8900</td>
+                  <td style="font-variant-numeric:tabular-nums;">38.50 USDT</td>
+                  <td style="font-size:12px; color:var(--text-muted);">2026-10-07 10:15</td>
+                  <td style="font-size:12px; color:var(--orange);">2026-11-06（29 天後）</td>
+                  <td><button class="btn btn-outline btn-sm" onclick="gotoPage('a6')">前往 A6 認領</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <!-- ╚══ /A5 ══╝ -->
+
+      <!-- ╔══ A6 無主款認領 ══╗ -->
+      <div class="page-section" id="page-a6">
+
+        <!-- 說明橫幅 -->
+        <div style="background:rgba(136,146,164,0.06); border:1px solid var(--border); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px; margin-bottom:20px; font-size:13px; color:var(--text-muted);">
+          <i class="fa-solid fa-circle-info" style="font-size:15px; flex-shrink:0;"></i>
+          <span>玩家轉帳時未附帶簽名訊息，導致系統無法對應地址。玩家可聯絡客服，提供原轉帳錢包的簽名驗證後由管理員發起認領。未認領款項 <strong style="color:var(--text-main);">30 天後</strong>發起清理（等待 48 小時生效）。</span>
+        </div>
+
+        <!-- 無主款列表 -->
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>交易編號（txHash）</th>
+                <th>金額</th>
+                <th>入帳時間</th>
+                <th>到期日</th>
+                <th>狀態</th>
+                <th style="text-align:right;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 待認領：剩餘時間充裕 -->
+              <tr>
+                <td style="font-family:monospace; font-size:12px;">0x5e4f3a2b…8900</td>
+                <td style="font-variant-numeric:tabular-nums;">38.50 USDT</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-10-07 10:15</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-11-06</td>
+                <td><span class="badge-status badge-draft">待認領</span></td>
+                <td style="text-align:right;">
+                  <button class="btn btn-outline btn-sm" onclick="openA6ClaimModal('0x5e4f3a2b…8900','38.50')">
+                    <i class="fa-solid fa-user-check"></i> 認領申請
+                  </button>
+                </td>
+              </tr>
+              <!-- 申請中 -->
+              <tr>
+                <td style="font-family:monospace; font-size:12px;">0x3c2b1a0f…6780</td>
+                <td style="font-variant-numeric:tabular-nums;">80.00 USDT</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-09-28 14:33</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-10-28</td>
+                <td><span class="badge-status badge-scheduled">申請中</span></td>
+                <td style="text-align:right;">
+                  <button class="btn btn-gold btn-sm" onclick="openA6ConfirmModal('0x3c2b1a0f…6780','80.00','TXyzA…b12c')">
+                    <i class="fa-solid fa-check"></i> 確認認領
+                  </button>
+                </td>
+              </tr>
+              <!-- 快到期（警告色） -->
+              <tr style="background:rgba(249,115,22,0.04);">
+                <td style="font-family:monospace; font-size:12px;">0x1a0f9e8d…4560</td>
+                <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-09-10 09:00</td>
+                <td style="font-size:12px; color:var(--orange); font-weight:600;">
+                  <i class="fa-solid fa-circle-exclamation" style="margin-right:4px;"></i>
+                  2026-10-10（3 天後）
+                </td>
+                <td><span class="badge-status badge-draft">待認領</span></td>
+                <td style="text-align:right;">
+                  <button class="btn btn-outline btn-sm" onclick="openA6ClaimModal('0x1a0f9e8d…4560','40.00')">
+                    <i class="fa-solid fa-user-check"></i> 認領申請
+                  </button>
+                </td>
+              </tr>
+              <!-- 逾期可清理 -->
+              <tr style="background:rgba(239,68,68,0.03);">
+                <td style="font-family:monospace; font-size:12px;">0x0f9e8d7c…3450</td>
+                <td style="font-variant-numeric:tabular-nums;">40.00 USDT</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-09-05 16:20</td>
+                <td style="font-size:12px; color:var(--red); font-weight:600;">
+                  <i class="fa-solid fa-circle-exclamation" style="margin-right:4px;"></i>
+                  已逾期 2 天
+                </td>
+                <td><span class="badge-status badge-disputed">逾期未認領</span></td>
+                <td style="text-align:right;">
+                  <button class="btn btn-danger btn-sm" onclick="openA6CleanupModal('0x0f9e8d7c…3450','40.00')">
+                    <i class="fa-solid fa-trash-can"></i> 發起清理
+                  </button>
+                </td>
+              </tr>
+              <!-- 已認領 -->
+              <tr style="opacity:0.55;">
+                <td style="font-family:monospace; font-size:12px;">0x8d7c6b5a…2340</td>
+                <td style="font-variant-numeric:tabular-nums;">120.00 USDT</td>
+                <td style="font-size:12px; color:var(--text-muted);">2026-09-01 11:10</td>
+                <td style="font-size:12px; color:var(--text-faint);">—</td>
+                <td><span class="badge-status badge-live">已認領</span></td>
+                <td style="text-align:right; font-size:12px; color:var(--text-faint);">TAbcd…5678</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px; font-size:12px; color:var(--text-faint);">共 5 筆 · 已認領紀錄不可刪除</div>
+
+      </div>
+      <!-- ╚══ /A6 ══╝ -->
+
+      <!-- ╔══ A7 玩家查詢 ══╗ -->
+      <div class="page-section" id="page-a7">
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex; gap:12px; align-items:flex-end;">
+            <div style="flex:1;">
+              <label class="form-label">錢包地址</label>
+              <input class="form-input" type="text" placeholder="輸入 TRC20 地址" id="player-search-input">
+            </div>
+            <button class="btn btn-gold" onclick="showPlayerResult()"><i class="fa-solid fa-magnifying-glass"></i> 查詢</button>
+          </div>
+        </div>
+        <div id="player-result" style="display:none;">
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+            <div class="card">
+              <div class="card-title">遊戲餘額</div>
+              <div class="card-value" style="font-size:22px;">120.50</div>
+              <div class="card-sub">USDT</div>
+            </div>
+            <div class="card">
+              <div class="card-title">黑名單狀態</div>
+              <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <span class="dot dot-green" id="a7-blacklist-dot"></span>
+                <span style="font-size:14px; font-weight:600; color:var(--green);" id="a7-blacklist-label">正常</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">推廣關係</div>
+              <div class="card-value" style="font-size:16px; margin-top:4px;">上線：TAbcd…5678</div>
+              <div class="card-sub">下線數：12</div>
+            </div>
+          </div>
+          <!-- 注單列表 -->
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="card-title" style="margin:0;">注單</div>
+              <select class="form-input" id="a7-period-select" onchange="a7ChangePeriod(this.value)"
+                      style="width:210px; font-size:13px; padding:4px 10px; height:32px;">
+                <option value="115000248">第 115000248 期（本期）</option>
+                <option value="115000247">第 115000247 期</option>
+                <option value="115000246">第 115000246 期</option>
+                <option value="115000245">第 115000245 期</option>
+              </select>
+            </div>
+            <table class="tbl">
+              <thead>
+                <tr><th>注單編號</th><th>號碼</th><th>金額</th><th>下注方式</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">TKT-2400001</td>
+                  <td>05, 12, 23, 31, 38</td>
+                  <td>40.00 USDT</td>
+                  <td>③ 儲值餘額</td>
+                </tr>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">TKT-2400002</td>
+                  <td>01, 08, 17, 29, 35</td>
+                  <td>40.00 USDT</td>
+                  <td>① 授權下注</td>
+                </tr>
+                <tr>
+                  <td style="font-family:monospace; font-size:12px;">TKT-2400003</td>
+                  <td>03, 14, 22, 27, 39</td>
+                  <td>40.00 USDT</td>
+                  <td>② 轉帳下注</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- 資金紀錄 -->
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div class="card-title" style="margin:0;">資金紀錄（最近 5 筆）</div>
+            </div>
+            <table class="tbl">
+              <thead>
+                <tr><th>類型</th><th>金額</th><th>說明</th><th>時間</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>中獎入帳</td><td style="color:var(--green);">+80.00 USDT</td><td>期號 115000246 中 2 碼</td><td style="font-size:12px; color:var(--text-muted);">2026-10-05 21:10</td></tr>
+                <tr><td>儲值</td><td style="color:var(--green);">+200.00 USDT</td><td>鏈上轉入</td><td style="font-size:12px; color:var(--text-muted);">2026-10-04 14:22</td></tr>
+                <tr><td>下注扣款</td><td style="color:var(--red);">-120.00 USDT</td><td>3 注 × 40 USDT</td><td style="font-size:12px; color:var(--text-muted);">2026-10-04 14:25</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- 黑名單操作 -->
+          <div style="display:flex; gap:8px;" id="a7-blacklist-actions">
+            <button class="btn btn-danger" id="a7-add-blacklist-btn" onclick="a7AddBlacklist()">
+              <i class="fa-solid fa-ban"></i> 加入黑名單
+            </button>
+            <button class="btn btn-outline" id="a7-remove-blacklist-btn" style="display:none; border-color:var(--green); color:var(--green);" onclick="a7RemoveBlacklist()">
+              <i class="fa-solid fa-circle-check"></i> 解除黑名單
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- ╚══ /A7 ══╝ -->
+
+      <!-- ╔══ A12 告警中心 ══╗ -->
+      <div class="page-section" id="page-a12">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <!-- 篩選列 + Telegram 提示 -->
+          <div style="padding:14px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-outline btn-sm" id="a12-filter-all" onclick="filterA12('all')" style="border-color:var(--border-gold); color:var(--gold);">全部 (8)</button>
+              <button class="btn btn-outline btn-sm" id="a12-filter-open" onclick="filterA12('open')">未處理 (4)</button>
+              <button class="btn btn-outline btn-sm" id="a12-filter-closed" onclick="filterA12('closed')">已處理 (4)</button>
+            </div>
+            <div style="font-size:12px; color:var(--text-faint);">
+              <i class="fa-brands fa-telegram" style="margin-right:4px;"></i>告警同時推送至 Telegram
+            </div>
+          </div>
+          <table class="tbl" id="a12-table">
+            <thead>
+              <tr>
+                <th>等級</th>
+                <th>告警類型</th>
+                <th>說明</th>
+                <th>時間</th>
+                <th>狀態</th>
+                <th style="text-align:right;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-status="open">
+                <td><span style="color:var(--red);">●</span> 緊急</td>
+                <td>預言機分歧</td>
+                <td>#3 預言機超過 2 小時未回報</td>
+                <td style="font-size:12px; color:var(--text-muted);">10 分鐘前</td>
+                <td><span class="badge-status badge-disputed">未處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a3')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" onclick="markA12Alert(this)">標記已處理</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="open">
+                <td><span style="color:var(--orange);">●</span> 警告</td>
+                <td>入帳比對異常</td>
+                <td>期號 115000247 發現 2 筆待查</td>
+                <td style="font-size:12px; color:var(--text-muted);">1 小時前</td>
+                <td><span class="badge-status badge-disputed">未處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a5')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" onclick="markA12Alert(this)">標記已處理</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="open">
+                <td><span style="color:var(--text-muted);">●</span> 資訊</td>
+                <td>無主款</td>
+                <td>出現 1 筆新無主款（38.50 USDT）</td>
+                <td style="font-size:12px; color:var(--text-muted);">3 小時前</td>
+                <td><span class="badge-status badge-disputed">未處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a6')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" onclick="markA12Alert(this)">標記已處理</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="closed">
+                <td><span style="color:var(--orange);">●</span> 警告</td>
+                <td>Energy 不足</td>
+                <td>存量低於告警門檻（已補充）</td>
+                <td style="font-size:12px; color:var(--text-muted);">昨日 14:30</td>
+                <td><span class="badge-status badge-live">已處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a11')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" disabled style="opacity:0.4;">已處理</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="closed">
+                <td><span style="color:var(--orange);">●</span> 警告</td>
+                <td>自動轉回失敗</td>
+                <td>地址 TAbc1…d23e 手動補發成功</td>
+                <td style="font-size:12px; color:var(--text-muted);">昨日 10:05</td>
+                <td><span class="badge-status badge-live">已處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a7')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" disabled style="opacity:0.4;">已處理</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="open">
+                <td><span style="color:var(--red);">●</span> 緊急</td>
+                <td>開獎結果延遲</td>
+                <td>期號 115000248 官方開獎後 35 分鐘仍未上鏈</td>
+                <td style="font-size:12px; color:var(--text-muted);">5 分鐘前</td>
+                <td><span class="badge-status badge-disputed">未處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a3')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" onclick="markA12Alert(this)">標記已處理</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="closed">
+                <td><span style="color:var(--red);">●</span> 緊急</td>
+                <td>入帳服務停擺</td>
+                <td>超過 10 分鐘無心跳，已自動重啟</td>
+                <td style="font-size:12px; color:var(--text-muted);">2 天前</td>
+                <td><span class="badge-status badge-live">已處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a5')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" disabled style="opacity:0.4;">已處理</button>
+                  </div>
+                </td>
+              </tr>
+              <tr data-status="closed">
+                <td><span style="color:var(--orange);">●</span> 警告</td>
+                <td>平台戶不足</td>
+                <td>平台戶餘額低於待付固定獎金預警水位</td>
+                <td style="font-size:12px; color:var(--text-muted);">3 天前</td>
+                <td><span class="badge-status badge-live">已處理</span></td>
+                <td>
+                  <div style="display:flex; gap:6px; justify-content:flex-end;">
+                    <button class="btn btn-outline btn-sm" onclick="gotoPage('a9')">前往處理</button>
+                    <button class="btn btn-outline btn-sm" disabled style="opacity:0.4;">已處理</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- ╚══ /A12 ══╝ -->
+
+      <!-- ╔══ 其他頁佔位 ══╗ -->
+      <!-- ╔══ A8 推廣夥伴 ══╗ -->
+      <div class="page-section" id="page-a8">
+
+        <!-- 搜尋列 -->
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex; gap:12px; align-items:flex-end;">
+            <div style="flex:1;">
+              <label class="form-label">依夥伴地址搜尋</label>
+              <input class="form-input" type="text" placeholder="輸入 TRC20 地址" id="a8-search-input">
+            </div>
+            <button class="btn btn-gold" onclick="a8Search()">
+              <i class="fa-solid fa-magnifying-glass"></i> 搜尋
+            </button>
+            <button class="btn btn-outline" onclick="a8Reset()">
+              <i class="fa-solid fa-rotate-left"></i> 重置
+            </button>
+          </div>
+        </div>
+
+        <!-- 統計卡 -->
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px;">
+          <div class="card">
+            <div class="card-title">推廣夥伴總數</div>
+            <div class="card-value">48</div>
+            <div class="card-sub">已在鏈上永久綁定</div>
+          </div>
+          <div class="card">
+            <div class="card-title">本期下線下注總額</div>
+            <div class="card-value" style="font-size:22px;">3,840</div>
+            <div class="card-sub">USDT（今彩 539 第 115000248 期）</div>
+          </div>
+          <div class="card">
+            <div class="card-title">本期應發分潤（預估）</div>
+            <div class="card-value" style="font-size:22px; color:var(--gold);">192</div>
+            <div class="card-sub">USDT · 待定案後計算</div>
+          </div>
+        </div>
+
+        <!-- 夥伴列表 -->
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="tbl" id="a8-table">
+            <thead>
+              <tr>
+                <th style="width:32px;"></th>
+                <th>夥伴地址</th>
+                <th style="text-align:right;">下線數</th>
+                <th style="text-align:right;">下線累計下注額</th>
+                <th style="text-align:right;">已發分潤</th>
+                <th style="text-align:right;">加入時間</th>
+              </tr>
+            </thead>
+            <tbody id="a8-tbody">
+
+              <!-- 夥伴列 #1（展開中） -->
+              <tr class="a8-partner-row" style="cursor:pointer;" onclick="toggleA8Row(this)">
+                <td><i class="fa-solid fa-chevron-down" style="font-size:11px; color:var(--gold); transition:transform 0.2s;"></i></td>
+                <td style="font-family:monospace; font-size:13px;">TXyzA…b12c</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums;">12</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600;">8,400 USDT</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--gold);">420 USDT</td>
+                <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-01</td>
+              </tr>
+              <!-- 展開：一層下線 -->
+              <tr class="a8-downline-section">
+                <td colspan="6" style="padding:0; background:var(--bg-surface);">
+                  <div style="padding:8px 16px 8px 40px;">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px;">一層下線（12）</div>
+                    <table class="tbl" style="background:transparent;">
+                      <thead>
+                        <tr>
+                          <th style="width:32px;"></th>
+                          <th>下線地址</th>
+                          <th style="text-align:right;">下注額</th>
+                          <th style="text-align:right;">加入時間</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="a8-partner-row" style="cursor:pointer;" onclick="toggleA8Row(this)">
+                          <td><i class="fa-solid fa-chevron-right" style="font-size:10px; color:var(--text-faint); transition:transform 0.2s;"></i></td>
+                          <td style="font-family:monospace; font-size:12px;">TAbc1…d23e</td>
+                          <td style="text-align:right; font-variant-numeric:tabular-nums;">1,200 USDT</td>
+                          <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-05</td>
+                        </tr>
+                        <!-- 展開：二層下線 -->
+                        <tr class="a8-downline-section" style="display:none;">
+                          <td colspan="4" style="padding:0; background:rgba(255,255,255,0.02);">
+                            <div style="padding:6px 16px 6px 48px;">
+                              <div style="font-size:11px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">二層下線（3）</div>
+                              <table class="tbl" style="background:transparent;">
+                                <thead>
+                                  <tr><th>下線地址</th><th style="text-align:right;">下注額</th><th style="text-align:right;">加入時間</th></tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td style="font-family:monospace; font-size:12px;">TDef2…e34f</td>
+                                    <td style="text-align:right; font-variant-numeric:tabular-nums;">320 USDT</td>
+                                    <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-10</td>
+                                  </tr>
+                                  <tr>
+                                    <td style="font-family:monospace; font-size:12px;">TGhi3…f45g</td>
+                                    <td style="text-align:right; font-variant-numeric:tabular-nums;">480 USDT</td>
+                                    <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-12</td>
+                                  </tr>
+                                  <tr>
+                                    <td style="font-family:monospace; font-size:12px;">TJkl4…g56h</td>
+                                    <td style="text-align:right; font-variant-numeric:tabular-nums;">160 USDT</td>
+                                    <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-18</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr class="a8-partner-row" style="cursor:pointer;" onclick="toggleA8Row(this)">
+                          <td><i class="fa-solid fa-chevron-right" style="font-size:10px; color:var(--text-faint); transition:transform 0.2s;"></i></td>
+                          <td style="font-family:monospace; font-size:12px;">TMno5…h67i</td>
+                          <td style="text-align:right; font-variant-numeric:tabular-nums;">880 USDT</td>
+                          <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-07</td>
+                        </tr>
+                        <tr class="a8-downline-section" style="display:none;">
+                          <td colspan="4" style="padding:0; background:rgba(255,255,255,0.02);">
+                            <div style="padding:6px 16px 6px 48px; font-size:12px; color:var(--text-faint);">無二層下線</div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- 夥伴列 #2（收合） -->
+              <tr class="a8-partner-row" style="cursor:pointer;" onclick="toggleA8Row(this)">
+                <td><i class="fa-solid fa-chevron-right" style="font-size:11px; color:var(--text-faint); transition:transform 0.2s;"></i></td>
+                <td style="font-family:monospace; font-size:13px;">TPqr6…i78j</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums;">5</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600;">2,200 USDT</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--gold);">110 USDT</td>
+                <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-14</td>
+              </tr>
+              <tr class="a8-downline-section" style="display:none;">
+                <td colspan="6" style="padding:0; background:var(--bg-surface);">
+                  <div style="padding:8px 16px 8px 40px;">
+                    <div style="font-size:11px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px;">一層下線（5）</div>
+                    <table class="tbl" style="background:transparent;">
+                      <thead>
+                        <tr><th style="width:32px;"></th><th>下線地址</th><th style="text-align:right;">下注額</th><th style="text-align:right;">加入時間</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr class="a8-partner-row" style="cursor:pointer;" onclick="toggleA8Row(this)">
+                          <td><i class="fa-solid fa-chevron-right" style="font-size:10px; color:var(--text-faint);"></i></td>
+                          <td style="font-family:monospace; font-size:12px;">TStu7…j89k</td>
+                          <td style="text-align:right; font-variant-numeric:tabular-nums;">640 USDT</td>
+                          <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-09-16</td>
+                        </tr>
+                        <tr class="a8-downline-section" style="display:none;">
+                          <td colspan="4" style="padding:0; background:rgba(255,255,255,0.02);">
+                            <div style="padding:6px 16px 6px 48px; font-size:12px; color:var(--text-faint);">無二層下線</div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- 夥伴列 #3（無下線） -->
+              <tr class="a8-partner-row" style="cursor:pointer;" onclick="toggleA8Row(this)">
+                <td><i class="fa-solid fa-chevron-right" style="font-size:11px; color:var(--text-faint); transition:transform 0.2s;"></i></td>
+                <td style="font-family:monospace; font-size:13px;">TVwx8…k90l</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums;">0</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-faint);">— USDT</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-faint);">— USDT</td>
+                <td style="text-align:right; font-size:12px; color:var(--text-muted);">2026-10-01</td>
+              </tr>
+              <tr class="a8-downline-section" style="display:none;">
+                <td colspan="6" style="padding:0; background:var(--bg-surface);">
+                  <div style="padding:12px 16px 12px 40px; font-size:13px; color:var(--text-faint);">尚無下線</div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px; font-size:12px; color:var(--text-faint);">共 48 位夥伴 · 夥伴關係由合約鏈上永久記錄，後台僅供查閱</div>
+
+      </div>
+      <!-- ╚══ /A8 ══╝ -->
+      <!-- ╔══ A9 財務 ══╗ -->
+      <div class="page-section" id="page-a9">
+
+        <!-- 平台財務總覽 -->
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px;">
+
+          <div class="card" style="border-color:rgba(34,197,94,0.20);">
+            <div class="card-title">平台戶餘額</div>
+            <div class="card-value">85,000</div>
+            <div class="card-sub">USDT · 讀合約即時值</div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-gold btn-sm" onclick="openA9TxModal('deposit')">
+                <i class="fa-solid fa-arrow-down"></i> 注資
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="openA9TxModal('withdraw')">
+                <i class="fa-solid fa-arrow-up"></i> 提款
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">待付固定獎金</div>
+            <div class="card-value">12,340</div>
+            <div class="card-sub">USDT · 所有進行中期別合計</div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="font-size:12px; color:var(--text-muted);">最近一期（115000247）</div>
+            <div style="font-size:14px; font-weight:600; font-variant-numeric:tabular-nums; margin-top:2px;">4,120 USDT</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">安全緩衝倍數</div>
+            <div class="card-value" style="color:var(--green);">×6.9</div>
+            <div class="card-sub">平台戶餘額 ÷ 待付固定獎金</div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span style="color:var(--text-faint);">警戒線</span>
+                <span style="color:var(--orange);">×2.0</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span style="color:var(--text-faint);">危險線</span>
+                <span style="color:var(--red);">×1.2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 損益報表篩選 -->
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+              <label class="form-label">期號範圍（起）</label>
+              <input class="form-input" type="text" placeholder="115000240" style="width:150px;" id="a9-draw-from">
+            </div>
+            <div>
+              <label class="form-label">期號範圍（迄）</label>
+              <input class="form-input" type="text" placeholder="115000248" style="width:150px;" id="a9-draw-to">
+            </div>
+            <div>
+              <label class="form-label">彩金桶</label>
+              <select class="form-select" style="width:140px;">
+                <option>今彩 539</option>
+              </select>
+            </div>
+            <button class="btn btn-gold" onclick="a9Query()">
+              <i class="fa-solid fa-magnifying-glass"></i> 查詢
+            </button>
+            <button class="btn btn-outline" onclick="a9Export('csv')">
+              <i class="fa-solid fa-file-csv"></i> 匯出 CSV
+            </button>
+            <button class="btn btn-outline" onclick="a9Export('xlsx')">
+              <i class="fa-solid fa-file-excel"></i> 匯出 Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- 損益報表 -->
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>期號</th>
+                <th style="text-align:right;">下注總額</th>
+                <th style="text-align:right;">固定獎派彩</th>
+                <th style="text-align:right;">頭獎提撥</th>
+                <th style="text-align:right;">分潤支出</th>
+                <th style="text-align:right;">平台份額</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>115000248</strong> <span style="font-size:11px; color:var(--blue); margin-left:4px;">進行中</span></td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums;">12,480</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--red);">—</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">—</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">—</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">—</td>
+              </tr>
+              <tr>
+                <td><strong>115000247</strong></td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums;">11,920</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--red);">-3,840</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">-596</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">-596</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--green); font-weight:600;">+6,888</td>
+              </tr>
+              <tr>
+                <td><strong>115000246</strong></td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums;">13,640</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--red);">-4,120</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">-682</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">-682</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--green); font-weight:600;">+8,156</td>
+              </tr>
+              <tr>
+                <td><strong>115000245</strong></td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums;">9,880</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--red);">-3,200</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">-494</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--text-muted);">-494</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; color:var(--green); font-weight:600;">+5,692</td>
+              </tr>
+            </tbody>
+            <!-- 小計列 -->
+            <tfoot>
+              <tr style="background:rgba(255,255,255,0.03); border-top:1px solid var(--border);">
+                <td style="font-weight:700; color:var(--text-muted); font-size:11px; letter-spacing:0.04em;">合計（3 期已結算）</td>
+                <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums;">35,440</td>
+                <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:var(--red);">-11,160</td>
+                <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text-muted);">-1,772</td>
+                <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text-muted);">-1,772</td>
+                <td style="text-align:right; font-weight:700; font-variant-numeric:tabular-nums; color:var(--green);">+20,736</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div style="margin-top:10px; font-size:12px; color:var(--text-faint);">金額單位：USDT · 進行中期別於定案後才計入損益</div>
+
+      </div>
+      <!-- ╚══ /A9 ══╝ -->
+      <!-- ╔══ A10 合約參數 ══╗ -->
+      <div class="page-section" id="page-a10">
+
+        <!-- 全局控制列 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+
+          <!-- 全局停收新注 -->
+          <div class="card" style="display:flex; align-items:center; gap:16px;">
+            <div style="flex:1;">
+              <div style="font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:4px;">全局停收新注</div>
+              <div style="font-size:12px; color:var(--text-faint);">立即生效・前台顯示暫停橫幅</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span id="a10-global-status" style="font-size:12px; color:var(--green);">收單中</span>
+              <div class="toggle on" id="a10-global-toggle" onclick="toggleA10Global()"></div>
+            </div>
+          </div>
+
+          <!-- 彩金桶狀態 -->
+          <div class="card">
+            <div style="font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:12px;">彩金桶狀態</div>
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="dot dot-green"></span>
+                <span style="font-size:13px;">今彩 539</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:12px; color:var(--green);">啟用中</span>
+                <div class="toggle on" onclick="openA10PoolModal('539','disable')"></div>
+              </div>
+            </div>
+            <div style="margin-top:10px;">
+              <button class="btn btn-outline btn-sm" onclick="alert('新增彩金桶（第二版功能，暫時佔位）')">
+                <i class="fa-solid fa-plus"></i> 新增彩金桶
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 現行合約參數 -->
+        <h2 style="font-size:13px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px;">現行合約參數</h2>
+        <div style="background:rgba(249,115,22,0.06); border:1px solid rgba(249,115,22,0.15); border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:12px; color:var(--text-muted);">
+          <i class="fa-solid fa-circle-info" style="color:var(--orange); margin-right:6px;"></i>
+          參數修改<strong style="color:var(--text-main);">只影響之後新建的期別</strong>，不影響進行中的現行期。所有修改均需產生待簽交易。
+        </div>
+        <div class="card" style="padding:0; overflow:hidden; margin-bottom:20px;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>參數名稱</th>
+                <th>說明</th>
+                <th style="text-align:right;">現行值</th>
+                <th style="text-align:right;">狀態</th>
+                <th style="text-align:right;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600;">每注售價</td>
+                <td style="color:var(--text-muted);">每注固定金額</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600;">40 USDT</td>
+                <td style="text-align:right;"><span class="badge-status badge-live">已確認</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="openA10ParamModal('每注售價','ticketPrice','40')"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">頭獎提撥比例</td>
+                <td style="color:var(--text-muted);">每期下注額撥入彩池的 %</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">⏳ 待定</td>
+                <td style="text-align:right;"><span class="badge-status badge-draft">待定</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" disabled style="opacity:0.4;"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">固定獎金 — 中 1 碼</td>
+                <td style="color:var(--text-muted);">定額 USDT</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">⏳ 待定</td>
+                <td style="text-align:right;"><span class="badge-status badge-draft">待定</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" disabled style="opacity:0.4;"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">固定獎金 — 中 2 碼</td>
+                <td style="color:var(--text-muted);">定額 USDT</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">⏳ 待定</td>
+                <td style="text-align:right;"><span class="badge-status badge-draft">待定</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" disabled style="opacity:0.4;"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">固定獎金 — 中 3 碼</td>
+                <td style="color:var(--text-muted);">定額 USDT</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">⏳ 待定</td>
+                <td style="text-align:right;"><span class="badge-status badge-draft">待定</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" disabled style="opacity:0.4;"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">中 4 碼保底獎</td>
+                <td style="color:var(--text-muted);">有人中 5 碼時的保底金額</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">⏳ 待定</td>
+                <td style="text-align:right;"><span class="badge-status badge-draft">待定</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" disabled style="opacity:0.4;"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">彩池無人中保留比例</td>
+                <td style="color:var(--text-muted);">無人中 5 碼時留存彩池的 %</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600;">20%</td>
+                <td style="text-align:right;"><span class="badge-status badge-live">已確認</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" onclick="openA10ParamModal('彩池無人中保留比例','jackpotRetainPct','20')"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">分潤比例（第一層）</td>
+                <td style="color:var(--text-muted);">下注額的 %</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">⏳ 待定</td>
+                <td style="text-align:right;"><span class="badge-status badge-draft">待定</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" disabled style="opacity:0.4;"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">分潤比例（第二層）</td>
+                <td style="color:var(--text-muted);">下注額的 %</td>
+                <td style="text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--orange);">⏳ 待定</td>
+                <td style="text-align:right;"><span class="badge-status badge-draft">待定</span></td>
+                <td style="text-align:right;"><button class="btn btn-outline btn-sm" disabled style="opacity:0.4;"><i class="fa-solid fa-pen"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 服務管理 -->
+        <h2 style="font-size:13px; font-weight:700; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px;">服務管理</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+
+          <!-- 排程服務錢包 -->
+          <div class="card">
+            <div class="card-title">排程服務錢包</div>
+            <div style="font-family:monospace; font-size:12px; color:var(--text-muted); margin-bottom:12px; word-break:break-all;">TScheduler123…ABC</div>
+            <button class="btn btn-outline btn-sm" onclick="openA10AddressModal('scheduler')">
+              <i class="fa-solid fa-arrow-right-arrow-left"></i> 更換錢包
+            </button>
+          </div>
+
+          <!-- 預言機簽名者 -->
+          <div class="card">
+            <div class="card-title">預言機簽名者</div>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+                <span style="color:var(--text-muted);">#1 (主)</span>
+                <span style="font-family:monospace; color:var(--text-main);">TOracle1…DEF</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+                <span style="color:var(--text-muted);">#2 (備)</span>
+                <span style="font-family:monospace; color:var(--text-main);">TOracle2…GHI</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+                <span style="color:var(--text-muted);">#3 (備)</span>
+                <span style="font-family:monospace; color:var(--orange);">TOracle3…JKL</span>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="openA10AddressModal('oracle')">
+              <i class="fa-solid fa-arrow-right-arrow-left"></i> 更換簽名者
+            </button>
+          </div>
+
+          <!-- 入帳上限 -->
+          <div class="card">
+            <div class="card-title">入帳上限（每期最大登記筆數）</div>
+            <div style="display:flex; align-items:center; gap:12px; margin-top:4px;">
+              <input class="form-input" type="number" value="1000" id="a10-deposit-limit" style="width:120px;">
+              <button class="btn btn-outline btn-sm" onclick="openA10DepositLimitModal()">
+                <i class="fa-solid fa-floppy-disk"></i> 更新
+              </button>
+            </div>
+            <div style="font-size:12px; color:var(--text-faint); margin-top:8px;">修改後產生待簽交易</div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- ╚══ /A10 ══╝ -->
+      <!-- ╔══ A11 Energy 監控 ══╗ -->
+      <div class="page-section" id="page-a11">
+
+        <!-- 頂部三格統計卡 -->
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; margin-bottom:16px;">
+
+          <!-- Energy 存量 + 進度條 -->
+          <div class="card">
+            <div style="font-size:11px; font-weight:600; letter-spacing:0.06em; color:var(--text-faint); text-transform:uppercase; margin-bottom:8px;">Energy 存量</div>
+            <div style="font-size:28px; font-weight:800; color:var(--text-main); font-variant-numeric:tabular-nums; margin-bottom:4px;">4,200,000</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">可用 Energy</div>
+            <div style="background:rgba(255,255,255,0.06); border-radius:4px; height:6px; overflow:hidden;">
+              <div style="background:var(--green); width:93%; height:100%; border-radius:4px;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:5px; font-size:11px; color:var(--text-faint);">
+              <span>0</span>
+              <span>門檻：1,500,000</span>
+            </div>
+          </div>
+
+          <!-- 每日消耗量 -->
+          <div class="card">
+            <div style="font-size:11px; font-weight:600; letter-spacing:0.06em; color:var(--text-faint); text-transform:uppercase; margin-bottom:8px;">每日消耗量</div>
+            <div style="font-size:28px; font-weight:800; color:var(--text-main); font-variant-numeric:tabular-nums; margin-bottom:4px;">320,000</div>
+            <div style="font-size:12px; color:var(--text-muted);">近 7 天平均</div>
+          </div>
+
+          <!-- 預估可用天數 -->
+          <div class="card">
+            <div style="font-size:11px; font-weight:600; letter-spacing:0.06em; color:var(--text-faint); text-transform:uppercase; margin-bottom:8px;">預估可用天數</div>
+            <div style="font-size:28px; font-weight:800; color:var(--green); font-variant-numeric:tabular-nums; margin-bottom:4px;">13.1</div>
+            <div style="font-size:12px; color:var(--text-muted);">天（存量 ÷ 日均消耗）</div>
+          </div>
+
+        </div>
+
+        <!-- 告警門檻 + 代付地址 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+
+          <!-- 告警門檻設定 -->
+          <div class="card">
+            <div style="font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:4px;">告警門檻設定</div>
+            <div style="font-size:12px; color:var(--text-faint); margin-bottom:12px;">低於此 Energy 值時觸發 A12 告警</div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input class="form-input" type="number" id="a11-threshold" value="1500000" min="0" style="flex:1;">
+              <button class="btn btn-gold" onclick="saveA11Threshold()">
+                <i class="fa-solid fa-floppy-disk"></i> 儲存門檻
+              </button>
+            </div>
+          </div>
+
+          <!-- 代付帳戶地址 -->
+          <div class="card">
+            <div style="font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:4px;">代付帳戶地址</div>
+            <div style="font-size:12px; color:var(--text-faint); margin-bottom:12px;">目前代付 Energy 的錢包地址</div>
+            <input class="form-input" type="text" value="TVXxu9EK2zr1pVJQqNSgMFHzDZ6BmDZ5gh" readonly style="font-family:monospace; font-size:12px; cursor:default; background:rgba(255,255,255,0.02); color:var(--text-muted);">
+          </div>
+
+        </div>
+
+        <!-- 30 天消耗趨勢圖 -->
+        <div class="card">
+          <div style="font-size:13px; font-weight:600; color:var(--text-main); margin-bottom:16px;">近 30 天每日消耗趨勢</div>
+          <div style="display:flex; gap:8px;">
+            <!-- Y 軸標籤 -->
+            <div style="display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end; padding-bottom:20px; min-width:38px;">
+              <span style="font-size:10px; color:var(--text-faint);">500K</span>
+              <span style="font-size:10px; color:var(--text-faint);">375K</span>
+              <span style="font-size:10px; color:var(--text-faint);">250K</span>
+              <span style="font-size:10px; color:var(--text-faint);">125K</span>
+              <span style="font-size:10px; color:var(--text-faint);">0</span>
+            </div>
+            <!-- 圖表 + X 軸 -->
+            <div style="flex:1; min-width:0;">
+              <svg width="100%" height="140" viewBox="0 0 870 140" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="a11-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#c49a2a" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#c49a2a" stop-opacity="0.02"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="1"   x2="870" y2="1"   stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <line x1="0" y1="35"  x2="870" y2="35"  stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <line x1="0" y1="70"  x2="870" y2="70"  stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <line x1="0" y1="105" x2="870" y2="105" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <line x1="0" y1="139" x2="870" y2="139" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <polygon
+                  points="0,90 30,85 60,95 90,80 120,100 150,88 180,78 210,92 240,105 270,88 300,75 330,82 360,110 390,95 420,70 450,65 480,88 510,100 540,85 570,78 600,92 630,105 660,88 690,72 720,68 750,80 780,95 810,100 840,85 870,82 870,140 0,140"
+                  fill="url(#a11-grad)"/>
+                <polyline
+                  points="0,90 30,85 60,95 90,80 120,100 150,88 180,78 210,92 240,105 270,88 300,75 330,82 360,110 390,95 420,70 450,65 480,88 510,100 540,85 570,78 600,92 630,105 660,88 690,72 720,68 750,80 780,95 810,100 840,85 870,82"
+                  fill="none" stroke="#c49a2a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+              <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:10px; color:var(--text-faint);">
+                <span>9/9</span><span>9/16</span><span>9/23</span><span>9/30</span><span>10/8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- ╚══ /A11 ══╝ -->
+      <div class="page-section" id="page-a13">
+        <!-- 篩選列 -->
+        <div class="card" style="margin-bottom:16px; padding:14px 16px;">
+          <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+            <div style="flex:1; min-width:140px;">
+              <label class="form-label">操作者</label>
+              <select class="form-input" id="a13-filter-operator" style="padding:7px 10px;">
+                <option value="">全部</option>
+                <option value="admin">admin</option>
+                <option value="ops">ops01</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:160px;">
+              <label class="form-label">動作類型</label>
+              <select class="form-input" id="a13-filter-action" style="padding:7px 10px;">
+                <option value="">全部</option>
+                <option value="公告">公告</option>
+                <option value="告警">告警處理</option>
+                <option value="裁定">爭議裁定</option>
+                <option value="黑名單">黑名單</option>
+                <option value="合約參數">合約參數</option>
+                <option value="期別">期別</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:140px;">
+              <label class="form-label">起始日期</label>
+              <input class="form-input" type="date" id="a13-filter-from" style="padding:7px 10px;">
+            </div>
+            <div style="flex:1; min-width:140px;">
+              <label class="form-label">結束日期</label>
+              <input class="form-input" type="date" id="a13-filter-to" style="padding:7px 10px;">
+            </div>
+            <button class="btn btn-gold" onclick="filterA13()" style="white-space:nowrap;">
+              <i class="fa-solid fa-magnifying-glass"></i> 搜尋
+            </button>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>時間</th>
+                <th>操作者</th>
+                <th>動作</th>
+                <th>詳細</th>
+                <th>待簽交易</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-size:12px; color:var(--text-muted);">2026-10-07 14:32</td>
+                <td>admin</td>
+                <td>新增公告</td>
+                <td>【重要】第一版上線公告</td>
+                <td style="color:var(--text-faint);">—</td>
+              </tr>
+              <tr>
+                <td style="font-size:12px; color:var(--text-muted);">2026-10-07 10:15</td>
+                <td>admin</td>
+                <td>告警處理</td>
+                <td>Energy 告警 標記為已處理</td>
+                <td style="color:var(--text-faint);">—</td>
+              </tr>
+              <tr>
+                <td style="font-size:12px; color:var(--text-muted);">2026-10-06 21:05</td>
+                <td>admin</td>
+                <td>爭議裁定</td>
+                <td>期號 115000246 開獎確認</td>
+                <td style="font-size:12px;"><a href="https://tronscan.org/#/transaction/0xabcdef" target="_blank" rel="noopener" style="font-family:monospace; color:var(--blue); text-decoration:none;">0xabc…def</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- ╚══ /其他頁 ══╝ -->
+
+    </div><!-- /page-content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══ MODAL: 跑馬燈 ═══ -->
+<div class="modal-backdrop" id="modal-marquee">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-marquee-title">新增跑馬燈</span>
+      <div class="modal-close" onclick="closeModal('modal-marquee')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="lang-tabs">
+      <div class="lang-tab active" data-lang="zh-tw" onclick="switchLangTab(this, 'mq')">繁中</div>
+      <div class="lang-tab" data-lang="zh-cn" onclick="switchLangTab(this, 'mq')">簡中</div>
+      <div class="lang-tab" data-lang="en" onclick="switchLangTab(this, 'mq')">English</div>
+    </div>
+    <div class="lang-fields" data-lang="zh-tw">
+      <div class="form-group">
+        <label class="form-label">文案（繁中）</label>
+        <input class="form-input" type="text" placeholder="跑馬燈文字" id="mq-text-zh-tw">
+      </div>
+    </div>
+    <div class="lang-fields" data-lang="zh-cn" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">文案（簡中）</label>
+        <input class="form-input" type="text" placeholder="跑马灯文字" id="mq-text-zh-cn">
+      </div>
+    </div>
+    <div class="lang-fields" data-lang="en" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Text (English)</label>
+        <input class="form-input" type="text" placeholder="Ticker text" id="mq-text-en">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">排程上架時間（留空 = 立即）</label>
+      <input class="form-input" type="datetime-local" id="mq-schedule-start">
+    </div>
+    <div class="form-group">
+      <label class="form-label">排程下架時間（留空 = 不自動下架）</label>
+      <input class="form-input" type="datetime-local" id="mq-schedule-end">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-marquee')">取消</button>
+      <button class="btn btn-gold" onclick="saveMarquee()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: 公告 ═══ -->
+<div class="modal-backdrop" id="modal-announce">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-announce-title">新增公告</span>
+      <div class="modal-close" onclick="closeModal('modal-announce')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="lang-tabs">
+      <div class="lang-tab active" data-lang="zh-tw" onclick="switchLangTab(this, 'ann')">繁中</div>
+      <div class="lang-tab" data-lang="zh-cn" onclick="switchLangTab(this, 'ann')">簡中</div>
+      <div class="lang-tab" data-lang="en" onclick="switchLangTab(this, 'ann')">English</div>
+    </div>
+    <div class="lang-fields" data-lang="zh-tw">
+      <div class="form-group">
+        <label class="form-label">標題（繁中）</label>
+        <input class="form-input" type="text" placeholder="公告標題" id="ann-title-zh-tw">
+      </div>
+      <div class="form-group">
+        <label class="form-label">內文（繁中）</label>
+        <textarea class="form-textarea" placeholder="公告內文" id="ann-body-zh-tw" style="min-height:120px;"></textarea>
+      </div>
+    </div>
+    <div class="lang-fields" data-lang="zh-cn" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">标题（简中）</label>
+        <input class="form-input" type="text" placeholder="公告标题" id="ann-title-zh-cn">
+      </div>
+      <div class="form-group">
+        <label class="form-label">内文（简中）</label>
+        <textarea class="form-textarea" placeholder="公告内文" id="ann-body-zh-cn" style="min-height:120px;"></textarea>
+      </div>
+    </div>
+    <div class="lang-fields" data-lang="en" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Title (English)</label>
+        <input class="form-input" type="text" placeholder="Announcement title" id="ann-title-en">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Body (English)</label>
+        <textarea class="form-textarea" placeholder="Announcement body" id="ann-body-en" style="min-height:120px;"></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">排程上架時間（留空 = 立即）</label>
+      <input class="form-input" type="datetime-local" id="ann-schedule-start">
+    </div>
+    <div class="form-group">
+      <label class="form-label">排程下架時間（留空 = 不自動下架）</label>
+      <input class="form-input" type="datetime-local" id="ann-schedule-end">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-announce')">取消</button>
+      <button class="btn btn-gold" onclick="saveAnnounce()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: FAQ ═══ -->
+<div class="modal-backdrop" id="modal-faq">
+  <div class="modal">
+    <div class="modal-title">
+      <span>新增 FAQ</span>
+      <div class="modal-close" onclick="closeModal('modal-faq')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label class="form-label">分類</label>
+      <select class="form-input" id="faq-cat">
+        <option value="play">玩法</option>
+        <option value="method">下注方式</option>
+        <option value="auth">授權與撤銷</option>
+        <option value="funds">儲值與提領</option>
+        <option value="draw">開獎與退款</option>
+        <option value="aff">推廣夥伴</option>
+      </select>
+    </div>
+    <div class="lang-tabs">
+      <div class="lang-tab active" data-lang="zh-tw" onclick="switchLangTab(this, 'faq')">繁中</div>
+      <div class="lang-tab" data-lang="zh-cn" onclick="switchLangTab(this, 'faq')">簡中</div>
+      <div class="lang-tab" data-lang="en" onclick="switchLangTab(this, 'faq')">English</div>
+    </div>
+    <div class="lang-fields" data-lang="zh-tw">
+      <div class="form-group">
+        <label class="form-label">問題（繁中）</label>
+        <input class="form-input" type="text" placeholder="常見問題" id="faq-q-zh-tw">
+      </div>
+      <div class="form-group">
+        <label class="form-label">答案（繁中）</label>
+        <textarea class="form-textarea" placeholder="詳細解答" id="faq-a-zh-tw" style="min-height:120px;"></textarea>
+      </div>
+    </div>
+    <div class="lang-fields" data-lang="zh-cn" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">问题（简中）</label>
+        <input class="form-input" type="text" placeholder="常见问题" id="faq-q-zh-cn">
+      </div>
+      <div class="form-group">
+        <label class="form-label">答案（简中）</label>
+        <textarea class="form-textarea" placeholder="详细解答" id="faq-a-zh-cn" style="min-height:120px;"></textarea>
+      </div>
+    </div>
+    <div class="lang-fields" data-lang="en" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Question (English)</label>
+        <input class="form-input" type="text" placeholder="Frequently asked question" id="faq-q-en">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Answer (English)</label>
+        <textarea class="form-textarea" placeholder="Detailed answer" id="faq-a-en" style="min-height:120px;"></textarea>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-faq')">取消</button>
+      <button class="btn btn-gold" onclick="saveFaq()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A10 修改參數 ═══ -->
+<div class="modal-backdrop" id="modal-a10-param">
+  <div class="modal" style="width:460px;">
+    <div class="modal-title">
+      <span>修改合約參數</span>
+      <div class="modal-close" onclick="closeModal('modal-a10-param')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div style="background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.20); border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);">
+      <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange); margin-right:6px;"></i>
+      修改只影響之後新建的期別，不影響進行中的現行期。
+    </div>
+    <div class="form-group">
+      <label class="form-label">參數名稱</label>
+      <input class="form-input" type="text" id="a10-param-name-display" disabled style="opacity:0.6;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">現行值</label>
+      <input class="form-input" type="text" id="a10-param-current" disabled style="opacity:0.6;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">新值</label>
+      <input class="form-input" type="text" placeholder="輸入新值" id="a10-param-new">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a10-param')">取消</button>
+      <button class="btn btn-gold" onclick="submitA10Param()">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A10 全局停收確認 ═══ -->
+<div class="modal-backdrop" id="modal-a10-global">
+  <div class="modal" style="width:440px;">
+    <div class="modal-title">
+      <span id="modal-a10-global-title">確認停收新注</span>
+      <div class="modal-close" onclick="closeModal('modal-a10-global')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div id="modal-a10-global-body" style="border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="cancelA10Global()">取消</button>
+      <button class="btn btn-danger" id="a10-global-confirm-btn" onclick="confirmA10Global()">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A10 彩金桶停用 / 啟用確認 ═══ -->
+<div class="modal-backdrop" id="modal-a10-pool">
+  <div class="modal" style="width:440px;">
+    <div class="modal-title">
+      <span id="modal-a10-pool-title">停用彩金桶</span>
+      <div class="modal-close" onclick="closeModal('modal-a10-pool')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div id="modal-a10-pool-body" style="border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a10-pool')">取消</button>
+      <button class="btn btn-danger" id="a10-pool-confirm-btn" onclick="confirmA10Pool()">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A10 更換地址（排程 / 預言機）═══ -->
+<div class="modal-backdrop" id="modal-a10-address">
+  <div class="modal" style="width:460px;">
+    <div class="modal-title">
+      <span id="modal-a10-address-title">更換排程服務錢包</span>
+      <div class="modal-close" onclick="closeModal('modal-a10-address')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div id="modal-a10-address-warning" style="display:none; border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted); background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.20);">
+      <i class="fa-solid fa-clock" style="color:var(--orange); margin-right:6px;"></i>
+      更換預言機簽名者將<strong style="color:var(--text-main);">等待 48 小時</strong>後生效，期間仍使用舊簽名者。
+    </div>
+    <div id="modal-a10-oracle-select" style="display:none;" class="form-group">
+      <label class="form-label">選擇預言機編號</label>
+      <select class="form-select" id="a10-oracle-index">
+        <option value="0">#1 主預言機</option>
+        <option value="1">#2 備用預言機</option>
+        <option value="2">#3 備用預言機</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">新地址（TRC20）</label>
+      <input class="form-input" type="text" placeholder="T…" id="a10-new-address">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a10-address')">取消</button>
+      <button class="btn btn-gold" onclick="submitA10Address()">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A9 注資 / 提款 ═══ -->
+<div class="modal-backdrop" id="modal-a9-tx">
+  <div class="modal" style="width:440px;">
+    <div class="modal-title">
+      <span id="modal-a9-tx-title">平台注資</span>
+      <div class="modal-close" onclick="closeModal('modal-a9-tx')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div id="modal-a9-tx-warning" style="border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);"></div>
+    <div class="form-group">
+      <label class="form-label">平台戶現有餘額</label>
+      <input class="form-input" type="text" value="85,000 USDT" disabled style="opacity:0.5;">
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="modal-a9-amount-label">注資金額（USDT）</label>
+      <input class="form-input" type="number" min="1" placeholder="輸入金額" id="a9-tx-amount">
+    </div>
+    <div class="form-group">
+      <label class="form-label">備註（供操作紀錄使用）</label>
+      <input class="form-input" type="text" placeholder="例：補充平台戶準備金" id="a9-tx-note">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a9-tx')">取消</button>
+      <button class="btn btn-gold" id="a9-tx-submit-btn" onclick="submitA9Tx()">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A5 暫停入帳服務 ═══ -->
+<div class="modal-backdrop" id="modal-a5-pause">
+  <div class="modal" style="width:440px;">
+    <div class="modal-title">
+      <span>暫停入帳服務</span>
+      <div class="modal-close" onclick="closeModal('modal-a5-pause')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.20); border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);">
+      <i class="fa-solid fa-triangle-exclamation" style="color:var(--red); margin-right:6px;"></i>
+      暫停後，② 轉帳下注將無法登記。此操作將產生待簽交易，需管理多簽確認後生效。
+    </div>
+    <div class="form-group">
+      <label class="form-label">暫停原因（供操作紀錄使用）</label>
+      <input class="form-input" type="text" placeholder="例：入帳錢包異常，待更換">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a5-pause')">取消</button>
+      <button class="btn btn-danger" onclick="confirmPendingTx('modal-a5-pause','暫停入帳服務')">
+        <i class="fa-solid fa-pause"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A5 更換入帳錢包 ═══ -->
+<div class="modal-backdrop" id="modal-a5-replace">
+  <div class="modal" style="width:440px;">
+    <div class="modal-title">
+      <span>更換入帳服務錢包</span>
+      <div class="modal-close" onclick="closeModal('modal-a5-replace')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">目前錢包地址</label>
+      <input class="form-input" type="text" value="TDepositABC123…" disabled style="opacity:0.5;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">新錢包地址（TRC20）</label>
+      <input class="form-input" type="text" placeholder="T…" id="a5-new-wallet">
+    </div>
+    <div style="font-size:12px; color:var(--text-faint); margin-bottom:16px;">
+      <i class="fa-solid fa-circle-info" style="margin-right:4px;"></i>
+      更換後需重新設定入帳服務指向新地址，請確認新錢包已準備好接收。
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a5-replace')">取消</button>
+      <button class="btn btn-gold" onclick="confirmPendingTx('modal-a5-replace','更換入帳服務錢包')">
+        <i class="fa-solid fa-arrow-right-arrow-left"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A6 認領申請 ═══ -->
+<div class="modal-backdrop" id="modal-a6-claim">
+  <div class="modal" style="width:500px;">
+    <div class="modal-title">
+      <span>無主款認領申請</span>
+      <div class="modal-close" onclick="closeModal('modal-a6-claim')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">交易編號（txHash）</label>
+      <input class="form-input" type="text" id="a6-claim-txhash" disabled style="opacity:0.6; font-family:monospace; font-size:12px;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">金額</label>
+      <input class="form-input" type="text" id="a6-claim-amount" disabled style="opacity:0.6;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">申請人錢包地址（原轉帳地址）</label>
+      <input class="form-input" type="text" placeholder="T…" id="a6-claim-address">
+    </div>
+    <div class="form-group">
+      <label class="form-label">玩家簽名</label>
+      <textarea class="form-textarea" placeholder="貼上玩家提供的簽名字串" id="a6-claim-sig" style="font-family:monospace; font-size:12px;"></textarea>
+      <div style="font-size:11px; color:var(--text-faint); margin-top:4px;">玩家需用原轉帳錢包對指定訊息（txHash + 地址）進行簽名</div>
+    </div>
+    <!-- 驗簽結果（驗簽後顯示） -->
+    <div id="a6-verify-result" style="display:none; border-radius:8px; padding:10px 14px; margin-bottom:8px; font-size:13px;"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a6-claim')">取消</button>
+      <button class="btn btn-outline" onclick="simulateVerifySig()">
+        <i class="fa-solid fa-shield-halved"></i> 驗證簽名
+      </button>
+      <button class="btn btn-gold" id="a6-confirm-btn" disabled style="opacity:0.4;" onclick="a6ClaimVerified()">
+        <i class="fa-solid fa-check"></i> 驗證通過，送出申請
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A6 確認認領（管理員發起待簽交易）═══ -->
+<div class="modal-backdrop" id="modal-a6-confirm">
+  <div class="modal" style="width:460px;">
+    <div class="modal-title">
+      <span>確認認領 — 產生待簽交易</span>
+      <div class="modal-close" onclick="closeModal('modal-a6-confirm')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div style="background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.20); border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);">
+      <i class="fa-solid fa-shield-halved" style="color:var(--green); margin-right:6px;"></i>
+      簽名驗證已通過。確認後產生待簽交易，由管理多簽確認後將款項轉入申請人地址。
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; font-size:13px;">
+        <span style="color:var(--text-muted);">交易編號</span>
+        <span style="font-family:monospace; font-size:12px;" id="a6-confirm-txhash">—</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:13px;">
+        <span style="color:var(--text-muted);">認領金額</span>
+        <span style="font-weight:700; color:var(--gold);" id="a6-confirm-amount">—</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:13px;">
+        <span style="color:var(--text-muted);">轉入地址</span>
+        <span id="a6-confirm-address">—</span>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a6-confirm')">取消</button>
+      <button class="btn btn-gold" onclick="confirmPendingTx('modal-a6-confirm','無主款認領')">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A6 發起清理 ═══ -->
+<div class="modal-backdrop" id="modal-a6-cleanup">
+  <div class="modal" style="width:440px;">
+    <div class="modal-title">
+      <span>發起清理</span>
+      <div class="modal-close" onclick="closeModal('modal-a6-cleanup')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.20); border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);">
+      <i class="fa-solid fa-triangle-exclamation" style="color:var(--red); margin-right:6px;"></i>
+      清理後款項將從合約移除。此操作<strong style="color:var(--text-main);">等待 48 小時</strong>後生效，期間玩家仍可提出認領。
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; font-size:13px;">
+        <span style="color:var(--text-muted);">交易編號</span>
+        <span style="font-family:monospace; font-size:12px;" id="a6-cleanup-txhash">—</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:13px;">
+        <span style="color:var(--text-muted);">清理金額</span>
+        <span style="font-weight:700; color:var(--red);" id="a6-cleanup-amount">—</span>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a6-cleanup')">取消</button>
+      <button class="btn btn-danger" onclick="confirmPendingTx('modal-a6-cleanup','發起無主款清理（48小時生效）')">
+        <i class="fa-solid fa-trash-can"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A3 查看開獎 / 爭議裁定 ═══ -->
+<div class="modal-backdrop" id="modal-a3-oracle">
+  <div class="modal" style="width:580px;">
+    <div class="modal-title">
+      <span id="modal-a3-oracle-title">查看開獎結果</span>
+      <div class="modal-close" onclick="closeModal('modal-a3-oracle')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+
+    <!-- 期號 + 開獎號碼 -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <span style="font-size:13px; color:var(--text-muted);">期號</span>
+      <span style="font-weight:700; color:var(--text-main);" id="a3-oracle-drawno">—</span>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px; color:var(--text-faint); margin-bottom:8px;">開獎號碼（官方最終結果）</div>
+      <div id="a3-oracle-numbers" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- Oracle 對照表 -->
+    <div style="font-size:12px; color:var(--text-faint); margin-bottom:8px;">預言機回報對照</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:20px;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);">
+          <th style="padding:8px 6px; text-align:left; color:var(--text-muted); font-weight:500;">預言機</th>
+          <th style="padding:8px 6px; text-align:left; color:var(--text-muted); font-weight:500;">回報時間</th>
+          <th style="padding:8px 6px; text-align:left; color:var(--text-muted); font-weight:500;">回報號碼</th>
+          <th style="padding:8px 6px; text-align:center; color:var(--text-muted); font-weight:500;">比對結果</th>
+        </tr>
+      </thead>
+      <tbody id="a3-oracle-tbody"></tbody>
+    </table>
+
+    <!-- 爭議裁定區塊（僅爭議中期別顯示） -->
+    <div id="a3-dispute-section" style="display:none; border-top:1px solid var(--border); padding-top:16px; margin-bottom:8px;">
+      <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.20); border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);" id="a3-dispute-reason"></div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="closeModal('modal-a3-oracle')">取消</button>
+        <button class="btn btn-outline" onclick="a3DisputeReject()" style="border-color:var(--red); color:var(--red);">
+          <i class="fa-solid fa-xmark"></i> 否決 — 要求重新提交
+        </button>
+        <button class="btn btn-gold" onclick="a3DisputeAccept()">
+          <i class="fa-solid fa-check"></i> 確認 — 維持現有結果
+        </button>
+      </div>
+    </div>
+    <!-- 非爭議期別關閉按鈕 -->
+    <div id="a3-close-section" style="display:flex; justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a3-oracle')">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A3 延期 ═══ -->
+<div class="modal-backdrop" id="modal-a3-postpone">
+  <div class="modal" style="width:440px;">
+    <div class="modal-title">
+      <span>延期 — <span id="a3-postpone-drawno">—</span></span>
+      <div class="modal-close" onclick="closeModal('modal-a3-postpone')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">新截止時間</label>
+      <input class="form-input" type="datetime-local" id="a3-postpone-time">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a3-postpone')">取消</button>
+      <button class="btn btn-gold" onclick="submitA3Postpone()">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: A5 代為入帳 ═══ -->
+<div class="modal-backdrop" id="modal-a5-manual-register">
+  <div class="modal" style="width:540px;">
+    <div class="modal-title">
+      <span>代為入帳</span>
+      <div class="modal-close" onclick="closeModal('modal-a5-manual-register')"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.20); border-radius:8px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--text-muted);">
+      <i class="fa-solid fa-triangle-exclamation" style="color:var(--red); margin-right:6px;"></i>
+      入帳服務已停擺超過 6 小時。代為入帳受相同入帳上限（D7）限制。
+    </div>
+    <div class="form-group">
+      <label class="form-label">待處理交易 txHash</label>
+      <input class="form-input" type="text" id="a5-mr-txhash" placeholder="0x…" style="font-family:monospace; font-size:12px;" value="a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2">
+    </div>
+    <div class="form-group">
+      <label class="form-label">所屬期號</label>
+      <input class="form-input" type="text" id="a5-mr-drawno" value="115000248">
+    </div>
+    <div class="form-group">
+      <label class="form-label">來源地址</label>
+      <input class="form-input" type="text" id="a5-mr-address" placeholder="T…" value="TCk3Ke8JFDSv5VmBNnCNPQKmBiWv3LnDiB">
+    </div>
+    <div class="form-group">
+      <label class="form-label">下注號碼（5 個，逗號分隔）</label>
+      <input class="form-input" type="text" id="a5-mr-numbers" placeholder="例：3,15,22,31,38">
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeModal('modal-a5-manual-register')">取消</button>
+      <button class="btn btn-gold" onclick="submitA5ManualRegister()">
+        <i class="fa-solid fa-file-signature"></i> 產生待簽交易
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

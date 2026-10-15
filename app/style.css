@@ -1,0 +1,20 @@
+/* ════════════════════════════════════════
+   前台共用樣式
+   ════════════════════════════════════════ */
+
+/* Navbar logo — 修改尺寸只需改這裡 */
+.navbar-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+/* Navbar 品牌名稱佔位符 — 定案後替換文字內容 */
+.navbar-brand {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}

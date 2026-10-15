@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>〔品牌名〕— 推廣夥伴</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
+  <style>
+    :root {
+      --gold:        #c49a2a;
+      --gold-light:  #e8b84b;
+      --gold-bright: #f5d67a;
+      --gold-dim:    #7a5e18;
+      --text-main:   #f0e6d2;
+      --text-muted:  #8a7a62;
+      --text-dim:    #5a4a35;
+      --bg-dark:     #0a0703;
+      --bg-surface:  #0e0b07;
+      --bg-card:     #1c1610;
+      --border-gold: rgba(196,154,42,0.22);
+    }
+    body {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background-color: #0a0703;
+      color: #f0e6d2;
+      min-height: 100vh;
+    }
+    .bg-neutral-950 { background-color: #0a0703 !important; }
+    .bg-neutral-900 { background-color: #0e0b07 !important; }
+    .font-display   { font-family: 'Cinzel', serif !important; }
+
+    @keyframes btn-shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .btn-gold {
+      background: linear-gradient(105deg,#7a5010 0%,#c49a2a 22%,#f5d67a 46%,#e8b84b 54%,#c49a2a 78%,#7a5010 100%) !important;
+      background-size: 250% auto !important;
+      animation: btn-shimmer 4.5s linear infinite;
+      color: #0d0a04 !important;
+      font-weight: 900;
+      box-shadow: 0 4px 28px rgba(196,154,42,0.4), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.35) !important;
+      border: 1px solid rgba(245,214,122,0.3) !important;
+      transition: box-shadow 0.3s ease, transform 0.15s ease !important;
+    }
+    .btn-gold:hover  { box-shadow: 0 6px 40px rgba(196,154,42,0.6), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.35) !important; }
+    .btn-gold:active { transform: scale(0.96); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05) !important;
+      color: var(--text-muted) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+    }
+    .btn-ghost:hover  { background: rgba(255,255,255,0.1) !important; color: var(--text-main) !important; }
+    .btn-ghost:active { transform: scale(0.96); }
+
+    .gold-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(196,154,42,0.35) 25%, rgba(232,184,75,0.55) 50%, rgba(196,154,42,0.35) 75%, transparent 100%);
+    }
+    .header-bg {
+      background: linear-gradient(90deg,#0e0905 0%,#150e07 100%) !important;
+      border-bottom: 1px solid rgba(196,154,42,0.2) !important;
+    }
+    .menu-item { transition: color 0.15s ease, background 0.15s ease, padding-left 0.2s ease; border-left: 2px solid transparent; }
+    .menu-item:hover, .menu-item.active {
+      color: #c49a2a !important; background: rgba(196,154,42,0.06);
+      padding-left: 1.5rem; border-left-color: rgba(196,154,42,0.4);
+    }
+    #menu-panel { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.2,0,0,1); }
+    #menu-panel.open { transform: translateX(0); }
+    #menu-backdrop { opacity: 0; transition: opacity 0.25s ease; }
+    #menu-backdrop.open { opacity: 1; }
+
+    .thin-scroll::-webkit-scrollbar { width: 3px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(196,154,42,0.25); border-radius: 2px; }
+
+    /* ── P6 SPECIFIC ─────────────────────── */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center;
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(196,154,42,0.12);
+    }
+    .stat-box {
+      flex: 1; padding: 0.875rem 1rem;
+      border-right: 1px solid rgba(196,154,42,0.1);
+    }
+    .stat-box:last-child { border-right: none; }
+    .claim-history-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1rem;
+    }
+    .divide-gold > * + * { border-top: 1px solid rgba(196,154,42,0.1); }
+    .info-row {
+      padding: 0.75rem 1rem;
+      font-size: 0.8125rem;
+      color: #7a6a50;
+      line-height: 1.5;
+    }
+    .info-row + .info-row { border-top: 1px solid rgba(196,154,42,0.08); }
+    .qr-placeholder {
+      width: 108px; height: 108px; flex-shrink: 0;
+      background: #f0e6d2; border-radius: 0.5rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body class="bg-neutral-950">
+
+<!-- ═══ SHARED BANNERS  §G1 ════════════════ -->
+<div id="banner-network"   class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.15);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.2);"><span data-i18n="banner.network"></span></div>
+<div id="banner-paused"    class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(234,179,8,0.1);color:#fbbf24;border-bottom:1px solid rgba(234,179,8,0.15);"><span data-i18n="banner.paused"></span></div>
+<div id="banner-blacklist" class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.12);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.18);"><span data-i18n="banner.blacklist"></span></div>
+
+<!-- ═══ HEADER  §G1 ═════════════════════════ -->
+<header class="header-bg sticky top-0 z-40 w-full">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2 select-none">
+      <img src="image/539_logo.png" alt="39彩金桶" class="navbar-logo">
+      <span class="navbar-brand">〔品牌名〕</span>
+    </a>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden sm:flex items-center gap-0.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-2.5 py-1 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+      </div>
+      <button id="wallet-btn-visitor" onclick="connectWallet()"
+              class="btn-gold px-4 py-2 rounded-lg text-sm font-bold hover:scale-[1.02]">
+        <span data-i18n="wallet.connect">連接錢包</span>
+      </button>
+      <div id="wallet-btn-connected" class="hidden items-center gap-2.5 rounded-lg px-3 py-2 cursor-pointer"
+           style="background:rgba(196,154,42,0.08);border:1px solid rgba(196,154,42,0.25);transition:background 0.15s ease;"
+           onmouseover="this.style.background='rgba(196,154,42,0.14)'"
+           onmouseout="this.style.background='rgba(196,154,42,0.08)'">
+        <i class="fa-solid fa-circle text-xs flex-shrink-0" style="color:#4ade80;"></i>
+        <div class="text-right leading-tight">
+          <div id="header-address" class="text-xs font-mono" style="color:#7a6a50;">—</div>
+          <div id="header-balance" class="text-sm font-black tabular-nums" style="color:#e8b84b;">—&thinsp;<span class="text-xs font-normal" style="color:#7a6a50;">USDT</span></div>
+        </div>
+      </div>
+      <button onclick="toggleMenu()" aria-label="選單"
+              class="w-9 h-9 flex items-center justify-center rounded-lg"
+              style="color:#7a6a50;transition:color 0.15s ease,background 0.15s ease;"
+              onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'"
+              onmouseout="this.style.color='#7a6a50';this.style.background='transparent'">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SIDE MENU  §G1 ══════════════════════ -->
+<div id="menu-overlay" class="hidden fixed inset-0 z-50">
+  <div id="menu-backdrop" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+  <nav id="menu-panel" class="absolute right-0 top-0 bottom-0 w-64 flex flex-col"
+       style="background:linear-gradient(180deg,#130e08 0%,#0d0a06 100%);border-left:1px solid rgba(196,154,42,0.2);"
+       onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid rgba(196,154,42,0.15);">
+      <span class="font-display font-bold tracking-[0.15em] text-sm" style="color:#c49a2a;">MENU</span>
+      <button onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg" style="color:#5a4a35;transition:color 0.15s ease,background 0.15s ease;" onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35';this.style.background='transparent'">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <ul class="flex-1 py-3 overflow-y-auto thin-scroll">
+      <li><a href="index.html"          data-nav="home"      class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-house w-4 text-center"></i> <span data-i18n="nav.home">首頁</span></a></li>
+      <li><a href="tickets.html"        data-nav="tickets"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-ticket w-4 text-center"></i> <span data-i18n="nav.tickets">我的注單</span></a></li>
+      <li><a href="account.html"        data-nav="account"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-circle-user w-4 text-center"></i> <span data-i18n="nav.account">會員中心</span></a></li>
+      <li><a href="history.html"        data-nav="history"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-clock-rotate-left w-4 text-center"></i> <span data-i18n="nav.history">歷史紀錄</span></a></li>
+      <li><a href="affiliate.html"      data-nav="affiliate" class="menu-item active flex items-center gap-3 px-5 py-3 font-semibold" style="color:#e8b84b;"><i class="fa-solid fa-handshake w-4 text-center" style="color:#c49a2a;"></i> <span data-i18n="nav.affiliate">推廣夥伴</span></a></li>
+      <li><a href="rules.html"          data-nav="rules"     class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-book-open w-4 text-center"></i> <span data-i18n="nav.rules">遊戲規則</span></a></li>
+      <li><a href="support.html"        data-nav="support"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-headset w-4 text-center"></i> <span data-i18n="nav.support">客服</span></a></li>
+    </ul>
+    <div class="p-4" style="border-top:1px solid rgba(196,154,42,0.15);">
+      <div class="flex justify-center gap-1.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-3 py-1.5 rounded" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-3 py-1.5 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-3 py-1.5 rounded" style="color:#5a4a35;">简</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT  §P6
+═══════════════════════════════════════ -->
+<main class="max-w-3xl mx-auto px-4 py-8 pb-20">
+
+  <div class="mb-6">
+    <h1 class="font-display font-bold text-2xl tracking-widest mb-1"
+        style="color:#e8b84b; letter-spacing:0.12em;" data-i18n="p6.page.title">推廣夥伴</h1>
+    <div class="gold-sep"></div>
+  </div>
+
+  <!-- ── 1. 推廣連結  §P6 ─────────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-link mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p6.link.title">專屬推廣連結</span>
+    </div>
+    <div class="p-4 space-y-4">
+      <!-- Promo URL -->
+      <div>
+        <div class="flex items-center gap-2">
+          <span id="promo-url" class="font-mono text-sm break-all leading-snug flex-1"
+                style="color:#c49a2a; word-break:break-all;">https://[domain]/?ref=DEMO1234</span>
+          <button id="copy-link-btn" onclick="copyPromoLink()"
+                  class="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg"
+                  style="background:rgba(196,154,42,0.08);color:#7a6a50;border:1px solid rgba(196,154,42,0.15);transition:background 0.15s ease,color 0.15s ease;"
+                  onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.18)'"
+                  onmouseout="this.style.color='#7a6a50';this.style.background='rgba(196,154,42,0.08)'">
+            <i class="fa-solid fa-copy text-xs"></i>
+          </button>
+        </div>
+      </div>
+      <!-- QR Code §P6 -->
+      <div class="flex items-center gap-4">
+        <div class="qr-placeholder">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:92px;height:92px;">
+            <rect x="5"  y="5"  width="30" height="30" fill="none" stroke="#0a0703" stroke-width="4"/>
+            <rect x="12" y="12" width="16" height="16" fill="#0a0703"/>
+            <rect x="65" y="5"  width="30" height="30" fill="none" stroke="#0a0703" stroke-width="4"/>
+            <rect x="72" y="12" width="16" height="16" fill="#0a0703"/>
+            <rect x="5"  y="65" width="30" height="30" fill="none" stroke="#0a0703" stroke-width="4"/>
+            <rect x="12" y="72" width="16" height="16" fill="#0a0703"/>
+            <rect x="42" y="5"  width="6" height="6" fill="#0a0703"/>
+            <rect x="50" y="5"  width="6" height="6" fill="#0a0703"/>
+            <rect x="42" y="13" width="6" height="6" fill="#0a0703"/>
+            <rect x="58" y="13" width="6" height="6" fill="#0a0703"/>
+            <rect x="42" y="21" width="6" height="6" fill="#0a0703"/>
+            <rect x="50" y="21" width="6" height="6" fill="#0a0703"/>
+            <rect x="5"  y="42" width="6" height="6" fill="#0a0703"/>
+            <rect x="13" y="42" width="6" height="6" fill="#0a0703"/>
+            <rect x="21" y="50" width="6" height="6" fill="#0a0703"/>
+            <rect x="5"  y="58" width="6" height="6" fill="#0a0703"/>
+            <rect x="42" y="42" width="6" height="6" fill="#0a0703"/>
+            <rect x="50" y="50" width="6" height="6" fill="#0a0703"/>
+            <rect x="58" y="42" width="6" height="6" fill="#0a0703"/>
+            <rect x="66" y="50" width="6" height="6" fill="#0a0703"/>
+            <rect x="74" y="42" width="6" height="6" fill="#0a0703"/>
+            <rect x="82" y="50" width="6" height="6" fill="#0a0703"/>
+            <rect x="42" y="66" width="6" height="6" fill="#0a0703"/>
+            <rect x="58" y="58" width="6" height="6" fill="#0a0703"/>
+            <rect x="66" y="66" width="6" height="6" fill="#0a0703"/>
+            <rect x="74" y="74" width="6" height="6" fill="#0a0703"/>
+            <rect x="50" y="74" width="6" height="6" fill="#0a0703"/>
+          </svg>
+        </div>
+        <div class="text-xs leading-relaxed" style="color:#5a4a35;" data-i18n="p6.qr.hint">掃描 QR Code 或分享連結，首次下注永久綁定</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 2. 統計  §P6 ─────────────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-chart-bar mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p6.stats.title">統計</span>
+    </div>
+    <!-- 2×2 grid: counts + volumes -->
+    <div class="flex" style="border-bottom:1px solid rgba(196,154,42,0.1);">
+      <div class="stat-box">
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="p6.stats.l1.count">第一層下線人數</div>
+        <div class="text-xl font-black tabular-nums" style="color:#e8b84b;">12</div>
+      </div>
+      <div class="stat-box">
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="p6.stats.l2.count">第二層下線人數</div>
+        <div class="text-xl font-black tabular-nums" style="color:#e8b84b;">5</div>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="stat-box">
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="p6.stats.l1.volume">第一層下注總額</div>
+        <div class="text-lg font-black tabular-nums" style="color:#e8b84b;">1,240.00 <span class="text-xs font-normal" style="color:#6a5a45;">USDT</span></div>
+      </div>
+      <div class="stat-box">
+        <div class="text-xs mb-1" style="color:#5a4a35;" data-i18n="p6.stats.l2.volume">第二層下注總額</div>
+        <div class="text-lg font-black tabular-nums" style="color:#e8b84b;">320.00 <span class="text-xs font-normal" style="color:#6a5a45;">USDT</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 3. 分潤  §P6 ─────────────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-coins mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p6.earn.title">分潤</span>
+    </div>
+    <!-- 可領金額 + 領取按鈕 -->
+    <div class="p-4" style="border-bottom:1px solid rgba(196,154,42,0.1);">
+      <div class="text-xs mb-1.5" style="color:#5a4a35;" data-i18n="p6.earn.available">可領金額</div>
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-baseline gap-2">
+          <span id="claimable-amount" class="text-2xl font-black tabular-nums" style="color:#e8b84b;">8.40</span>
+          <span class="text-sm font-normal" style="color:#6a5a45;">USDT</span>
+        </div>
+        <button onclick="claimEarnings()"
+                class="btn-gold px-6 py-2.5 rounded-xl text-sm font-black flex-shrink-0"
+                data-i18n="p6.earn.claim">領取</button>
+      </div>
+    </div>
+    <!-- 領取紀錄 -->
+    <div class="card-header" style="border-bottom:1px solid rgba(196,154,42,0.1);border-top:none;">
+      <span class="text-xs font-bold" style="color:#5a4a35;" data-i18n="p6.earn.history.title">領取紀錄</span>
+    </div>
+    <div class="divide-gold">
+      <!-- Demo row 1 -->
+      <div class="claim-history-row">
+        <div>
+          <div class="text-sm font-bold tabular-nums" style="color:#e8b84b;">6.20 USDT</div>
+          <div class="text-xs mt-0.5" style="color:#5a4a35;">#115000354&ensp;·&ensp;2026-10-06 21:05</div>
+        </div>
+        <a href="#" class="text-xs" style="color:#5a4a35;text-decoration:underline;" data-i18n="p4.funds.tx">鏈上交易</a>
+      </div>
+      <!-- Demo row 2 -->
+      <div class="claim-history-row">
+        <div>
+          <div class="text-sm font-bold tabular-nums" style="color:#e8b84b;">4.80 USDT</div>
+          <div class="text-xs mt-0.5" style="color:#5a4a35;">#115000352&ensp;·&ensp;2026-10-04 21:12</div>
+        </div>
+        <a href="#" class="text-xs" style="color:#5a4a35;text-decoration:underline;" data-i18n="p4.funds.tx">鏈上交易</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4. 說明  §P6 ─────────────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-circle-info mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p6.info.title">說明</span>
+    </div>
+    <div>
+      <div class="info-row" data-i18n="p6.info.rate">分潤比例：【待定，比例尚未確定】</div>
+      <div class="info-row" data-i18n="p6.info.timing">入帳時機：每期開獎結算後入帳</div>
+      <div class="info-row" data-i18n="p6.info.refund">退款的期別不產生分潤</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER  §G1 ════════════════════════ -->
+<div id="site-footer"></div>
+<script src="footer.js"></script>
+
+<script>
+/* ── MENU ────────────────────────────────── */
+function toggleMenu() {
+  const overlay  = document.getElementById('menu-overlay');
+  const backdrop = document.getElementById('menu-backdrop');
+  const panel    = document.getElementById('menu-panel');
+  const isOpen   = panel.classList.contains('open');
+  if (isOpen) {
+    backdrop.classList.remove('open');
+    panel.classList.remove('open');
+    setTimeout(() => { overlay.classList.add('hidden'); }, 260);
+  } else {
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+    });
+  }
+}
+
+/* ── WALLET (stub) ──────────────────────── */
+function connectWallet() {
+  /* TODO: connect TronLink wallet */
+}
+
+/* ── COPY PROMO LINK  §P6 ───────────────── */
+function copyPromoLink() {
+  /* TODO: read promo URL from contract / API */
+  const url = document.getElementById('promo-url').textContent.trim();
+  const btn = document.getElementById('copy-link-btn');
+  if (!url) return;
+  try {
+    navigator.clipboard.writeText(url).then(() => {
+      btn.innerHTML = '<i class="fa-solid fa-check text-xs" style="color:#4ade80;"></i>';
+      setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-copy text-xs"></i>'; }, 1800);
+    });
+  } catch(e) {}
+}
+
+/* ── CLAIM EARNINGS  §P6 ────────────────── */
+function claimEarnings() {
+  /* TODO: call contract claimAffiliateEarnings() */
+}
+</script>
+</body>
+</html>

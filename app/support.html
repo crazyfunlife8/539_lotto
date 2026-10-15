@@ -1,0 +1,448 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>〔品牌名〕— 客服</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
+  <style>
+    :root {
+      --gold:        #c49a2a;
+      --gold-light:  #e8b84b;
+      --bg-dark:     #0a0703;
+      --bg-card:     #1c1610;
+      --border-gold: rgba(196,154,42,0.22);
+      --text-main:   #f0e6d2;
+      --text-muted:  #8a7a62;
+      --text-dim:    #5a4a35;
+    }
+    body {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background-color: #0a0703;
+      color: #f0e6d2;
+      min-height: 100vh;
+    }
+    .bg-neutral-950 { background-color: #0a0703 !important; }
+    .font-display   { font-family: 'Cinzel', serif !important; }
+
+    @keyframes btn-shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .btn-gold {
+      background: linear-gradient(105deg,#7a5010 0%,#c49a2a 22%,#f5d67a 46%,#e8b84b 54%,#c49a2a 78%,#7a5010 100%) !important;
+      background-size: 250% auto !important;
+      animation: btn-shimmer 4.5s linear infinite;
+      color: #0d0a04 !important;
+      font-weight: 900;
+      box-shadow: 0 4px 28px rgba(196,154,42,0.4), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.35) !important;
+      border: 1px solid rgba(245,214,122,0.3) !important;
+      transition: box-shadow 0.3s ease, transform 0.15s ease !important;
+    }
+    .btn-gold:active { transform: scale(0.96); }
+    .gold-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(196,154,42,0.35) 25%, rgba(232,184,75,0.55) 50%, rgba(196,154,42,0.35) 75%, transparent 100%);
+    }
+    .header-bg {
+      background: linear-gradient(90deg,#0e0905 0%,#150e07 100%) !important;
+      border-bottom: 1px solid rgba(196,154,42,0.2) !important;
+    }
+    .menu-item { transition: color 0.15s ease, background 0.15s ease, padding-left 0.2s ease; border-left: 2px solid transparent; }
+    .menu-item:hover, .menu-item.active {
+      color: #c49a2a !important; background: rgba(196,154,42,0.06);
+      padding-left: 1.5rem; border-left-color: rgba(196,154,42,0.4);
+    }
+    #menu-panel { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.2,0,0,1); }
+    #menu-panel.open { transform: translateX(0); }
+    #menu-backdrop { opacity: 0; transition: opacity 0.25s ease; }
+    #menu-backdrop.open { opacity: 1; }
+    .thin-scroll::-webkit-scrollbar { width: 3px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(196,154,42,0.25); border-radius: 2px; }
+
+    /* ── P8 SPECIFIC ─────────────────────── */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 1rem;
+      overflow: clip;
+    }
+    .card-header {
+      display: flex; align-items: center;
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(196,154,42,0.12);
+    }
+    .input-field {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(196,154,42,0.2);
+      color: #f0e6d2;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      width: 100%; outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9375rem;
+    }
+    .input-field:focus {
+      border-color: rgba(196,154,42,0.5);
+      box-shadow: 0 0 0 3px rgba(196,154,42,0.08);
+    }
+    .input-field::placeholder { color: #3a2e1e; }
+    /* Category filter pills */
+    .cat-pill {
+      padding: 0.375rem 0.875rem;
+      font-size: 0.75rem; font-weight: 600;
+      border-radius: 999px;
+      border: 1px solid rgba(196,154,42,0.15);
+      color: #5a4a35;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      background: rgba(255,255,255,0.03);
+    }
+    .cat-pill.active, .cat-pill:hover {
+      background: rgba(196,154,42,0.15);
+      color: #c49a2a;
+      border-color: rgba(196,154,42,0.35);
+    }
+    /* FAQ accordion */
+    .faq-item {
+      border-bottom: 1px solid rgba(196,154,42,0.08);
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.875rem 1rem;
+      cursor: pointer;
+      font-size: 0.875rem; font-weight: 600; color: #c0ad8a;
+      transition: color 0.15s ease;
+      gap: 0.75rem;
+    }
+    .faq-q:hover { color: #e8b84b; }
+    .faq-q .faq-icon { flex-shrink: 0; color: #5a4a35; transition: transform 0.2s ease, color 0.15s ease; }
+    .faq-item.open .faq-q { color: #e8b84b; }
+    .faq-item.open .faq-icon { transform: rotate(180deg); color: #c49a2a; }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.25s cubic-bezier(0.2,0,0,1), padding 0.2s ease;
+      font-size: 0.8125rem; color: #7a6a50; line-height: 1.7;
+      padding: 0 1rem;
+    }
+    .faq-item.open .faq-a {
+      max-height: 500px;
+      padding: 0 1rem 0.875rem;
+    }
+    .faq-empty {
+      padding: 1.5rem 1rem;
+      text-align: center;
+      font-size: 0.875rem; color: #3a2e1e;
+    }
+    /* Contact select */
+    .select-field {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(196,154,42,0.2);
+      color: #f0e6d2;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      width: 100%; outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a4a35' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.875rem center;
+      padding-right: 2.5rem;
+    }
+    .select-field:focus { border-color: rgba(196,154,42,0.5); }
+    .select-field option { background: #1c1610; }
+  </style>
+</head>
+<body class="bg-neutral-950">
+
+<!-- ═══ SHARED BANNERS ════════════════════ -->
+<div id="banner-network"   class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.15);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.2);"><span data-i18n="banner.network"></span></div>
+<div id="banner-paused"    class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(234,179,8,0.1);color:#fbbf24;border-bottom:1px solid rgba(234,179,8,0.15);"><span data-i18n="banner.paused"></span></div>
+<div id="banner-blacklist" class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.12);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.18);"><span data-i18n="banner.blacklist"></span></div>
+
+<!-- ═══ HEADER ══════════════════════════════ -->
+<header class="header-bg sticky top-0 z-40 w-full">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2 select-none">
+      <img src="image/539_logo.png" alt="39彩金桶" class="navbar-logo">
+      <span class="navbar-brand">〔品牌名〕</span>
+    </a>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden sm:flex items-center gap-0.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-2.5 py-1 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+      </div>
+      <button id="wallet-btn-visitor" onclick="connectWallet()"
+              class="btn-gold px-4 py-2 rounded-lg text-sm font-bold">
+        <span data-i18n="wallet.connect">連接錢包</span>
+      </button>
+      <div id="wallet-btn-connected" class="hidden items-center gap-2.5 rounded-lg px-3 py-2 cursor-pointer"
+           style="background:rgba(196,154,42,0.08);border:1px solid rgba(196,154,42,0.25);">
+        <i class="fa-solid fa-circle text-xs" style="color:#4ade80;"></i>
+        <div id="header-address" class="text-xs font-mono" style="color:#7a6a50;">—</div>
+      </div>
+      <button onclick="toggleMenu()" aria-label="選單"
+              class="w-9 h-9 flex items-center justify-center rounded-lg"
+              style="color:#7a6a50;transition:color 0.15s ease,background 0.15s ease;"
+              onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'"
+              onmouseout="this.style.color='#7a6a50';this.style.background='transparent'">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SIDE MENU ══════════════════════════ -->
+<div id="menu-overlay" class="hidden fixed inset-0 z-50">
+  <div id="menu-backdrop" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+  <nav id="menu-panel" class="absolute right-0 top-0 bottom-0 w-64 flex flex-col"
+       style="background:linear-gradient(180deg,#130e08 0%,#0d0a06 100%);border-left:1px solid rgba(196,154,42,0.2);"
+       onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid rgba(196,154,42,0.15);">
+      <span class="font-display font-bold tracking-[0.15em] text-sm" style="color:#c49a2a;">MENU</span>
+      <button onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg" style="color:#5a4a35;" onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35';this.style.background='transparent'">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <ul class="flex-1 py-3 overflow-y-auto thin-scroll">
+      <li><a href="index.html"     data-nav="home"      class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-house w-4 text-center"></i> <span data-i18n="nav.home">首頁</span></a></li>
+      <li><a href="tickets.html"   data-nav="tickets"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-ticket w-4 text-center"></i> <span data-i18n="nav.tickets">我的注單</span></a></li>
+      <li><a href="account.html"   data-nav="account"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-circle-user w-4 text-center"></i> <span data-i18n="nav.account">會員中心</span></a></li>
+      <li><a href="history.html"   data-nav="history"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-clock-rotate-left w-4 text-center"></i> <span data-i18n="nav.history">歷史紀錄</span></a></li>
+      <li><a href="affiliate.html" data-nav="affiliate" class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-handshake w-4 text-center"></i> <span data-i18n="nav.affiliate">推廣夥伴</span></a></li>
+      <li><a href="rules.html"     data-nav="rules"     class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-book-open w-4 text-center"></i> <span data-i18n="nav.rules">遊戲規則</span></a></li>
+      <li><a href="support.html"   data-nav="support"   class="menu-item active flex items-center gap-3 px-5 py-3 font-semibold" style="color:#e8b84b;"><i class="fa-solid fa-headset w-4 text-center" style="color:#c49a2a;"></i> <span data-i18n="nav.support">客服</span></a></li>
+    </ul>
+    <div class="p-4" style="border-top:1px solid rgba(196,154,42,0.15);">
+      <div class="flex justify-center gap-1.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-3 py-1.5 rounded" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-3 py-1.5 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-3 py-1.5 rounded" style="color:#5a4a35;">简</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT  §P8
+═══════════════════════════════════════ -->
+<main class="max-w-3xl mx-auto px-4 py-8 pb-20">
+
+  <div class="mb-6">
+    <h1 class="font-display font-bold text-2xl tracking-widest mb-1"
+        style="color:#e8b84b; letter-spacing:0.12em;" data-i18n="p8.page.title">客服</h1>
+    <div class="gold-sep"></div>
+  </div>
+
+  <!-- ── 1. 常見問題 FAQ  §P8 ──────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-solid fa-circle-question mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p8.faq.title">常見問題</span>
+    </div>
+
+    <!-- Keyword search -->
+    <div class="p-4 pb-3">
+      <input id="faq-search" type="text" class="input-field" oninput="filterFaq()"
+             data-i18n-placeholder="p8.faq.search.placeholder"
+             placeholder="搜尋問題…" />
+    </div>
+
+    <!-- Category filter §P8 -->
+    <div class="flex flex-wrap gap-2 px-4 pb-3">
+      <button class="cat-pill active" data-cat="all"    onclick="setCat('all')"    data-i18n="p8.faq.cat.all">全部</button>
+      <button class="cat-pill" data-cat="play"   onclick="setCat('play')"   data-i18n="p8.faq.cat.play">玩法</button>
+      <button class="cat-pill" data-cat="method" onclick="setCat('method')" data-i18n="p8.faq.cat.method">下注方式</button>
+      <button class="cat-pill" data-cat="auth"   onclick="setCat('auth')"   data-i18n="p8.faq.cat.auth">授權與撤銷</button>
+      <button class="cat-pill" data-cat="funds"  onclick="setCat('funds')"  data-i18n="p8.faq.cat.funds">儲值與提領</button>
+      <button class="cat-pill" data-cat="draw"   onclick="setCat('draw')"   data-i18n="p8.faq.cat.draw">開獎與退款</button>
+      <button class="cat-pill" data-cat="aff"    onclick="setCat('aff')"    data-i18n="p8.faq.cat.affiliate">推廣夥伴</button>
+    </div>
+
+    <!-- FAQ list — static demo §P8 (content managed via backend A2 in production) -->
+    <div id="faq-list">
+      <div class="faq-item" data-cat="play" data-q-zh-tw="如何開始下注？" data-q-zh-cn="如何开始下注？" data-q-en="How do I start betting?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q1.q">如何開始下注？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q1.a">連接 TRON 錢包（如 TronLink）後，前往「下注」頁面選 5 個號碼加入注單，確認後選擇下注方式完成付款即可。截止時間為每日 20:20。</div>
+      </div>
+      <div class="faq-item" data-cat="play" data-q-zh-tw="開獎結果怎麼決定？" data-q-zh-cn="开奖结果怎么决定？" data-q-en="How are draw results determined?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q2.q">開獎結果怎麼決定？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q2.a">採用台灣官方今彩 539 的開獎結果，由多簽預言機送上 TRON 鏈後合約自動結算。每期結果均有鏈上紀錄可查詢。</div>
+      </div>
+      <div class="faq-item" data-cat="method" data-q-zh-tw="授權下注需要授權多少金額？" data-q-zh-cn="授权下注需要授权多少金额？" data-q-en="How much USDT do I need to authorize?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q3.q">授權下注需要授權多少金額？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q3.a">預設只授權本次下注所需金額。你也可以授權更高的額度，這樣下次下注時不需要再次授權，可節省手續費。授權額度用完才需再次授權。</div>
+      </div>
+      <div class="faq-item" data-cat="method" data-q-zh-tw="轉帳下注的截止時間是什麼時候？" data-q-zh-cn="转账下注的截止时间是什么时候？" data-q-en="When is the transfer betting deadline?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q4.q">轉帳下注的截止時間是什麼時候？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q4.a">轉帳下注截止時間為每日 20:15，比一般截止時間（20:20）早 5 分鐘。必須從已連接的錢包直接轉出，交易所提幣無法入帳。</div>
+      </div>
+      <div class="faq-item" data-cat="auth" data-q-zh-tw="如何撤銷 USDT 授權？" data-q-zh-cn="如何撤销 USDT 授权？" data-q-en="How do I revoke USDT authorization?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q5.q">如何撤銷 USDT 授權？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q5.a">請至 TronLink（或其他 TRON 錢包）→ DApp 管理 → 找到本平台資金合約地址 → 撤銷授權。撤銷後你的遊戲餘額與獎金不受影響，仍可正常提領。</div>
+      </div>
+      <div class="faq-item" data-cat="funds" data-q-zh-tw="提領需要多久？" data-q-zh-cn="提领需要多久？" data-q-en="How long does a withdrawal take?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q6.q">提領需要多久？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q6.a">送出提領交易後，通常幾個區塊確認（約 1–3 分鐘）USDT 即到帳。提領的 Energy 費用由平台代付，USDT 手續費【待定】。</div>
+      </div>
+      <div class="faq-item" data-cat="draw" data-q-zh-tw="開獎後多久可以領獎？" data-q-zh-cn="开奖后多久可以领奖？" data-q-en="When are prizes credited after the draw?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q7.q">開獎後多久可以領獎？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q7.a">開獎結果由預言機上鏈後，合約自動結算並將獎金記入你的遊戲餘額，無需手動領取。之後可隨時在「會員中心」提領至錢包。</div>
+      </div>
+      <div class="faq-item" data-cat="aff" data-q-zh-tw="推廣分潤什麼時候入帳？" data-q-zh-cn="推广分润什么时候入账？" data-q-en="When are affiliate commissions credited?">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text" data-i18n="p8.faq.q8.q">推廣分潤什麼時候入帳？</span>
+          <i class="fa-solid fa-chevron-down faq-icon text-xs"></i>
+        </div>
+        <div class="faq-a" data-i18n="p8.faq.q8.a">每期開獎結算後，分潤記入你的可領金額，可至「推廣夥伴」頁面自行領取。退款的期別不產生分潤。</div>
+      </div>
+    </div>
+    <!-- No result -->
+    <div id="faq-empty" class="faq-empty hidden" data-i18n="p8.faq.empty">找不到符合的問題</div>
+  </section>
+
+  <!-- ── 2. 聯絡客服  §P8 ──────────────────── -->
+  <section class="section-card mb-5">
+    <div class="card-header">
+      <i class="fa-brands fa-telegram mr-2.5 text-sm" style="color:#c49a2a;"></i>
+      <span class="text-sm font-bold" style="color:#c49a2a;" data-i18n="p8.contact.title">聯絡客服</span>
+    </div>
+    <div class="p-4 space-y-4">
+      <!-- 問題分類 §P8 -->
+      <div>
+        <label class="block text-xs mb-1.5" style="color:#5a4a35;" data-i18n="p8.contact.cat.label">問題分類</label>
+        <select id="contact-cat" class="select-field">
+          <option value="deposit"  data-i18n="p8.contact.cat.deposit">儲值／提領</option>
+          <option value="bet"      data-i18n="p8.contact.cat.bet">下注與開獎</option>
+          <option value="feedback" data-i18n="p8.contact.cat.feedback">意見回饋</option>
+          <option value="other"    data-i18n="p8.contact.cat.other">其他</option>
+        </select>
+      </div>
+      <!-- Telegram button §P8 -->
+      <button onclick="openTelegram()"
+              class="btn-gold w-full py-3 rounded-xl text-sm font-black flex items-center justify-center gap-2">
+        <i class="fa-brands fa-telegram text-base"></i>
+        <span data-i18n="p8.contact.telegram">開啟 Telegram 客服</span>
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════ -->
+<div id="site-footer"></div>
+<script src="footer.js"></script>
+
+<script>
+/* ── MENU ────────────────────────────────── */
+function toggleMenu() {
+  const overlay  = document.getElementById('menu-overlay');
+  const backdrop = document.getElementById('menu-backdrop');
+  const panel    = document.getElementById('menu-panel');
+  const isOpen   = panel.classList.contains('open');
+  if (isOpen) {
+    backdrop.classList.remove('open');
+    panel.classList.remove('open');
+    setTimeout(() => { overlay.classList.add('hidden'); }, 260);
+  } else {
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      backdrop.classList.add('open');
+      panel.classList.add('open');
+    });
+  }
+}
+function connectWallet() { /* TODO */ }
+
+/* ── FAQ ACCORDION ──────────────────────── */
+function toggleFaq(qEl) {
+  const item = qEl.closest('.faq-item');
+  item.classList.toggle('open');
+}
+
+/* ── FAQ FILTER — category + keyword §P8 ─── */
+let currentCat = 'all';
+
+function setCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.cat === cat);
+  });
+  filterFaq();
+}
+
+function filterFaq() {
+  const q = document.getElementById('faq-search').value.trim().toLowerCase();
+  const items = document.querySelectorAll('#faq-list .faq-item');
+  let shown = 0;
+  items.forEach(item => {
+    const catMatch = currentCat === 'all' || item.dataset.cat === currentCat;
+    let textMatch = true;
+    if (q) {
+      const qText = (item.dataset.qZhTw || '') + ' ' + (item.dataset.qZhCn || '') + ' ' + (item.dataset.qEn || '');
+      const aEl   = item.querySelector('.faq-a');
+      textMatch   = qText.toLowerCase().includes(q) || (aEl && aEl.textContent.toLowerCase().includes(q));
+    }
+    const visible = catMatch && textMatch;
+    item.style.display = visible ? '' : 'none';
+    if (visible) shown++;
+  });
+  document.getElementById('faq-empty').classList.toggle('hidden', shown > 0);
+}
+
+/* ── OPEN TELEGRAM  §P8 ─────────────────── */
+function openTelegram() {
+  /* TODO: replace with actual Telegram support link */
+  const TELEGRAM_URL = 'https://t.me/[support_account]';
+  const cat  = document.getElementById('contact-cat').value;
+  const addr = (typeof window._walletAddress !== 'undefined' && window._walletAddress)
+    ? maskAddress(window._walletAddress)
+    : '';
+  let msg = '[' + cat + ']';
+  if (addr) msg += ' addr:' + addr;
+  window.open(TELEGRAM_URL + '?start=' + encodeURIComponent(msg), '_blank');
+}
+
+/* Address masking §1.5 */
+function maskAddress(addr) {
+  if (!addr || addr.length < 10) return addr;
+  return addr.slice(0, 5) + '…' + addr.slice(-4);
+}
+</script>
+</body>
+</html>

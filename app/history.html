@@ -1,0 +1,580 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>〔品牌名〕— 歷史紀錄</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
+  <style>
+    :root {
+      --gold:        #c49a2a;
+      --gold-light:  #e8b84b;
+      --gold-bright: #f5d67a;
+      --text-main:   #f0e6d2;
+      --text-muted:  #8a7a62;
+      --text-dim:    #5a4a35;
+      --bg-dark:     #0a0703;
+      --bg-card:     #1c1610;
+      --border-gold: rgba(196,154,42,0.22);
+    }
+    body {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background-color: #0a0703;
+      color: #f0e6d2;
+      min-height: 100vh;
+    }
+    .bg-neutral-950 { background-color: #0a0703 !important; }
+    .font-display   { font-family: 'Cinzel', serif !important; }
+
+    @keyframes btn-shimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    .btn-gold {
+      background: linear-gradient(105deg,#7a5010 0%,#c49a2a 22%,#f5d67a 46%,#e8b84b 54%,#c49a2a 78%,#7a5010 100%) !important;
+      background-size: 250% auto !important;
+      animation: btn-shimmer 4.5s linear infinite;
+      color: #0d0a04 !important; font-weight: 900;
+      box-shadow: 0 4px 28px rgba(196,154,42,0.4), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.35) !important;
+      border: 1px solid rgba(245,214,122,0.3) !important;
+      transition: box-shadow 0.3s ease, transform 0.15s ease !important;
+    }
+    .btn-gold:active { transform: scale(0.96); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.05) !important;
+      color: var(--text-muted) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+    }
+    .btn-ghost:hover  { background: rgba(255,255,255,0.1) !important; color: var(--text-main) !important; }
+    .btn-ghost:active { transform: scale(0.96); }
+
+    .gold-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(196,154,42,0.35) 25%, rgba(232,184,75,0.55) 50%, rgba(196,154,42,0.35) 75%, transparent 100%);
+    }
+    .header-bg {
+      background: linear-gradient(90deg,#0e0905 0%,#150e07 100%) !important;
+      border-bottom: 1px solid rgba(196,154,42,0.2) !important;
+    }
+    .menu-item { transition: color 0.15s ease, background 0.15s ease, padding-left 0.2s ease; border-left: 2px solid transparent; }
+    .menu-item:hover, .menu-item.active {
+      color: #c49a2a !important; background: rgba(196,154,42,0.06);
+      padding-left: 1.5rem; border-left-color: rgba(196,154,42,0.4);
+    }
+    #menu-panel { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.2,0,0,1); }
+    #menu-panel.open { transform: translateX(0); }
+    #menu-backdrop { opacity: 0; transition: opacity 0.25s ease; }
+    #menu-backdrop.open { opacity: 1; }
+
+    .modal-overlay { position: fixed; inset: 0; z-index: 60; }
+    .modal-backdrop-el { position: absolute; inset: 0; background: rgba(0,0,0,0.75); opacity: 0; transition: opacity 0.2s ease; }
+    .modal-backdrop-el.open { opacity: 1; }
+    .modal-dialog-el { opacity: 0; transform: scale(0.95) translateY(10px); transition: opacity 0.25s cubic-bezier(0.2,0,0,1), transform 0.25s cubic-bezier(0.2,0,0,1); }
+    .modal-dialog-el.open { opacity: 1; transform: scale(1) translateY(0); }
+    .modal-surface { background: linear-gradient(160deg, #1a1208, #100c07); border: 1px solid rgba(196,154,42,0.3); }
+
+    .thin-scroll::-webkit-scrollbar { width: 3px; }
+    .thin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: rgba(196,154,42,0.25); border-radius: 2px; }
+
+    /* ── DRAW BALLS ──────────────────────── */
+    .draw-ball {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2rem; height: 2rem; border-radius: 50%;
+      font-size: 0.7rem; font-weight: 900; flex-shrink: 0;
+      background: radial-gradient(circle at 40% 35%, #f5d67a 0%, #c49a2a 50%, #7a5010 100%);
+      color: #0d0a04;
+      box-shadow: 0 2px 8px rgba(196,154,42,0.45), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.25);
+    }
+    /* Smaller ball for "other bets" rows */
+    .hist-ball {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.5rem; height: 1.5rem; border-radius: 50%;
+      font-size: 0.55rem; font-weight: 900; flex-shrink: 0;
+      background: rgba(40,30,20,0.85);
+      color: #8a7a62;
+      border: 1px solid rgba(196,154,42,0.2);
+    }
+
+    /* ── P5 SPECIFIC ─────────────────────── */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(196,154,42,0.12);
+    }
+    .subsection-header {
+      display: flex; align-items: center;
+      padding: 0.5rem 1rem;
+      background: rgba(0,0,0,0.15);
+      border-top: 1px solid rgba(196,154,42,0.1);
+    }
+    .input-field {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(196,154,42,0.2);
+      color: #f0e6d2;
+      border-radius: 0.75rem;
+      padding: 0.625rem 1rem;
+      width: 100%; outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+    .input-field:focus {
+      border-color: rgba(196,154,42,0.5);
+      box-shadow: 0 0 0 3px rgba(196,154,42,0.08);
+    }
+    .input-field::placeholder { color: #3a2e1e; }
+    .game-tab-bar {
+      display: inline-flex; gap: 0.25rem; padding: 0.25rem;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(196,154,42,0.15);
+      border-radius: 0.75rem;
+    }
+    .game-tab-btn {
+      padding: 0.4rem 1.25rem;
+      font-size: 0.8125rem; font-weight: 700;
+      border-radius: 0.5rem;
+      transition: background 0.15s ease, color 0.15s ease;
+      color: #5a4a35; border: 1px solid transparent; cursor: pointer;
+    }
+    .game-tab-btn.active {
+      background: rgba(196,154,42,0.18);
+      color: #c49a2a;
+      border-color: rgba(196,154,42,0.3);
+    }
+    .divide-gold > * + * { border-top: 1px solid rgba(196,154,42,0.1); }
+    .ext-link {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.75rem; color: #5ba3c9;
+      transition: color 0.15s ease;
+    }
+    .ext-link:hover { color: #93c5fd; }
+  </style>
+</head>
+<body class="bg-neutral-950">
+
+<!-- ═══ SHARED BANNERS  §G1 ════════════════ -->
+<div id="banner-network"   class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.15);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.2);"><span data-i18n="banner.network">請切換到 TRON 主網，目前連接到測試網或不支援的網路，所有交易功能已停用。</span></div>
+<div id="banner-paused"    class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(234,179,8,0.1);color:#fbbf24;border-bottom:1px solid rgba(234,179,8,0.15);"><span data-i18n="banner.paused">目前暫停接受新注，提領功能照常開放。</span></div>
+<div id="banner-blacklist" class="hidden w-full py-2.5 px-4 text-center text-xs font-semibold" style="background:rgba(239,68,68,0.12);color:#f87171;border-bottom:1px solid rgba(239,68,68,0.18);"><span data-i18n="banner.blacklist">此地址目前無法下注，餘額可正常提領。</span></div>
+
+<!-- ═══ HEADER  §G1 ═════════════════════════ -->
+<header class="header-bg sticky top-0 z-40 w-full">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2 select-none">
+      <img src="image/539_logo.png" alt="39彩金桶" class="navbar-logo">
+      <span class="navbar-brand">〔品牌名〕</span>
+    </a>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden sm:flex items-center gap-0.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-2.5 py-1 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-2.5 py-1 rounded transition-colors duration-150" style="color:#5a4a35;">简</button>
+      </div>
+      <button id="wallet-btn-visitor" onclick="connectWallet()"
+              class="btn-gold px-4 py-2 rounded-lg text-sm font-bold hover:scale-[1.02]">
+        <span data-i18n="wallet.connect">連接錢包</span>
+      </button>
+      <div id="wallet-btn-connected" class="hidden items-center gap-2.5 rounded-lg px-3 py-2 cursor-pointer"
+           style="background:rgba(196,154,42,0.08);border:1px solid rgba(196,154,42,0.25);transition:background 0.15s ease;"
+           onmouseover="this.style.background='rgba(196,154,42,0.14)'"
+           onmouseout="this.style.background='rgba(196,154,42,0.08)'">
+        <i class="fa-solid fa-circle text-xs flex-shrink-0" style="color:#4ade80;"></i>
+        <div class="text-right leading-tight">
+          <div id="header-address" class="text-xs font-mono" style="color:#7a6a50;">—</div>
+          <div id="header-balance" class="text-sm font-black tabular-nums" style="color:#e8b84b;">—&thinsp;<span class="text-xs font-normal" style="color:#7a6a50;">USDT</span></div>
+        </div>
+      </div>
+      <button onclick="toggleMenu()" aria-label="選單"
+              class="w-9 h-9 flex items-center justify-center rounded-lg"
+              style="color:#7a6a50;transition:color 0.15s ease,background 0.15s ease;"
+              onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'"
+              onmouseout="this.style.color='#7a6a50';this.style.background='transparent'">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SIDE MENU  §G1 ══════════════════════ -->
+<div id="menu-overlay" class="hidden fixed inset-0 z-50">
+  <div id="menu-backdrop" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+  <nav id="menu-panel" class="absolute right-0 top-0 bottom-0 w-64 flex flex-col"
+       style="background:linear-gradient(180deg,#130e08 0%,#0d0a06 100%);border-left:1px solid rgba(196,154,42,0.2);"
+       onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid rgba(196,154,42,0.15);">
+      <span class="font-display font-bold tracking-[0.15em] text-sm" style="color:#c49a2a;">MENU</span>
+      <button onclick="toggleMenu()" class="w-8 h-8 flex items-center justify-center rounded-lg" style="color:#5a4a35;transition:color 0.15s ease,background 0.15s ease;" onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35';this.style.background='transparent'">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+    <ul class="flex-1 py-3 overflow-y-auto thin-scroll">
+      <li><a href="index.html"     data-nav="home"      class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-house w-4 text-center"></i> <span data-i18n="nav.home">首頁</span></a></li>
+      <li><a href="tickets.html"   data-nav="tickets"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-ticket w-4 text-center"></i> <span data-i18n="nav.tickets">我的注單</span></a></li>
+      <li><a href="account.html"   data-nav="account"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-circle-user w-4 text-center"></i> <span data-i18n="nav.account">會員中心</span></a></li>
+      <li><a href="history.html"   data-nav="history"   class="menu-item active flex items-center gap-3 px-5 py-3 font-semibold" style="color:#e8b84b;"><i class="fa-solid fa-clock-rotate-left w-4 text-center" style="color:#c49a2a;"></i> <span data-i18n="nav.history">歷史紀錄</span></a></li>
+      <li><a href="affiliate.html" data-nav="affiliate" class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-handshake w-4 text-center"></i> <span data-i18n="nav.affiliate">推廣夥伴</span></a></li>
+      <li><a href="rules.html"     data-nav="rules"     class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-book-open w-4 text-center"></i> <span data-i18n="nav.rules">遊戲規則</span></a></li>
+      <li><a href="support.html"   data-nav="support"   class="menu-item flex items-center gap-3 px-5 py-3" style="color:#6a5a45;"><i class="fa-solid fa-headset w-4 text-center"></i> <span data-i18n="nav.support">客服</span></a></li>
+    </ul>
+    <div class="p-4" style="border-top:1px solid rgba(196,154,42,0.15);">
+      <div class="flex justify-center gap-1.5 text-xs">
+        <button onclick="setLang('en')"    data-lang-btn="en"    class="px-3 py-1.5 rounded" style="color:#5a4a35;">EN</button>
+        <button onclick="setLang('zh-tw')" data-lang-btn="zh-tw" class="px-3 py-1.5 rounded font-bold" style="background:rgba(196,154,42,0.15);color:#c49a2a;border:1px solid rgba(196,154,42,0.3);">繁</button>
+        <button onclick="setLang('zh-cn')" data-lang-btn="zh-cn" class="px-3 py-1.5 rounded" style="color:#5a4a35;">简</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT  §P5
+═══════════════════════════════════════ -->
+<main class="max-w-2xl mx-auto px-4 py-8 pb-20">
+
+  <div class="mb-6">
+    <h1 class="font-display font-bold text-2xl tracking-widest mb-1"
+        style="color:#e8b84b;letter-spacing:0.12em;" data-i18n="p5.page.title">歷史紀錄</h1>
+    <div class="gold-sep"></div>
+  </div>
+
+  <!-- ── 彩金桶分頁  §P5 第一版只有 539 ──── -->
+  <div class="mb-5">
+    <div class="game-tab-bar">
+      <button class="game-tab-btn active" data-i18n="p5.game.tab.539">今彩 539</button>
+      <!-- 加州天天樂: 排除清單 §P5 -->
+    </div>
+  </div>
+
+  <!-- ── 期號查詢  §P5 ──────────────────── -->
+  <div class="flex gap-2 mb-7">
+    <input id="search-input" type="text" class="input-field"
+           placeholder="115000355…" oninput="filterPeriods()" />
+    <button onclick="filterPeriods()"
+            class="btn-ghost flex-shrink-0 px-5 rounded-xl text-sm font-bold"
+            data-i18n="p5.search.btn">查詢</button>
+  </div>
+
+  <!-- ── 期別列表  §P5 預設最近幾期 ────── -->
+  <div id="period-list" class="space-y-5">
+
+    <!-- ── 第 115000355 期 ───────────────── -->
+    <div class="section-card period-card" data-period="115000355">
+      <!-- Header -->
+      <div class="card-header">
+        <div class="flex items-center gap-2">
+          <span class="font-display text-sm font-bold tabular-nums" style="color:#c49a2a;">第 115000355 期</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs" style="color:#5a4a35;" data-i18n="p5.period.pool">彩池總額</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#e8b84b;">2,456 USDT</span>
+        </div>
+      </div>
+
+      <!-- Draw numbers + links -->
+      <div class="px-4 pt-4 pb-3">
+        <div class="flex items-center gap-1.5 mb-3">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p3.drawn.numbers">開獎號碼</span>
+          <div class="flex gap-1.5">
+            <span class="draw-ball">03</span>
+            <span class="draw-ball">11</span>
+            <span class="draw-ball">22</span>
+            <span class="draw-ball">28</span>
+            <span class="draw-ball">35</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="#" target="_blank" rel="noopener" class="ext-link" data-i18n="p1.draw.official">
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>官方開獎頁
+          </a>
+          <a href="#" target="_blank" rel="noopener" class="ext-link" data-i18n="p1.draw.chain">
+            <i class="fa-solid fa-cube text-xs"></i>鏈上紀錄
+          </a>
+        </div>
+      </div>
+
+      <!-- Winners §P5 中獎明細（遮蔽地址＋獲得金額） -->
+      <div class="subsection-header">
+        <i class="fa-solid fa-trophy text-xs mr-2" style="color:#e8b84b;"></i>
+        <span class="text-xs font-bold" style="color:#c49a2a;" data-i18n="p5.winners.title">中獎明細</span>
+      </div>
+      <div class="divide-gold">
+        <div class="flex items-center justify-between px-4 py-3">
+          <span class="font-mono text-xs" style="color:#7a6a50;">TXab9…c1d2</span>
+          <span class="text-xs" style="color:#8a7a62;">中 2 碼</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#4ade80;">+20 USDT</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-3">
+          <span class="font-mono text-xs" style="color:#7a6a50;">TXef3…2a3b</span>
+          <span class="text-xs" style="color:#8a7a62;">中 1 碼</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#4ade80;">+10 USDT</span>
+        </div>
+      </div>
+
+      <!-- Other bets §P5 其他下注明細（遮蔽地址＋所選號碼） -->
+      <div class="subsection-header">
+        <i class="fa-solid fa-list text-xs mr-2" style="color:#5a4a35;"></i>
+        <span class="text-xs font-bold" style="color:#6a5a45;" data-i18n="p5.bets.title">其他下注明細</span>
+      </div>
+      <div class="divide-gold">
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="font-mono text-xs flex-shrink-0" style="color:#5a4a35;">TXgh4…4c5d</span>
+          <div class="flex gap-1 flex-wrap">
+            <span class="hist-ball">05</span><span class="hist-ball">12</span><span class="hist-ball">18</span><span class="hist-ball">27</span><span class="hist-ball">33</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="font-mono text-xs flex-shrink-0" style="color:#5a4a35;">TXij6…6e7f</span>
+          <div class="flex gap-1 flex-wrap">
+            <span class="hist-ball">03</span><span class="hist-ball">08</span><span class="hist-ball">15</span><span class="hist-ball">22</span><span class="hist-ball">37</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="font-mono text-xs flex-shrink-0" style="color:#5a4a35;">TXkl8…8a9b</span>
+          <div class="flex gap-1 flex-wrap">
+            <span class="hist-ball">07</span><span class="hist-ball">14</span><span class="hist-ball">21</span><span class="hist-ball">28</span><span class="hist-ball">35</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 第 115000354 期 ───────────────── -->
+    <div class="section-card period-card" data-period="115000354">
+      <div class="card-header">
+        <div class="flex items-center gap-2">
+          <span class="font-display text-sm font-bold tabular-nums" style="color:#c49a2a;">第 115000354 期</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs" style="color:#5a4a35;" data-i18n="p5.period.pool">彩池總額</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#e8b84b;">1,892 USDT</span>
+        </div>
+      </div>
+
+      <div class="px-4 pt-4 pb-3">
+        <div class="flex items-center gap-1.5 mb-3">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p3.drawn.numbers">開獎號碼</span>
+          <div class="flex gap-1.5">
+            <span class="draw-ball">07</span>
+            <span class="draw-ball">15</span>
+            <span class="draw-ball">20</span>
+            <span class="draw-ball">28</span>
+            <span class="draw-ball">36</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="#" target="_blank" rel="noopener" class="ext-link" data-i18n="p1.draw.official">
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>官方開獎頁
+          </a>
+          <a href="#" target="_blank" rel="noopener" class="ext-link" data-i18n="p1.draw.chain">
+            <i class="fa-solid fa-cube text-xs"></i>鏈上紀錄
+          </a>
+        </div>
+      </div>
+
+      <div class="subsection-header">
+        <i class="fa-solid fa-trophy text-xs mr-2" style="color:#e8b84b;"></i>
+        <span class="text-xs font-bold" style="color:#c49a2a;" data-i18n="p5.winners.title">中獎明細</span>
+      </div>
+      <div class="divide-gold">
+        <div class="flex items-center justify-between px-4 py-3">
+          <span class="font-mono text-xs" style="color:#7a6a50;">TXmn0…0c1d</span>
+          <span class="text-xs" style="color:#8a7a62;">中 2 碼</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#4ade80;">+20 USDT</span>
+        </div>
+      </div>
+
+      <div class="subsection-header">
+        <i class="fa-solid fa-list text-xs mr-2" style="color:#5a4a35;"></i>
+        <span class="text-xs font-bold" style="color:#6a5a45;" data-i18n="p5.bets.title">其他下注明細</span>
+      </div>
+      <div class="divide-gold">
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="font-mono text-xs flex-shrink-0" style="color:#5a4a35;">TXop2…2e3f</span>
+          <div class="flex gap-1 flex-wrap">
+            <span class="hist-ball">01</span><span class="hist-ball">09</span><span class="hist-ball">16</span><span class="hist-ball">23</span><span class="hist-ball">37</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="font-mono text-xs flex-shrink-0" style="color:#5a4a35;">TXqr4…4a5b</span>
+          <div class="flex gap-1 flex-wrap">
+            <span class="hist-ball">11</span><span class="hist-ball">17</span><span class="hist-ball">24</span><span class="hist-ball">30</span><span class="hist-ball">38</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 第 115000353 期 ───────────────── -->
+    <div class="section-card period-card" data-period="115000353">
+      <div class="card-header">
+        <div class="flex items-center gap-2">
+          <span class="font-display text-sm font-bold tabular-nums" style="color:#c49a2a;">第 115000353 期</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs" style="color:#5a4a35;" data-i18n="p5.period.pool">彩池總額</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#e8b84b;">987 USDT</span>
+        </div>
+      </div>
+
+      <div class="px-4 pt-4 pb-3">
+        <div class="flex items-center gap-1.5 mb-3">
+          <span class="text-xs w-14 flex-shrink-0" style="color:#5a4a35;" data-i18n="p3.drawn.numbers">開獎號碼</span>
+          <div class="flex gap-1.5">
+            <span class="draw-ball">02</span>
+            <span class="draw-ball">07</span>
+            <span class="draw-ball">22</span>
+            <span class="draw-ball">31</span>
+            <span class="draw-ball">39</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="#" target="_blank" rel="noopener" class="ext-link" data-i18n="p1.draw.official">
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>官方開獎頁
+          </a>
+          <a href="#" target="_blank" rel="noopener" class="ext-link" data-i18n="p1.draw.chain">
+            <i class="fa-solid fa-cube text-xs"></i>鏈上紀錄
+          </a>
+        </div>
+      </div>
+
+      <div class="subsection-header">
+        <i class="fa-solid fa-trophy text-xs mr-2" style="color:#e8b84b;"></i>
+        <span class="text-xs font-bold" style="color:#c49a2a;" data-i18n="p5.winners.title">中獎明細</span>
+      </div>
+      <div class="divide-gold">
+        <div class="flex items-center justify-between px-4 py-3">
+          <span class="font-mono text-xs" style="color:#7a6a50;">TXst6…6c7d</span>
+          <span class="text-xs" style="color:#8a7a62;">中 1 碼</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#4ade80;">+10 USDT</span>
+        </div>
+        <div class="flex items-center justify-between px-4 py-3">
+          <span class="font-mono text-xs" style="color:#7a6a50;">TXuv8…8e9f</span>
+          <span class="text-xs" style="color:#8a7a62;">中 1 碼</span>
+          <span class="text-sm font-bold tabular-nums" style="color:#4ade80;">+10 USDT</span>
+        </div>
+      </div>
+
+      <div class="subsection-header">
+        <i class="fa-solid fa-list text-xs mr-2" style="color:#5a4a35;"></i>
+        <span class="text-xs font-bold" style="color:#6a5a45;" data-i18n="p5.bets.title">其他下注明細</span>
+      </div>
+      <div class="divide-gold">
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="font-mono text-xs flex-shrink-0" style="color:#5a4a35;">TXwx0…0a1b</span>
+          <div class="flex gap-1 flex-wrap">
+            <span class="hist-ball">05</span><span class="hist-ball">14</span><span class="hist-ball">27</span><span class="hist-ball">31</span><span class="hist-ball">38</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-3">
+          <span class="font-mono text-xs flex-shrink-0" style="color:#5a4a35;">TXyz2…2c3d</span>
+          <div class="flex gap-1 flex-wrap">
+            <span class="hist-ball">08</span><span class="hist-ball">15</span><span class="hist-ball">19</span><span class="hist-ball">25</span><span class="hist-ball">36</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No-result state (hidden by default) -->
+    <div id="no-result" class="hidden text-center py-12" style="color:#4a3c2a;">
+      <i class="fa-solid fa-magnifying-glass text-3xl mb-3 block"></i>
+      <span data-i18n="p5.search.empty">找不到此期號</span>
+    </div>
+
+  </div><!-- /period-list -->
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════ -->
+<div id="site-footer"></div>
+<script src="footer.js"></script>
+
+<!-- ═══ NO WALLET MODAL  §1.4 ════════════ -->
+<div id="no-wallet-modal" class="hidden modal-overlay" style="z-index:64;">
+  <div id="nw-backdrop" class="modal-backdrop-el" onclick="closeNoWalletModal()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div id="nw-dialog" class="modal-dialog-el modal-surface pointer-events-auto w-full max-w-sm rounded-2xl p-6" style="box-shadow:0 24px 64px rgba(0,0,0,0.8);">
+      <div class="flex items-start justify-between mb-5">
+        <div><div class="font-bold text-white mb-1" data-i18n="nw.title">未偵測到錢包</div><div class="text-sm" style="color:#7a6a50;" data-i18n="nw.desc">請安裝支援 TRON 的錢包：</div></div>
+        <button onclick="closeNoWalletModal()" class="w-7 h-7 flex items-center justify-center rounded-lg flex-shrink-0 ml-3" style="color:#5a4a35;" onmouseover="this.style.color='#c49a2a';this.style.background='rgba(196,154,42,0.1)'" onmouseout="this.style.color='#5a4a35';this.style.background='transparent'"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <a href="https://www.tronlink.org/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(196,154,42,0.06);border:1px solid rgba(196,154,42,0.15);">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(196,154,42,0.12);"><i class="fa-solid fa-link" style="color:#c49a2a;"></i></div>
+        <div class="flex-1 min-w-0"><div class="font-semibold text-sm text-white">TronLink</div><div class="text-xs" style="color:#5a4a35;" data-i18n="nw.tronlink.desc">瀏覽器擴充套件 / 手機 App</div></div>
+        <i class="fa-solid fa-arrow-up-right-from-square text-xs flex-shrink-0" style="color:#5a4a35;"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+  /* ════ SHARED HELPERS ════════════════════ */
+  let _connected = false;
+
+  function toggleMenu() {
+    const o = document.getElementById('menu-overlay');
+    const p = document.getElementById('menu-panel');
+    const b = document.getElementById('menu-backdrop');
+    if (o.classList.contains('hidden')) {
+      o.classList.remove('hidden');
+      requestAnimationFrame(() => { p.classList.add('open'); b.classList.add('open'); });
+    } else {
+      p.classList.remove('open'); b.classList.remove('open');
+      setTimeout(() => o.classList.add('hidden'), 260);
+    }
+  }
+
+  function connectWallet() {
+    if (typeof window.tronWeb === 'undefined') { openNoWalletModal(); return; }
+    /* TODO: TronWeb connect */
+  }
+
+  function _openModal(overlayId, backdropId, dialogId) {
+    const o = document.getElementById(overlayId);
+    document.getElementById(overlayId).classList.remove('hidden');
+    requestAnimationFrame(() => {
+      document.getElementById(backdropId).classList.add('open');
+      document.getElementById(dialogId).classList.add('open');
+    });
+  }
+  function _closeModal(overlayId, backdropId, dialogId) {
+    document.getElementById(backdropId).classList.remove('open');
+    document.getElementById(dialogId).classList.remove('open');
+    setTimeout(() => document.getElementById(overlayId).classList.add('hidden'), 260);
+  }
+
+  function openNoWalletModal()  { _openModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+  function closeNoWalletModal() { _closeModal('no-wallet-modal', 'nw-backdrop', 'nw-dialog'); }
+
+  /* ════ P5: PERIOD SEARCH §P5 ════════════ */
+  function filterPeriods() {
+    const q = document.getElementById('search-input').value.trim();
+    const cards = document.querySelectorAll('.period-card');
+    let shown = 0;
+    cards.forEach(card => {
+      const match = !q || card.dataset.period.includes(q);
+      card.classList.toggle('hidden', !match);
+      if (match) shown++;
+    });
+    document.getElementById('no-result').classList.toggle('hidden', shown > 0);
+  }
+
+  /* ════ INIT ═════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', applyLang);
+</script>
+</body>
+</html>
