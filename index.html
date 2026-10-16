@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>39彩金桶 — 專案導航</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500@display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0e0b07;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: 24px;
+    }
+
+    /* subtle grid texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(196,154,42,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196,154,42,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .logo-wrap img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 900;
+      background: linear-gradient(135deg, #f0d060 0%, #c49a2a 50%, #e8b84b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.04em;
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #4a3c2a;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 220px;
+      background: rgba(196,154,42,0.04);
+      border: 1px solid rgba(196,154,42,0.18);
+      border-radius: 16px;
+      padding: 32px 28px;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      background: rgba(196,154,42,0.09);
+      border-color: rgba(196,154,42,0.45);
+      transform: translateY(-3px);
+    }
+
+    .card:active {
+      transform: scale(0.97);
+    }
+
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 22px;
+    }
+
+    .card-icon.gold {
+      background: rgba(196,154,42,0.12);
+      color: #e8b84b;
+    }
+
+    .card-icon.slate {
+      background: rgba(100,120,160,0.12);
+      color: #7a9cc9;
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #f0e6d2;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: #4a3c2a;
+      line-height: 1.6;
+    }
+
+    .card-arrow {
+      margin-top: 20px;
+      font-size: 12px;
+      color: rgba(196,154,42,0.4);
+      transition: color 0.18s ease;
+    }
+
+    .card:hover .card-arrow {
+      color: #c49a2a;
+    }
+
+    .footer-note {
+      margin-top: 48px;
+      font-size: 11px;
+      color: #2a2018;
+      letter-spacing: 0.08em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-wrap">
+    <img src="app/image/539_logo.png" alt="39彩金桶">
+    <h1>39彩金桶</h1>
+  </div>
+  <p class="subtitle">Blockchain Edition — Dev Preview</p>
+
+  <div class="cards">
+
+    <a class="card" href="app/index.html">
+      <div class="card-icon gold">
+        <i class="fa-solid fa-gamepad"></i>
+      </div>
+      <div class="card-title">玩家前台</div>
+      <div class="card-desc">首頁、選號下注<br>我的柱單、會員中心</div>
+      <div class="card-arrow">進入 <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></div>
+    </a>
+
+    <a class="card" href="dashboard/admin.html">
+      <div class="card-icon slate">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="card-title">管理後台</div>
+      <div class="card-desc">期別管理、入帳監控<br>財務、合約參數</div>
+      <div class="card-arrow">進入 <i class="fa-solid fa-arrow-right" style="font-size:10px;"></i></div>
+    </a>
+
+  </div>
+
+  <p class="footer-note">PROTOTYPE · DEMO DATA ONLY</p>
+
+</body>
+</html>
